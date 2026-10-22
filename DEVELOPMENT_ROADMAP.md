@@ -233,28 +233,28 @@ Required dependencies between phases 5 and 11:
 
 **Prerequisites:** none. The owner confirms that Git may be initialised locally.
 
-- [ ] **0.1** Install Node 24 LTS. Add `.nvmrc` (`24`) and `"engines": { "node": ">=24 <25" }`.
+- [x] **0.1** Install Node 24 LTS. Add `.nvmrc` (`24`) and `"engines": { "node": ">=24 <25" }`.
   - **Verify:** `node -v` prints `v24.x`.
-- [ ] **0.2** Initialise Git **locally**. Do not add a remote.
+- [x] **0.2** Initialise Git **locally**. Do not add a remote.
   - Add a `.gitignore` covering `node_modules/`, `.next/`, `out/`, `data/build/`, `public/data/`, `.env*`, `data/reports/` and `.vercel/`.
   - Make a local snapshot commit only if the owner asks.
   - **Verify:** `git status` lists the existing files.
-- [ ] **0.3** Scaffold Next.js (App Router, TypeScript, ESLint, no `src/`, import alias `@/*`) in a temporary folder **outside** `handoff/`.
+- [x] **0.3** Scaffold Next.js (App Router, TypeScript, ESLint, no `src/`, import alias `@/*`) in a temporary folder **outside** `handoff/`.
   - Copy in only `package.json`, `package-lock.json`, `tsconfig.json`, the ESLint config and `next-env.d.ts`.
   - **Verify:** `app/layout.tsx`, `app/fonts.ts`, `app/tokens.css`, `next.config.mjs`, `tailwind.config.ts` and `lib/types.ts` are byte-identical to before (`git diff --stat`, or compare checksums).
-- [ ] **0.4** Install `tailwindcss@3.4.x`, `postcss` and `autoprefixer` at exact versions. Add `postcss.config.mjs`.
+- [x] **0.4** Install `tailwindcss@3.4.x`, `postcss` and `autoprefixer` at exact versions. Add `postcss.config.mjs`.
   - **Verify:** `app/tokens.css` keeps its `@tailwind` directives and is imported in `app/layout.tsx`.
-- [ ] **0.5** Add a placeholder `app/page.tsx` that uses `bg-bg text-ink`, `font-serif text-h1` and a Bangla line in `font-bn text-bn-lg`.
-- [ ] **0.6** Add scripts that **do not touch data**: `dev`, `build`, `lint` (`next lint` or `eslint .`), `typecheck` (`tsc --noEmit`) and `test` (Vitest).
+- [x] **0.5** Add a placeholder `app/page.tsx` that uses `bg-bg text-ink`, `font-serif text-h1` and a Bangla line in `font-bn text-bn-lg`.
+- [x] **0.6** Add scripts that **do not touch data**: `dev`, `build`, `lint` (`next lint` or `eslint .`), `typecheck` (`tsc --noEmit`) and `test` (Vitest).
   - **Verify:** `npm run build` writes `out/index.html`.
   - **Verify:** `npm run lint`, `npm run typecheck` and `npm test` all exit 0.
-- [ ] **0.7** Install Vitest. Add `tests/csv.test.ts` for `scripts/csv.mjs`, covering:
+- [x] **0.7** Install Vitest. Add `tests/csv.test.ts` for `scripts/csv.mjs`, covering:
   - a quoted comma;
   - an escaped quote;
   - a Bangla value;
   - a byte-order mark;
   - a row with the wrong number of fields, which should be reported (this test is expected to fail until task 1.3).
-- [ ] **0.8** Add a GitHub Actions workflow file (`.github/workflows/ci.yml`) running `npm ci`, `lint`, `typecheck`, `test` and `build` on Node 24. It runs once the repository is pushed.
+- [x] **0.8** Add a GitHub Actions workflow file (`.github/workflows/ci.yml`) running `npm ci`, `lint`, `typecheck`, `test` and `build` on Node 24. It runs once the repository is pushed.
 - [ ] **0.9** Create the app repository as **private** (O1), plus a separate **public** issues-only repository for corrections (for example `jomidarpedia-corrections`), with an issue template for corrections and one for photo offers. Then push the app repository.
   - **Verify:** the first CI run is green.
 
