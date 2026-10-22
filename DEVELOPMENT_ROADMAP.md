@@ -325,10 +325,10 @@ Required dependencies between phases 5 and 11:
   - `dev` (`JP_DATA_MODE=local npm run data && next dev`)
   - `build:local`
   - `build` (`npm run data && next build`, release by default)
-- [ ] **1.13** Update CI so it runs `npm run build:local` on branches and `npm run build` (release) on `main`. Until Phase 12 is complete, the `main` job is allowed to fail and is marked as non-blocking.
-  - **Implemented 22 Oct 2026, not yet verified:** tick after the first CI run on GitHub. Every push and PR runs lint, typecheck, tests and `build:local` as a blocking job. Pushes to `main` also run a separate `release` job with `continue-on-error`, which uploads the report as an artifact; this keeps a blocking build on `main`.
+- [x] **1.13** Update CI so it runs `npm run build:local` on branches and `npm run build` (release) on `main`. Until Phase 12 is complete, the `main` job is allowed to fail and is marked as non-blocking.
+  - **Done 22 Oct 2026:** every push and PR runs lint, typecheck, tests and `build:local` as a blocking job. Pushes to `main` also run a separate `release` job with `continue-on-error`, which uploads the report as an artifact; this keeps a blocking build on `main`. Verified by CI run 39821513865 on `main`: `check` passed; `release` failed as expected (1,510 cells to edit) and uploaded `release-problems`; the run succeeded.
 
-**Done 22 Oct 2026 (1.1–1.12)**, specified in `.claude/specs/01-Data-pipeline-gates.md`. Verified with 109 passing tests, `npm run build:local` (exit 0), `npm run build` (release, exit 1 with 1,510 cells to edit) and two byte-identical data builds. Changes from the task text:
+**Done 22 Oct 2026 (1.1–1.13)**, specified in `.claude/specs/01-Data-pipeline-gates.md`. Verified with 109 passing tests, `npm run build:local` (exit 0), `npm run build` (release, exit 1 with 1,510 cells to edit) and two byte-identical data builds. Changes from the task text:
 - **Data fixes** needed for structural validity: removed 2 orphan `claim_source_links` rows; gave the two Rautara sites distinct slugs (`rautara-zamindar-bari-magura`, `rautara-zamindar-bari-sirajganj`); changed SRC-0001's publication date to `2024-02` (the edition note moved to `reliability_notes`); removed 71 `site_sources` rows that duplicated the AI-audit citations under the master-list IDs SRC-1104 and SRC-1107.
 - **Shared code:** validation, structure checks, output checks and the report live in `scripts/lib/`; `npm run data` (`scripts/data.mjs`) runs both builders and writes one report.
 - **Slugs** must be unique within each route namespace (sites, districts, divisions). A district and a division may share one, as Dhaka does.
