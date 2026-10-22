@@ -7,5 +7,7 @@ data/reports/
 .env*
 .vercel/
 .DS_Store
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/specs/
 *.tsbuildinfo
