@@ -255,8 +255,9 @@ Required dependencies between phases 5 and 11:
   - a byte-order mark;
   - a row with the wrong number of fields, which should be reported (this test is expected to fail until task 1.3).
 - [x] **0.8** Add a GitHub Actions workflow file (`.github/workflows/ci.yml`) running `npm ci`, `lint`, `typecheck`, `test` and `build` on Node 24. It runs once the repository is pushed.
-- [ ] **0.9** Create the app repository as **private** (O1), plus a separate **public** issues-only repository for corrections (for example `jomidarpedia-corrections`), with an issue template for corrections and one for photo offers. Then push the app repository.
+- [x] **0.9** Create the app repository as **private** (O1), plus a separate **public** issues-only repository for corrections (for example `jomidarpedia-corrections`), with an issue template for corrections and one for photo offers. Then push the app repository.
   - **Verify:** the first CI run is green.
+  - **Done 22 Oct 2026, with one owner change:** the app repository `Shojibmahmud/jomidarpedia` is **public** by the owner's choice (overriding O1's default; it may be made private later). The corrections repository is `Shojibmahmud/jomidarpedia-corrections` (public, issues only), with the forms `correction.yml` and `photo-offer.yml` and the labels `correction` and `photo-offer`. Both forms take `site_id` and `page_url` as prefill fields; the correction form also takes `field` (5.13).
 
 **Acceptance criteria**
 - The placeholder page renders the cream background, Fraunces and Hind Siliguri in `out/index.html`, opened through `npx serve out`.
