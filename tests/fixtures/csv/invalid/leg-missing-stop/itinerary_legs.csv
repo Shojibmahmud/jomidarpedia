@@ -1,0 +1,2 @@
+itinerary_id,from_stop,to_stop,mode,duration,cost_row,source_ids
+IT-DHK-001-1,1,9,car,0.5,CO-DHK-001-02,SRC-0002

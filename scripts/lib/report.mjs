@@ -11,7 +11,9 @@ export const REPORT_PATH = 'data/reports/release-problems.md';
 const EDITORIAL = {
   notes: 'Internal notes in public text',
   credits: 'Credit lines not in the standard form',
-  unclassified: 'Sites with type "unclassified"'
+  unclassified: 'Sites with type "unclassified"',
+  planStatus: 'Itineraries without a reviewed plan_status',
+  closedDays: 'Sites without reviewed closed_days'
 };
 
 const cellId = c => `${c.table} / ${c.key}${c.column ? ` / ${c.column}` : ''}`;
@@ -39,7 +41,8 @@ export function combine(results, mode) {
   const occurrences = new Set(editorial.notes.flatMap(c => c.outputs)).size;
   const editorialCount = Object.values(editorial).reduce((n, cs) => n + cs.length, 0);
   const fatal = structural.length > 0 || gates.length > 0 || (editorialIsFatal(mode) && editorialCount > 0);
-  return { mode, fatal, structural, gates, editorial, warnings, cells, occurrences, unpublished, editorialCount };
+  const notes = results.flatMap(r => r.notes ?? []);
+  return { mode, fatal, structural, gates, editorial, warnings, cells, occurrences, unpublished, editorialCount, notes };
 }
 
 export function summaryLine(c) {
@@ -76,6 +79,10 @@ export function formatReport(c) {
   }
   out.push(`## Warnings (${c.warnings.length})`, '', 'These never fail a build.', '');
   c.warnings.forEach(w => out.push(`- ${w}`));
+  if (c.notes.length) {
+    out.push('', '## Build notes', '', 'Counts and suggestions for the editor. They never fail a build.');
+    for (const n of c.notes) { out.push('', `### ${n.title}`, ''); n.lines.forEach(l => out.push(`- ${l}`)); }
+  }
   return out.join('\n') + '\n';
 }
 

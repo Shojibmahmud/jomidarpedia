@@ -1,0 +1,120 @@
+# Data contract
+
+What the generated data carries, where each field comes from, and what the UI shows when it is missing.
+The types are in `lib/types.ts`; this file and the types change together (roadmap 2.17).
+The specification is `.claude/specs/02-Data-contracts.md`.
+
+**Rules that hold everywhere**
+- The CSVs in `data/csv/` are the only source. A field with no CSV value is **omitted** (or `known: false`), never filled in. An unknown is shown as words, never as a blank, `0` or "Free" (R2, R6).
+- Only named public fields reach the output (I7). These columns never do: `site_sources.citation_note`, `sources.local_path`, `images.identity_verification`, `images.license_evidence`, `images.notes`.
+- The browser fetches only `public/data/index.json`. Everything in `data/build/**` is read at build time and passed to pages as props.
+- Hidden pins (`map_display = hide`, or no coordinates) never carry coordinates anywhere (R5).
+
+## 1. Features rendered in the browser
+
+"Index" means the field comes from `index.json` (fetched); "props" means it comes from build-time JSON.
+
+### Explore card (list row)
+| Shows | Field | From | When missing |
+|---|---|---|---|
+| Names | `e`, `b` | index | No `b`: English name with `lang="en"` and "Bangla name not yet recorded" |
+| Place | `dv`, `d`, `db`, `u` | index | No `u`: district only |
+| Photo | `img.id` → `/thumbs/<id>.webp`, `img.credit` | index | No `img`: placeholder with no credit |
+| Condition, access | `c`, `ac` | index | always present |
+| Fee | `fe` | index | No `fe`: "No ticket reported" or "Not documented" from `ac` |
+| Travel time | `h`, `tb` | index | `tb = unknown`: "Travel time not documented" |
+| One-way cost | `oc` | index | No `oc`: no cost shown |
+| Location status | `lc`, `f`, `ll` | index | No `ll`: "No map location yet" |
+| Confidence | `rc` | index | always present |
+
+### Explore filters
+| Filter | Field | Note |
+|---|---|---|
+| Day trip | `dt` | absent = unknown, never counted as "no" |
+| Type | `ty` (raw `site_type`), `t` (group) | |
+| Has visiting hours | `hv` | true only for a clock time in `opening_hours` (12 sites on 22 Oct 2026); "Daylight hours" does not count |
+| Has photo | `p` | |
+| Condition, access, division, district, travel time, confidence | `c`, `ac`, `dv`, `d`, `tb`, `rc` | |
+
+### Map summary card (pin popover, mobile sheet)
+Index fields only: `e`, `b`, `d`, `c`, `ac`, `fe`, `h`, `tb`, `lc`, `f`, `img`, plus "Read more" to `/site/<i>/<s>/`. No summary text is in the index.
+
+### Search results
+| Group | Fields | From |
+|---|---|---|
+| Sites | `e`, `b`, `a` (alternate names), `d`, `db` | index |
+| Families | `fm` (founder or family as text; not a normalized family entity) | index |
+| Districts | `districts.json`: `slug`, `en`, `bn`, `count` | props |
+
+### Trip card (`/trips`, Home, division pages)
+`trips.json` (props): `title`, `duration`, `planStatus`, `anchorEn`, `anchorBn`, `district`, `stopCount`, `hours`, `bucket`, `dayTrip`, `thumb`.
+- No `planStatus` (not yet reviewed): the card shows neither "Timed plan" nor "Suggested circuit".
+- No `anchorBn`: English name with `lang="en"`.
+- No `thumb`: placeholder.
+
+### Home tiles and numbers strip
+`meta.json` (props): `counts.*`, `lastVerified` ("Last verified …"), `compiledAt` (when the build ran). `divisions.json` for division tiles; `trips.json` for trip tiles.
+
+## 2. Index row (`IndexSite`)
+
+| Key | Meaning | CSV source | Present when |
+|---|---|---|---|
+| `i`, `s` | ID, slug | `sites.site_id`, `dataset_slug` | always |
+| `e`, `b` | names | `name_en`, `name_bn` | `b` only when recorded |
+| `a` | alternate names | `alternate_names` | not blank |
+| `fm` | founder or family | `founder_or_family` | known (not blank, not "Unknown…") |
+| `dv`, `d`, `db`, `u` | place | `division`, `district`, `district_bn`, `upazila` | `u` when not blank |
+| `ll` | pin | `latitude`, `longitude` | mappable only |
+| `lc`, `f` | location status, flagged | `coordinates_status`, `map_display` | `f` when `show_flagged` |
+| `c`, `ac`, `rc` | condition, access, confidence | `condition_category`, `visitor_access`, `record_confidence` | always |
+| `fe` | entry fee, Tk | `entry_fee_bdt` | ticketed and > 0 |
+| `h`, `tb`, `dt` | travel time, bucket, day trip | `travel_time_hours_from_dhaka`, `travel_time_bucket`, `day_trip_from_dhaka` | `h`/`dt` when known |
+| `t`, `ty` | type group, raw type | `site_type` | always |
+| `hv` | opening times known | `visitor_info.opening_hours` | a clock time |
+| `oc` | one-way cost, Tk | `one_way_cost_bdt_estimate` | a number > 0 |
+| `p`, `img` | has photo; first Ready image `{ id, credit }` | `images.csv` | a Ready image exists |
+
+Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 2026 the index is 59 KB.
+
+## 3. Build-time shapes
+
+### Site record (`data/build/sites/<id>.json`)
+- **Footnotes.** `sources` is the page's numbered list. Each fact, event, legend, feature and conflict version points only to its own `SourceRef`s (`{ id, n, relation? }`). The list does not imply that every source supports every claim.
+- **Facts** `era`, `founder`, `style`, `preservation`: `Maybe<string>` plus `sources`, from `claims.csv` `fact` rows with field `history.established_era`, `history.founder`, `history.architectural_style`, `history.preservation_status`, joined to `claim_source_links`. Empty `sources`: show no citation marker.
+- **Conflicts.** `versions[].sources` holds a source only when the version text names its publisher (normalized name or a reviewed alias in `scripts/lib/rules.mjs`). Anything else goes to `unattributedSources`: "Sources for this disagreement (not matched to a version)". A source is never on two versions. Competing `features.csv` measurements also appear here.
+- **Legends.** `sources`: the `SRC-` IDs in the attribution, then the claim's `reported_by` links, shown as "reported by".
+- **Features.** From `features.csv` only. `[]`: `FeatureList` shows "Not documented".
+- **Visiting.** `hours` (text), `hoursKnown`, `closed` (the unreviewed `weekly_closing_days` text), `closedDays` (reviewed `closed_days`; `known: false` → "Closing days not documented"; `days: []` → no closing day), `date` ("Visiting info checked …").
+- **Routes.** `mode` is one of `bus`, `train`, `launch`, `ferry`, `car`, `air`, `boat`, `unknown`, `mixed`; `unknown` and `mixed` use neutral icons. `inferred: true` means the label was "Other / mixed" and the description named exactly one mode. `estimateDate` per route.
+- **Photos.** `images` holds Ready images only. Without one, `externalPhotos` links out: a hidden pin gets "Search for visitor photos", a Google Maps search on name and district only (O10).
+- **Names.** `name.bn` is optional; `bnMissing: true` when it is blank (O13).
+
+### Itinerary (`data/build/trips/<id>.json`)
+- `title`: shortened only for `prefix (X) (Anchor)` titles; others are kept as written (I5).
+- `planStatus`: the editor's `plan_status` (`timed`, `circuit`, `incomplete`); absent until reviewed.
+- `stops[]`: `kind` is `site` (has `siteId`) or `place` (terminal, lunch stop, ghat). A site stop has `latlon` only with a pin, and `visitingChecked`. A place has `latlon` only from `itinerary_places.csv`, with its `sources`.
+- `legs[]` from `itinerary_legs.csv`; `schematic: true` when there are none: "schematic: stops in order, roads not drawn".
+- `budget.rows[]`: from `costs.csv` columns, never from `amount_text`. `amount` only when > 0; an entry fee of 0 is `noTicket` ("No ticket reported"). `unit` from the reviewed unit table; `basis` and `legs` from `fare_basis` and `legs`; `note` is `basis_and_assumptions`; `date`, `status`, `sources` (SRC- IDs). `range` is reserved and not emitted yet.
+- `budget.known`: the sum of per-person amounts; absent when there are none. `budget.omitted`: items with no amount (not `noTicket`, not `not_applicable`). The anchor transport row is "Dhaka → [anchor], one way"; there is no return fare or fare between stops unless a row exists.
+- `costsEstimated`: `{ from, to }` over the budget rows' dates ("Costs estimated …"). There is no single trip `lastChecked`.
+
+### Sources (`data/build/sources.json`)
+`bib` (`author`, `publisher`, `edition`, `isbn`, `verificationMethod`) when the structured columns are filled (SRC-0001 only, Oct 2026). `citationsByDivision`: site citations per division.
+
+### Meta (`data/build/meta.json`)
+`lastVerified`: the newest `last_verified` in the data. `compiledAt`: when the data was compiled (`SOURCE_DATE_EPOCH`, else `lastVerified`). `counts.hoursKnown`.
+
+## 4. Reviewed columns and optional tables
+
+| Column or table | Values | Blank or missing |
+|---|---|---|
+| `itineraries.plan_status` | `timed`, `circuit`, `incomplete` | unknown; an editorial cell (fails release only). The report suggests a value (O11). |
+| `visitor_info.closed_days` | `unknown`, `none`, or `;`-separated `sat`…`fri` | unknown; an editorial cell. Never derived from `weekly_closing_days`. |
+| `costs.fare_basis` | `shared`, `reserved` | omitted |
+| `costs.legs` | stop-order pairs, `1-2;2-4` | omitted |
+| `costs.unit` | a key of `UNIT` in `scripts/lib/rules.mjs` | required when `amount_bdt` is set (structural) |
+| `travel_routes.transport_mode` | a key of `MODE_LABEL` in `scripts/lib/rules.mjs` | an unlisted label is structural |
+| `sources.author`, `publisher`, `edition`, `isbn`, `verification_method` | text | omitted |
+| `itinerary_places.csv` | `itinerary_id`, `stop_order`, `latitude`, `longitude`, `source_ids` (required) | no place coordinates |
+| `itinerary_legs.csv` | `itinerary_id`, `from_stop`, `to_stop`, `mode`, `duration`, `cost_row`, `source_ids` | `legs: []`, schematic |
+| `features.csv` | `site_id`, `feature`, `feature_bn`, `measurement`, `unit`, `source_ids`, `status` | `features: []` |

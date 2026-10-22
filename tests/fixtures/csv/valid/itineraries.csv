@@ -1,2 +1,2 @@
-itinerary_id,anchor_site_id,title,duration,linked_site_ids,planning_notes,day_trip_from_dhaka
-IT-DHK-001-1,JB-DHK-001,Suggested circuit (Saturia loop),One day,JB-DHK-001; JB-DHK-002,Start early.,TRUE
+itinerary_id,anchor_site_id,title,duration,linked_site_ids,planning_notes,day_trip_from_dhaka,plan_status
+IT-DHK-001-1,JB-DHK-001,Suggested circuit (Saturia loop) (Test House One (Roy Bari)),One day,JB-DHK-001; JB-DHK-002,Start early.,TRUE,circuit

@@ -1,3 +1,6 @@
-claim_id,site_id,claim_type,claim_text
-CL-DHK-001-001,JB-DHK-001,legend,A tunnel is said to run to the river.
-CL-DHK-001-002,JB-DHK-001,conflict,Style: Indo-Saracenic (A. Author) vs colonial (A Newspaper).
+claim_id,site_id,field,claim_type,claim_text
+CL-DHK-001-001,JB-DHK-001,,legend,A tunnel is said to run to the river.
+CL-DHK-001-002,JB-DHK-001,,conflict,Style: Indo-Saracenic (A. Author) vs colonial (A Newspaper).
+CL-DHK-001-003,JB-DHK-001,,conflict,"Built: 1850 (A Newspaper, print) vs 1860 (A Newspaper, online)."
+CL-DHK-001-004,JB-DHK-001,,conflict,Name: the house may be the Roy family seat (A Newspaper).
+CL-DHK-001-005,JB-DHK-001,history.founder,fact,Roy family.

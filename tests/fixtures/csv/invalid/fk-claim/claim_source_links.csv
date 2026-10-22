@@ -1,2 +1,7 @@
 claim_id,site_id,source_id,relation
-CL-DHK-001-099,JB-DHK-001,SRC-0001,disputed_by
+CL-DHK-001-099,JB-DHK-001,SRC-0002,reported_by
+CL-DHK-001-002,JB-DHK-001,SRC-0001,disputed_by
+CL-DHK-001-002,JB-DHK-001,SRC-0002,disputed_by
+CL-DHK-001-003,JB-DHK-001,SRC-0002,disputed_by
+CL-DHK-001-004,JB-DHK-001,SRC-0002,disputed_by
+CL-DHK-001-005,JB-DHK-001,SRC-0001,supports

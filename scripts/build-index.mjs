@@ -4,6 +4,8 @@
 //
 // Usage: node scripts/build-index.mjs [sites.csv] [images.csv] [out-dir]
 //   defaults: data/csv/sites.csv data/csv/images.csv public/data
+// visitor_info.csv (for "hours known") is read from the folder that holds sites.csv.
+// Row shape: IndexSite in lib/types.ts; field sources in docs/DATA_CONTRACT.md.
 // The mode comes from scripts/data-mode.mjs (release unless set). No dependencies.
 
 import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
@@ -13,20 +15,22 @@ import { pathToFileURL } from 'node:url';
 import { TYPE_GROUP, BUCKET, latlon, isMappable } from './lib/validate.mjs';
 import { loadTables, validateTables } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, ZERO_OR_FREE } from './lib/checks.mjs';
+import { hoursKnown, isKnownText } from './lib/rules.mjs';
 
 export const INDEX_BUDGET = 150 * 1024;
 const DAY = { TRUE: 1, FALSE: 0 };
 
-/** @param {{ sitesPath?: string, imagesPath?: string, outDir?: string, budget?: number }} [options] */
+/** @param {{ sitesPath?: string, imagesPath?: string, visitorPath?: string, outDir?: string, budget?: number }} [options] */
 export function buildIndex({
-  sitesPath = 'data/csv/sites.csv', imagesPath = 'data/csv/images.csv', outDir = 'public/data', budget = INDEX_BUDGET
+  sitesPath = 'data/csv/sites.csv', imagesPath = 'data/csv/images.csv', visitorPath, outDir = 'public/data', budget = INDEX_BUDGET
 } = {}) {
+  visitorPath ??= join(dirname(sitesPath), 'visitor_info.csv');
   const outFile = join(outDir, 'index.json');
   const result = { name: 'build-index', structural: [], gates: [], editorial: {}, warnings: [], info: [], outputs: [outFile] };
 
-  // Both files are read as tables; images.csv is optional only in name, as the index needs photo flags.
+  // All three files are read as tables: images for the card photo, visitor_info for "hours known".
   const T = {}, structural = [];
-  for (const [name, path] of [['sites', sitesPath], ['images', imagesPath]]) {
+  for (const [name, path] of [['sites', sitesPath], ['images', imagesPath], ['visitor_info', visitorPath]]) {
     const { T: t, errors } = loadTables(dirname(path), [basename(path, '.csv')]);
     T[name] = Object.values(t)[0];
     structural.push(...errors.map(e => ({ ...e, file: basename(path) })));
@@ -39,7 +43,9 @@ export function buildIndex({
   }
 
   // Only openly licensed, reviewed images may ever reach the site.
-  const withPhoto = new Set(T.images.filter(im => (im.publication_readiness || '').startsWith('Ready')).map(im => im.site_id));
+  const firstImage = new Map();
+  for (const im of T.images) if ((im.publication_readiness || '').startsWith('Ready') && !firstImage.has(im.site_id)) firstImage.set(im.site_id, im);
+  const hours = new Map(T.visitor_info.map(v => [v.site_id, hoursKnown(v.opening_hours)]));
 
   const index = T.sites.map(s => {
     const fee = s.visitor_access === 'ticketed' && s.entry_fee_bdt !== '' && Number(s.entry_fee_bdt) > 0 ? Number(s.entry_fee_bdt) : null;
@@ -47,8 +53,9 @@ export function buildIndex({
     return {
       i: s.site_id,                       // permanent ID
       s: s.dataset_slug,                  // URL slug
-      e: s.name_en, b: s.name_bn,
+      e: s.name_en, b: s.name_bn || undefined, // no b: Bangla name not yet recorded (O13)
       a: s.alternate_names || undefined,  // searched, not shown in the list
+      fm: isKnownText(s.founder_or_family) ? s.founder_or_family : undefined, // founder or family, as text for search
       dv: s.division, d: s.district, db: s.district_bn, u: s.upazila || undefined,
       ll: latlon(s),
       lc: s.coordinates_status,           // verified | single_source | approximate | unverified | not_found
@@ -61,7 +68,11 @@ export function buildIndex({
       dt: DAY[s.day_trip_from_dhaka],     // 1, 0 or undefined (= unknown)
       rc: s.record_confidence,
       t: TYPE_GROUP[s.site_type] ?? 'unclassified',
-      p: withPhoto.has(s.site_id) ? 1 : undefined
+      ty: s.site_type,                    // raw site_type, for the type filter
+      hv: hours.get(s.site_id) ? 1 : undefined, // opening times known (clock times; rules.mjs)
+      oc: Number(s.one_way_cost_bdt_estimate) > 0 ? Number(s.one_way_cost_bdt_estimate) : undefined, // one-way cost in Tk
+      p: firstImage.has(s.site_id) ? 1 : undefined,
+      img: firstImage.has(s.site_id) ? { id: firstImage.get(s.site_id).image_id, credit: firstImage.get(s.site_id).required_credit } : undefined
     };
   });
 
@@ -83,7 +94,7 @@ export function buildIndex({
 
   mkdirSync(outDir, { recursive: true });
   writeFileSync(outFile, json);
-  result.counts = { sites: index.length, onMap: index.filter(x => x.ll).length, withPhotos: index.filter(x => x.p).length, gzipBytes: gz };
+  result.counts = { sites: index.length, onMap: index.filter(x => x.ll).length, withPhotos: index.filter(x => x.p).length, hoursKnown: index.filter(x => x.hv).length, gzipBytes: gz };
   result.info.push(`index.json  sites: ${index.length}  raw: ${(json.length / 1024).toFixed(1)} KB  gzipped: ${(gz / 1024).toFixed(1)} KB  (budget ${(budget / 1024).toFixed(0)} KB)`);
   result.info.push(`            on map: ${result.counts.onMap}  with photos: ${result.counts.withPhotos}`);
   return result;
