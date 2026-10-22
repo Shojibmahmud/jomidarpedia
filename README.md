@@ -14,8 +14,10 @@ Design canvas (all screens, light and dark, Bangla mode, print, accessibility pa
 | `app/layout.tsx` | Root layout: font variables, no-flash theme/language script, skip link |
 | `next.config.mjs` | Static export settings |
 | `lib/types.ts` | TypeScript shapes of every generated JSON file |
-| `scripts/build-index.mjs` | Builds `public/data/index.json` from `sites.csv` and `images.csv`. Last run (22 Oct 2026): **413 sites, 34.9 KB gzipped** (budget 150 KB) |
-| `scripts/build-data.mjs` | Builds `data/build/**` from all 14 CSV tables. Currently exits 1 by design: 1,386 internal-note strings in output (see roadmap Phase 12) |
+| `scripts/build-index.mjs` | Builds `public/data/index.json` from `sites.csv` and `images.csv` (defaults: `data/csv/`, `public/data`). Last run (22 Oct 2026): **413 sites, 35.0 KB gzipped** (budget 150 KB) |
+| `scripts/build-data.mjs` | Builds `data/build/**` from all 14 CSV tables |
+| `scripts/data.mjs` | `npm run data`: runs both builders and writes `data/reports/release-problems.md` |
+| `scripts/data-mode.mjs`, `scripts/lib/` | Build mode, CSV validation, safety and editorial checks, the report |
 | `DEVELOPMENT_ROADMAP.md` | The build plan (v2). Decisions, build modes and data contracts there override this README where they differ |
 | `DESIGN_COVERAGE.md` | Each design board mapped to routes, data and roadmap tasks |
 
@@ -32,17 +34,22 @@ data/build/**/*.json      read at build time only, via fs, by generateStaticPara
 out/                      ~2,430 static pages (413 sites + 413 ID redirects + 385 trips + 1,136 sources + 72 areas + ~10 others) + assets → Vercel
 ```
 
-`build-data.mjs` exists and reads all 14 tables in `data/csv/` (exported from the workbook; `scripts/export-xlsx.py` goes the other way). It writes the build-time files below. Build modes (`local` / `preview` / `release`, release by default) are planned in roadmap §2.4 and Phase 1; today the script has no mode flag.
+`build-data.mjs` reads all 14 tables in `data/csv/` (exported from the workbook; `scripts/export-xlsx.py` goes the other way) and writes the build-time files below. The spec is `.claude/specs/01-Data-pipeline-gates.md`.
 
-`build-data.mjs` must fail the build when it finds:
-- internal notes in public text,
-- an image that isn't `Ready`,
-- a fee of 0 shown as a price.
+The build mode comes from `scripts/data-mode.mjs` (roadmap §2.4). It is **`release` unless set otherwise**; Vercel production is always `release`. `npm run dev` and `npm run build:local` set `JP_DATA_MODE=local`.
+
+| Problem | local / preview | release |
+|---|---|---|
+| Structural: malformed CSV, missing column, bad or duplicate ID, broken reference, bad enum, date or number, coordinates outside Bangladesh, duplicate slug, Ready image without a file | fail; nothing is written | fail; nothing is written |
+| Safety: hidden-pin coordinates on any path, a non-`Ready` image, a fee of 0 or "free entry" shown as a price, `index.json` over 150 KB gzipped | fail | fail |
+| Editorial: internal notes in public text, non-standard credit line, `unclassified` site type | reported | fail |
+
+Every run writes `data/reports/release-problems.md`, which groups editorial problems by the CSV cell to edit. Outputs are deterministic: `meta.generatedAt` is `SOURCE_DATE_EPOCH` if set, otherwise the data's last-updated date.
 
 Hard rules it enforces:
 - Only images with `publication_readiness = Ready` are written; `Needs review` and `Permission required` never leave the CSV.
 - `entry_fee_bdt = 0` becomes `{ known: false, text: 'No ticket reported' }`. The word "Free" never appears.
-- `map_display = hide` sites get no coordinates in `index.json`, so no guessed pin is possible.
+- Sites with `map_display = hide`, or without both coordinates, get no coordinates on any output path (index, site JSON, trip stops, map links), so no guessed pin is possible.
 
 ## Data files
 
@@ -200,8 +207,8 @@ S = server component, C = client component. "Data" says where the props come fro
 
 Status as of 22 Oct 2026. Tasks refer to `DEVELOPMENT_ROADMAP.md` v2.
 
-1. **Internal research notes in public text.** `build-data.mjs` finds 1,386 strings in output (417 records); in the CSVs that is 1,939 cells, 474 of them in columns never published. Largest public groups: `site_sources.citation_publisher` (688), `sites.coordinates_note` (298), `site_sources.citation_title` (109), `claims.claim_text` (100), `sites.short_description` (71). Roadmap 1.10, Phase 12.
-2. **`entry_fee_bdt = 0` means "no ticket reported"** (for example Teota, Ruplal House). Never display it as a price or as free entry. Roadmap 1.11.
+1. **Internal research notes in public text.** The release report (`data/reports/release-problems.md`, 22 Oct 2026) lists **1,510 cells to edit**: 1,416 internal-note cells (1,489 output occurrences), 15 credit lines and 79 unclassified types. Largest groups: `site_sources.citation_publisher` (643), `sites.coordinates_note` (298), `site_sources.citation_title` (110), `claims.claim_text` (78), `sites.short_description` (71). Another 1,286 flagged cells never reach the output. Phase 12.
+2. **`entry_fee_bdt = 0` means "no ticket reported"** (for example Teota, Ruplal House). Never display it as a price or as free entry. Enforced by the build (roadmap 1.11).
 3. **`site_type = unclassified` for 79 sites**, including Baliati. Roadmap 12.6.
 4. **Source records carry internal provenance** (for example SRC-1079). Public fields are rewritten in Phase 12; internal columns are never emitted (roadmap I7).
 5. **15 image credit lines don't follow the standard format.** Fix without dropping any licence-required wording. Roadmap 12.7.

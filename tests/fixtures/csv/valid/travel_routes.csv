@@ -1,0 +1,2 @@
+route_id,site_id,route_kind,transport_mode,route_description,last_mile,duration_hours_one_way,cost_bdt_one_way,cost_basis,estimate_date
+TR-DHK-001-1,JB-DHK-001,primary,Bus,Gabtoli -> Saturia,Rickshaw,2,150,Bus fare,2026-10-01

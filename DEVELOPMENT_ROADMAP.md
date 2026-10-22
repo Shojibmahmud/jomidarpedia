@@ -6,7 +6,7 @@
 - Tick a box only when the task is done **and** its verification step has passed.
 - Task IDs are stable. When the plan changes, add tasks with new IDs (for example `5.3a`) instead of renumbering.
 - Each phase lists its **required** prerequisites. The order of phases is a suggestion, except where a prerequisite says otherwise.
-- Nothing in this file has been implemented or verified yet. Statements about the current state of the repository were checked on 22 October 2026, by reading the files and running both data builders into temporary folders.
+- Unticked tasks have not been implemented or verified. Statements about the current state of the repository were checked on 22 October 2026, by reading the files and running both data builders into temporary folders; where Phase 1 changed them, the text says so.
 
 Design references:
 - Canvas (every screen, light and dark, Bangla, print pages): https://claude.ai/artifact/RWUDBkchSgq1mwrDe5LqqC
@@ -76,6 +76,8 @@ This `handoff/` folder is assumed to become the repository root.
 - Photo files are in `../images/<division>/`, **outside** the repository root.
 - `images.csv` refers to them by `relative_file_path`.
 
+**Update after Phase 1:** the release build now fails on editorial problems only. Its report (`data/reports/release-problems.md`) lists **1,510 cells to edit**: 1,416 internal-note cells (1,489 output occurrences), 15 credit lines and 79 unclassified sites. The figures below are the original survey.
+
 **`build-data.mjs` exits with code 1, as designed.** It finds 1,386 internal-note strings in its output, across 417 output records. These are repeated occurrences: the same source text shows up on many site pages. In the CSVs, 1,939 cells contain the same flagged terms. The largest groups:
 
 | CSV column | Flagged cells | Public? |
@@ -91,8 +93,8 @@ This `handoff/` folder is assumed to become the repository root.
 **Known defects in the existing code**, which this plan fixes (task IDs in brackets):
 - `conflict()` drops source links when it splits "A vs B": 576 of 1,196 conflict versions have no sources [2.2].
 - An unknown transport mode is drawn as a bus; this affects 37 routes [2.5].
-- `build-index.mjs` checks only for a missing latitude [1.4].
-- `meta.generatedAt` makes the output different on every run [1.7].
+- ~~`build-index.mjs` checks only for a missing latitude~~ [1.4]. Fixed in Phase 1.
+- ~~`meta.generatedAt` makes the output different on every run~~ [1.7]. Fixed in Phase 1.
 - Trip `lastChecked` takes the newest date of any anchor fact [2.8].
 - Dark mode can survive printing, because the selector `:root:not([data-theme="light"])` outranks the print block's `:root` [9.11].
 - `app/layout.tsx` hard-codes "399 sites" [3.9].
@@ -177,7 +179,7 @@ Notes:
 - **Before Phase 12 finishes, nothing is deployed to production.** Early deployments are previews with Vercel Deployment Protection turned on. Check what protection the Hobby plan offers when you do task 4.6. If previews can't be protected, deploy only a hand-picked set of records that pass release checks.
 
 ### 2.5 Dataset baseline
-Observed on 22 October 2026 from `data/csv/`. This is the only place in the plan where these numbers are written down. Tests compare against `tests/baseline.json` (task 1.9), and changes to that file are reviewed.
+Observed on 22 October 2026 from `data/csv/`, updated after the Phase 1 data fixes. This is the only place in the plan where these numbers are written down. Tests compare against `tests/baseline.json` (task 1.9), and changes to that file are reviewed.
 
 | Measure | Value |
 |---|---:|
@@ -191,9 +193,10 @@ Observed on 22 October 2026 from `data/csv/`. This is the only place in the plan
 | Sources | 1,136 |
 | Images | Ready 934 (126 sites; 814 on `thumb.wikimedia.org`, 120 on `upload.wikimedia.org`); Needs review 24; Permission required 1,322 |
 | Claims | fact 3,866, conflict 982, legend 205 |
-| Claim-source relations | supports 2,714, disputed_by 1,790, reported_by 71 |
+| Claim-source relations | supports 2,714, disputed_by 1,788 (2 orphan links removed in Phase 1), reported_by 71 |
+| Site-source citations | 2,662 (71 stale duplicate audit citations removed in Phase 1) |
 | Sites with opening hours stated | about 286–289, depending on the rule (task 2.9 defines the rule) |
-| `index.json` | 34.9 KB gzipped (budget 150 KB) |
+| `index.json` | 35.0 KB gzipped (budget 150 KB) |
 | Unclassified sites | 79 |
 | Dhaka Division | 111 sites, 42 without pins |
 
@@ -272,11 +275,11 @@ Required dependencies between phases 5 and 11:
 
 **Prerequisites:** Phase 0.
 
-- [ ] **1.1** Add `scripts/data-mode.mjs`, which resolves `local`, `preview` or `release` as in §2.4. The default is `release`. Unit-test each environment combination, including "Vercel production with `JP_DATA_MODE=local`", which must resolve to `release`.
-- [ ] **1.2** Give `build-index.mjs` default paths (`data/csv/sites.csv`, `data/csv/images.csv`, `public/data`).
+- [x] **1.1** Add `scripts/data-mode.mjs`, which resolves `local`, `preview` or `release` as in §2.4. The default is `release`. Unit-test each environment combination, including "Vercel production with `JP_DATA_MODE=local`", which must resolve to `release`.
+- [x] **1.2** Give `build-index.mjs` default paths (`data/csv/sites.csv`, `data/csv/images.csv`, `public/data`).
   - **Verify:** `node scripts/build-index.mjs` with no arguments writes `index.json`.
-- [ ] **1.3** Extend `scripts/csv.mjs` to report malformed input: field-count mismatches, unclosed quotes, duplicate or empty header names. It returns `{ rows, errors }`. Make the 0.7 test pass.
-- [ ] **1.4** Create `scripts/lib/validate.mjs` with the shared rules:
+- [x] **1.3** Extend `scripts/csv.mjs` to report malformed input: field-count mismatches, unclosed quotes, duplicate or empty header names. It returns `{ rows, errors }`. Make the 0.7 test pass.
+- [x] **1.4** Create `scripts/lib/validate.mjs` with the shared rules:
   - `isMappable(site)`: coordinates are finite, latitude 20.3–26.7 and longitude 88.0–92.7 (Bangladesh with a margin), and `map_display ≠ hide`;
   - ID patterns;
   - enum sets (conditions, access, location status, confidence, buckets);
@@ -284,7 +287,7 @@ Required dependencies between phases 5 and 11:
   - non-negative numbers.
 
   Use it in **both** builders and for itinerary stops.
-- [ ] **1.5** Add structural validation, reported per CSV row. These checks are fatal in every mode:
+- [x] **1.5** Add structural validation, reported per CSV row. These checks are fatal in every mode:
   - required columns are present;
   - IDs are unique;
   - foreign keys resolve (every `site_id`, `source_id`, `claim_id`, `itinerary_id` and `related_site_id`);
@@ -293,29 +296,29 @@ Required dependencies between phases 5 and 11:
   - numbers parse;
   - generated route paths are unique (slugs);
   - every Ready image has a `relative_file_path`.
-- [ ] **1.6** Add small valid and invalid fixtures under `tests/fixtures/csv/`, one per rule in 1.4 and 1.5.
+- [x] **1.6** Add small valid and invalid fixtures under `tests/fixtures/csv/`, one per rule in 1.4 and 1.5.
   - **Verify:** each invalid fixture fails with a message naming the file, row and column.
-- [ ] **1.7** Make the output deterministic:
+- [x] **1.7** Make the output deterministic:
   - `generatedAt` comes from `SOURCE_DATE_EPOCH` if it is set, otherwise from `meta.lastUpdated`;
   - object keys and arrays are sorted where order has no meaning.
   - **Verify:** two runs produce byte-identical `data/build/**` and `public/data/index.json`.
-- [ ] **1.8** Add the mode flag to `build-data.mjs` and `build-index.mjs`:
+- [x] **1.8** Add the mode flag to `build-data.mjs` and `build-index.mjs`:
   - structural, hidden-coordinate, image-eligibility, fee and budget rules always fail the build;
   - editorial rules fail only in `release`;
   - in every mode, write `data/reports/release-problems.md`.
-- [ ] **1.9** Write `tests/baseline.json` (the counts in §2.5) and an invariant test:
+- [x] **1.9** Write `tests/baseline.json` (the counts in §2.5) and an invariant test:
   - `onMap + noPin = sites`;
   - every hidden site has no `ll` and no `latlon`;
   - Ready images in the output equal the Ready rows in the CSV;
   - every index row has a site file.
 
   A difference from the baseline fails the test, which prints a diff to review.
-- [ ] **1.10** Group the internal-note report **by CSV source cell** (table, row ID, column). List the affected outputs under each cell. The summary line reports `cells to edit` as well as `output occurrences`.
-- [ ] **1.11** Narrow and widen the content rules (finding B9):
+- [x] **1.10** Group the internal-note report **by CSV source cell** (table, row ID, column). List the affected outputs under each cell. The summary line reports `cells to edit` as well as `output occurrences`.
+- [x] **1.11** Narrow and widen the content rules (finding B9):
   - **Fee rule:** test meaning, not words. A fee that is zero or unknown must never appear as a price or as "free entry", and nothing may say "free entry" or "entry: free". Allow "Free" in other contexts, such as source titles. Remove the blanket ban on "Free" and any ban on the word "audit".
   - **Internal-note terms:** keep them in `scripts/lib/internal-terms.mjs`. Include the existing terms plus `Brave browser`, `Project upload`, local file paths (`/Users/`, `file://`, `C:\`) and `.xlsx`/`.md` working-file names.
   - **URL strings:** scan them for local paths and `file:` schemes only.
-- [ ] **1.12** Add the package scripts:
+- [x] **1.12** Add the package scripts:
   - `data:index`
   - `data:build`
   - `data` (both)
@@ -323,6 +326,16 @@ Required dependencies between phases 5 and 11:
   - `build:local`
   - `build` (`npm run data && next build`, release by default)
 - [ ] **1.13** Update CI so it runs `npm run build:local` on branches and `npm run build` (release) on `main`. Until Phase 12 is complete, the `main` job is allowed to fail and is marked as non-blocking.
+  - **Implemented 22 Oct 2026, not yet verified:** tick after the first CI run on GitHub. Every push and PR runs lint, typecheck, tests and `build:local` as a blocking job. Pushes to `main` also run a separate `release` job with `continue-on-error`, which uploads the report as an artifact; this keeps a blocking build on `main`.
+
+**Done 22 Oct 2026 (1.1–1.12)**, specified in `.claude/specs/01-Data-pipeline-gates.md`. Verified with 109 passing tests, `npm run build:local` (exit 0), `npm run build` (release, exit 1 with 1,510 cells to edit) and two byte-identical data builds. Changes from the task text:
+- **Data fixes** needed for structural validity: removed 2 orphan `claim_source_links` rows; gave the two Rautara sites distinct slugs (`rautara-zamindar-bari-magura`, `rautara-zamindar-bari-sirajganj`); changed SRC-0001's publication date to `2024-02` (the edition note moved to `reliability_notes`); removed 71 `site_sources` rows that duplicated the AI-audit citations under the master-list IDs SRC-1104 and SRC-1107.
+- **Shared code:** validation, structure checks, output checks and the report live in `scripts/lib/`; `npm run data` (`scripts/data.mjs`) runs both builders and writes one report.
+- **Slugs** must be unique within each route namespace (sites, districts, divisions). A district and a division may share one, as Dhaka does.
+- **Coordinates outside Bangladesh** are a structural error, not a silent hidden pin.
+- **Dates:** system dates must be `YYYY-MM-DD`; citation and publication dates may be `YYYY`, `YYYY-MM`, `YYYY-MM-DD` or a range.
+- **On a structural error** nothing is written and old output is removed; on a safety or editorial failure the output is still written for inspection.
+- **Open:** `Project upload` source-type labels (16 cells) count as editorial work for now.
 
 **Acceptance criteria**
 - `npm run build` on a fresh checkout runs release mode and currently fails, listing **cells to edit**.

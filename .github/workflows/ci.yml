@@ -13,6 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Blocking on every push and pull request: data builds in local mode
+  # (structural and safety rules fail; editorial problems are only reported).
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -28,6 +30,29 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      # next build only: no data scripts run until Phase 1 adds build modes.
-      - run: npm run build
+      - run: npm run build:local
       - run: test -f out/index.html
+
+  # Release-mode build on main. Not blocking until Phase 12 clears the editorial problems
+  # (DEVELOPMENT_ROADMAP.md task 1.13); its report is kept as an artifact either way.
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    continue-on-error: true
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-problems
+          path: data/reports/release-problems.md
+          if-no-files-found: warn
