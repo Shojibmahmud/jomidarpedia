@@ -1,0 +1,54 @@
+{
+  "sites": 413,
+  "onMap": 299,
+  "onMapByStatus": {
+    "approximate": 43,
+    "single_source": 217,
+    "unverified": 1,
+    "verified": 38
+  },
+  "noPin": 114,
+  "dayTripSites": {
+    "blank": 12,
+    "FALSE": 269,
+    "TRUE": 132
+  },
+  "itineraries": 385,
+  "itinerariesByDuration": {
+    "Not stated": 176,
+    "One day": 144,
+    "Overnight / multi-day": 65
+  },
+  "stops": 1110,
+  "stopsWithoutSite": 200,
+  "stopsWithTime": 301,
+  "itinerariesWithTimedStop": 45,
+  "sources": 1136,
+  "siteSources": 2662,
+  "imagesByReadiness": {
+    "Needs review": 24,
+    "Permission required": 1322,
+    "Ready": 934
+  },
+  "readyImageHosts": {
+    "thumb.wikimedia.org": 814,
+    "upload.wikimedia.org": 120
+  },
+  "sitesWithReadyImages": 126,
+  "claims": {
+    "conflict": 982,
+    "fact": 3866,
+    "legend": 205
+  },
+  "claimSourceLinks": {
+    "disputed_by": 1788,
+    "reported_by": 71,
+    "supports": 2714
+  },
+  "unclassifiedSites": 79,
+  "dhakaDivision": {
+    "sites": 111,
+    "noPin": 42
+  },
+  "indexRowsOnMap": 299
+}

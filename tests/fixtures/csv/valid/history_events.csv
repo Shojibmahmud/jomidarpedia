@@ -1,0 +1,2 @@
+event_id,site_id,event_type,date_text,year_start,year_end,date_approximate,description,verification_status,source_ids
+HE-DHK-001-001,JB-DHK-001,built,c. 1850,1850,,TRUE,The house was built.,single_source,SRC-0001
