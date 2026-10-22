@@ -1,0 +1,5 @@
+cost_id,site_id,category,amount_bdt,amount_text,currency,unit,basis_and_assumptions,estimate_date,status,source_ids,fare_basis,legs
+CO-DHK-001-01,JB-DHK-001,entry_fee,20,Tk 20,BDT,per person (local adult rate unless stated),Free entry for children.,2026-10-01,reported,SRC-0002,,
+CO-DHK-001-02,JB-DHK-001,transport_dhaka_one_way,150,Tk 150,BDT,"per person, one way, public transport (assumed)",,2026-09-20,estimate,record-level,,
+CO-DHK-001-03,JB-DHK-001,food,,Unknown (not researched),BDT,,,2026-10-01,unknown,,,
+CO-DHK-002-01,JB-DHK-002,entry_fee,0,No ticket reported,BDT,per person (local adult rate unless stated),,2026-10-02,needs_verification,,,

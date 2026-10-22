@@ -1,5 +1,5 @@
 // Shared helpers: fixture folders, running both builders into a temp folder, hashing output.
-import { cpSync, mkdtempSync, readdirSync, readFileSync, existsSync, statSync } from 'node:fs';
+import { cpSync, mkdtempSync, readdirSync, readFileSync, existsSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { buildData } from '../scripts/build-data.mjs';
 import { buildIndex } from '../scripts/build-index.mjs';
 import { combine, discardOutputs, formatReport } from '../scripts/lib/report.mjs';
+import { parseCsv } from '../scripts/csv.mjs';
 
 export const FIXTURES = fileURLToPath(new URL('./fixtures/csv', import.meta.url));
 export const MODES = ['local', 'preview', 'release'] as const;
@@ -53,3 +54,11 @@ export function hashDir(dir: string): Record<string, string> {
 }
 
 export const readJson = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+
+// Rewrites one table in a fixture folder. Columns default to the union of the rows' keys, in first-seen order.
+export function writeTable(dir: string, table: string, rows: Record<string, string>[], columns?: string[]) {
+  const cols = columns ?? [...new Set(rows.flatMap(r => Object.keys(r)))];
+  const cell = (v: string) => (/[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
+  writeFileSync(join(dir, `${table}.csv`), [cols.join(','), ...rows.map(r => cols.map(c => cell(r[c] ?? '')).join(','))].join('\n') + '\n');
+}
+export const readTable = (dir: string, table: string): Record<string, string>[] => parseCsv(readFileSync(join(dir, `${table}.csv`), 'utf8')).rows;

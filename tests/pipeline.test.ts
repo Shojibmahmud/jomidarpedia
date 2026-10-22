@@ -113,13 +113,13 @@ describe('determinism (task 1.7)', () => {
     expect(reportText(a.results, 'release')).toBe(reportText(b.results, 'release'));
   });
 
-  it('generatedAt comes from the data, or from SOURCE_DATE_EPOCH, and nothing else changes', () => {
+  it('compiledAt comes from the data, or from SOURCE_DATE_EPOCH, and nothing else changes', () => {
     const dir = fixtureDir();
     const a = runBuilders(dir), b = runBuilders(dir, tempDir('out'), { SOURCE_DATE_EPOCH: '1767225600' });
     const ma = readJson(join(a.out, 'build', 'meta.json')), mb = readJson(join(b.out, 'build', 'meta.json'));
-    expect(ma.generatedAt).toBe(ma.lastUpdated);
-    expect(mb.generatedAt).toBe('2026-01-01T00:00:00.000Z');
-    expect({ ...ma, generatedAt: 0 }).toEqual({ ...mb, generatedAt: 0 });
+    expect(ma.compiledAt).toBe(ma.lastVerified);
+    expect(mb.compiledAt).toBe('2026-01-01T00:00:00.000Z');
+    expect({ ...ma, compiledAt: 0 }).toEqual({ ...mb, compiledAt: 0 });
     const ha = hashDir(a.out), hb = hashDir(b.out);
     delete ha['build/meta.json']; delete hb['build/meta.json'];
     expect(ha).toEqual(hb);
@@ -128,7 +128,7 @@ describe('determinism (task 1.7)', () => {
   it('ignores an invalid SOURCE_DATE_EPOCH with a notice', () => {
     const { data, out } = runBuilders(fixtureDir(), tempDir('out'), { SOURCE_DATE_EPOCH: 'yesterday' });
     const meta = readJson(join(out, 'build', 'meta.json'));
-    expect(meta.generatedAt).toBe(meta.lastUpdated);
+    expect(meta.compiledAt).toBe(meta.lastVerified);
     expect(data.info.join('\n')).toContain('SOURCE_DATE_EPOCH');
   });
 });

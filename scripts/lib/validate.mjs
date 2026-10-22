@@ -1,5 +1,7 @@
 // Shared data rules for build-index.mjs, build-data.mjs and the tests. Each rule is defined once here.
 
+import { MODE_LABEL, MODES, PLAN_STATUS, FARE_BASIS } from './rules.mjs';
+
 // Bangladesh with a margin. Coordinates outside this box are a structural error, not a hidden pin.
 export const BBOX = { latMin: 20.3, latMax: 26.7, lonMin: 88.0, lonMax: 92.7 };
 
@@ -55,10 +57,12 @@ export const ENUMS = {
     division: DIVISIONS,
     site_type: Object.keys(TYPE_GROUP)
   },
-  itineraries: { duration: ['One day', 'Overnight / multi-day', 'Not stated'], day_trip_from_dhaka: BOOL_OR_BLANK },
+  itineraries: { duration: ['One day', 'Overnight / multi-day', 'Not stated'], day_trip_from_dhaka: BOOL_OR_BLANK, plan_status: [...PLAN_STATUS, ''] },
+  costs: { fare_basis: [...FARE_BASIS, ''] },
+  itinerary_legs: { mode: MODES },
   claims: { claim_type: ['fact', 'conflict', 'legend'] },
   claim_source_links: { relation: ['supports', 'disputed_by', 'reported_by'] },
-  travel_routes: { route_kind: ['primary', 'alternative'] }
+  travel_routes: { route_kind: ['primary', 'alternative'], transport_mode: Object.keys(MODE_LABEL) }
 };
 
 // Dates. System dates are exact days; citation dates are as precise as their source, or a range.

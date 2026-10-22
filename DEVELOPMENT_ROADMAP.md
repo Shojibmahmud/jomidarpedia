@@ -76,7 +76,7 @@ This `handoff/` folder is assumed to become the repository root.
 - Photo files are in `../images/<division>/`, **outside** the repository root.
 - `images.csv` refers to them by `relative_file_path`.
 
-**Update after Phase 1:** the release build now fails on editorial problems only. Its report (`data/reports/release-problems.md`) lists **1,510 cells to edit**: 1,416 internal-note cells (1,489 output occurrences), 15 credit lines and 79 unclassified sites. The figures below are the original survey.
+**Update after Phase 1:** the release build now fails on editorial problems only. Its report (`data/reports/release-problems.md`) lists **1,510 cells to edit**: 1,416 internal-note cells (1,489 output occurrences), 15 credit lines and 79 unclassified sites. After Phase 2 it lists **2,309**: the new reviewed columns add 385 `plan_status` and 413 `closed_days` cells, and one more internal-note cell is published. The figures below are the original survey.
 
 **`build-data.mjs` exits with code 1, as designed.** It finds 1,386 internal-note strings in its output, across 417 output records. These are repeated occurrences: the same source text shows up on many site pages. In the CSVs, 1,939 cells contain the same flagged terms. The largest groups:
 
@@ -179,7 +179,7 @@ Notes:
 - **Before Phase 12 finishes, nothing is deployed to production.** Early deployments are previews with Vercel Deployment Protection turned on. Check what protection the Hobby plan offers when you do task 4.6. If previews can't be protected, deploy only a hand-picked set of records that pass release checks.
 
 ### 2.5 Dataset baseline
-Observed on 22 October 2026 from `data/csv/`, updated after the Phase 1 data fixes. This is the only place in the plan where these numbers are written down. Tests compare against `tests/baseline.json` (task 1.9), and changes to that file are reviewed.
+Observed on 22 October 2026 from `data/csv/`, updated after the Phase 1 data fixes and the Phase 2 contract. This is the only place in the plan where these numbers are written down. Tests compare against `tests/baseline.json` (task 1.9), and changes to that file are reviewed.
 
 | Measure | Value |
 |---|---:|
@@ -195,8 +195,11 @@ Observed on 22 October 2026 from `data/csv/`, updated after the Phase 1 data fix
 | Claims | fact 3,866, conflict 982, legend 205 |
 | Claim-source relations | supports 2,714, disputed_by 1,788 (2 orphan links removed in Phase 1), reported_by 71 |
 | Site-source citations | 2,662 (71 stale duplicate audit citations removed in Phase 1) |
-| Sites with opening hours stated | about 286–289, depending on the rule (task 2.9 defines the rule) |
-| `index.json` | 35.0 KB gzipped (budget 150 KB) |
+| Sites with opening times known (`hoursKnown`, task 2.9: a clock time) | 12 ("Daylight hours" and other stated access without a clock time: 276 more, shown as text only) |
+| `index.json` | 59 KB gzipped after the Phase 2 additions (35.0 KB before; budget 150 KB, test warns above 120 KB) |
+| Conflict versions | 267 with their own sources, 929 without; 1,422 source links not matched to a version |
+| Route modes | bus 434, train 198, car 153, mixed 63, launch 49, air 25, ferry 17, boat 8, unknown 3 (22 inferred) |
+| Sites without a Bangla name | 2 (JB-RAJ-059, JB-RAJ-071) |
 | Unclassified sites | 79 |
 | Dhaka Division | 111 sites, 42 without pins |
 
@@ -354,7 +357,7 @@ Required dependencies between phases 5 and 11:
 
 **Rule for this phase:** if the data can't support a field, the contract makes it optional and the UI shows a documented empty state. **Do not invent values to match a screenshot.**
 
-- [ ] **2.1** Write `docs/DATA_CONTRACT.md`. For each browser-rendered feature, list the fields it reads and whether they come from `index.json` (fetched) or from build-time props. The features are:
+- [x] **2.1** Write `docs/DATA_CONTRACT.md`. For each browser-rendered feature, list the fields it reads and whether they come from `index.json` (fetched) or from build-time props. The features are:
   - Explore card
   - map summary
   - search results
@@ -362,15 +365,15 @@ Required dependencies between phases 5 and 11:
   - home tiles
 
   Update `lib/types.ts` to match. Add a runtime check for `index.json` in tests: a small hand-written validator, no new dependency needed.
-- [ ] **2.2** **Conflict attribution.** Rebuild `conflict()` so each version carries its own sources, using `claim_source_links.relation`:
+- [x] **2.2** **Conflict attribution.** Rebuild `conflict()` so each version carries its own sources, using `claim_source_links.relation`:
   - a `supports` source is attached to the version it supports;
   - a `disputed_by` source is attached to the opposing version;
   - `reported_by` is shown as "reported by".
 
   Where a source can't be tied to a version, put it on the conflict as `unattributedSources` and show "Sources for this disagreement (not matched to a version)". Never copy every source onto every version.
   - **Verify:** the report counts versions with and without sources. A test on fixtures covers both cases.
-- [ ] **2.3** **Legend and fact sources.** Give each legend `sources: SourceRef[]`, drawn from its `SRC-` IDs. Give `era`, `founder`, `style` and `preservation` a `sources` field. Take it from the fact claims whose `field` is `history.established_era`, `history.founder`, `history.architectural_style` or `history.preservation_status`, joined to `claim_source_links`. Leave it empty where no claim has a source. The page footnotes no longer imply that each listed source supports every claim on the page.
-- [ ] **2.4** **Index additions** (budget: 150 KB gzipped; the test fails above 120 KB as an early warning):
+- [x] **2.3** **Legend and fact sources.** Give each legend `sources: SourceRef[]`, drawn from its `SRC-` IDs. Give `era`, `founder`, `style` and `preservation` a `sources` field. Take it from the fact claims whose `field` is `history.established_era`, `history.founder`, `history.architectural_style` or `history.preservation_status`, joined to `claim_source_links`. Leave it empty where no claim has a source. The page footnotes no longer imply that each listed source supports every claim on the page.
+- [x] **2.4** **Index additions** (budget: 150 KB gzipped; the test fails above 120 KB as an early warning):
   - `fm`: the founder or family as text, for search; it is not a normalized family entity;
   - `ty`: the raw `site_type`, for the type filter;
   - `hv`: hours known (rule in 2.9);
@@ -378,8 +381,8 @@ Required dependencies between phases 5 and 11:
   - `img`: `{ id, credit }` for the card photo.
 
   Do **not** add summaries to the index. The map summary card shows index fields only, plus a "Read more" link.
-- [ ] **2.5** **Transport mode.** Add `unknown` and `mixed` to `Route['mode']`. Stop defaulting to `bus`. Infer a mode from the description only on an exact keyword match, and record that it was `inferred`. Show neutral icons for unknown and mixed modes.
-- [ ] **2.6** **Budget rows.** Change itinerary `budget` to rows with these fields:
+- [x] **2.5** **Transport mode.** Add `unknown` and `mixed` to `Route['mode']`. Stop defaulting to `bus`. Infer a mode from the description only on an exact keyword match, and record that it was `inferred`. Show neutral icons for unknown and mixed modes.
+- [x] **2.6** **Budget rows.** Change itinerary `budget` to rows with these fields:
   - `item`, `category`;
   - `amount` (a number), or `range: [min, max]`;
   - `currency`, `unit` (per person, per vehicle, per group);
@@ -388,35 +391,47 @@ Required dependencies between phases 5 and 11:
   - `date`, `status`, `sources`.
 
   Take these from the `costs.csv` columns that already exist (`amount_bdt`, `unit`, `basis_and_assumptions`, `estimate_date`, `status`, `source_ids`). **Never parse display prose** such as "about Tk 320".
-- [ ] **2.7** **Budget totals.** Compute a `known` subtotal of per-person amounts only, and an `omitted` list naming each item without an amount. Label the anchor transport as "Dhaka → [anchor], one way". There is no return fare or fare between stops unless a row for it exists.
+- [x] **2.7** **Budget totals.** Compute a `known` subtotal of per-person amounts only, and an `omitted` list naming each item without an amount. Label the anchor transport as "Dhaka → [anchor], one way". There is no return fare or fare between stops unless a row for it exists.
   - **Verify on the Manikganj loop:** Tk 405 is known, onward transport and food are named as omitted, and the shared-rickshaw basis is shown.
-- [ ] **2.8** **Dates per fact.** Each visiting field, cost row and route carries its own date. Trip pages show dates per section ("Costs estimated …", "Visiting info checked …, per stop"). There is no single trip `lastChecked`. The meta file distinguishes `compiledAt` (when the build ran) from `lastVerified`.
-- [ ] **2.9** **"Has visiting hours".** Derive `hoursKnown` from `visitor_info.opening_hours`. It is true only when the value is not blank, not an unknown phrase, and not a restriction-only phrase. Put the phrase list in `scripts/lib/rules.mjs` and test it on real examples. Record the resulting count in the baseline.
-- [ ] **2.10** **Itinerary model.**
+- [x] **2.8** **Dates per fact.** Each visiting field, cost row and route carries its own date. Trip pages show dates per section ("Costs estimated …", "Visiting info checked …, per stop"). There is no single trip `lastChecked`. The meta file distinguishes `compiledAt` (when the build ran) from `lastVerified`.
+- [x] **2.9** **"Has visiting hours".** Derive `hoursKnown` from `visitor_info.opening_hours`. It is true only when the value is not blank, not an unknown phrase, and not a restriction-only phrase. Put the phrase list in `scripts/lib/rules.mjs` and test it on real examples. Record the resulting count in the baseline.
+- [x] **2.10** **Itinerary model.**
   - Add `plan_status` (O11).
   - Mark each stop as `site` or `place` (terminal, lunch stop, ghat).
   - Give place stops coordinates **only** from a new optional `itinerary_places.csv` with sources.
   - Add an optional `itinerary_legs.csv` (`from_stop`, `to_stop`, `mode`, `duration`, `cost_row`, `source_ids`).
 
   Leave both new CSVs empty until there is researched data. `RouteMap` draws legs only where legs exist, and labels anything else "schematic: stops in order, roads not drawn".
-- [ ] **2.11** **Closing-day rules.** Add a reviewed `closed_days` column to `visitor_info.csv` (for example `fri`, `sun;mon`, `none`, `unknown`), filled in by the editor and not parsed automatically. `DayCheck` uses only this column. Where it is `unknown`, it says "Closing days not documented".
-- [ ] **2.12** **External photo link (O10).** For hidden-pin sites, generate a name-only search URL. Test that it contains no digits that look like coordinates.
-- [ ] **2.13** **Missing Bangla names (O13).** Make `name.bn` optional in the contract, with `bnMissing: true`. List the affected sites in the report.
-- [ ] **2.14** **Architectural features.** `claims.csv` has no `key_features` field; only `history.architectural_style` exists, with 370 rows. So:
+- [x] **2.11** **Closing-day rules.** Add a reviewed `closed_days` column to `visitor_info.csv` (for example `fri`, `sun;mon`, `none`, `unknown`), filled in by the editor and not parsed automatically. `DayCheck` uses only this column. Where it is `unknown`, it says "Closing days not documented".
+- [x] **2.12** **External photo link (O10).** For hidden-pin sites, generate a name-only search URL. Test that it contains no digits that look like coordinates.
+- [x] **2.13** **Missing Bangla names (O13).** Make `name.bn` optional in the contract, with `bnMissing: true`. List the affected sites in the report.
+- [x] **2.14** **Architectural features.** `claims.csv` has no `key_features` field; only `history.architectural_style` exists, with 370 rows. So:
   - add an optional `features.csv` (`site_id`, `feature`, `feature_bn`, `measurement`, `unit`, `source_ids`, `status`), filled only from research;
   - build `features` from that table, keeping their sources;
   - competing measurements, such as Baliati's area, become two rows with different sources and appear as a conflict;
   - until rows exist, `features: []`, and `FeatureList` shows "Not documented".
 
   Don't copy values from the screenshots.
-- [ ] **2.15** **Structured source fields.** Add optional columns to `sources.csv`: `author`, `publisher`, `edition`, `isbn`, `verification_method`. Fill them **for SRC-0001 only** from its existing confirmed text (Md. Mahmud Ali; Dibyaprakash; first edition, February 2024; ISBN 978-984-97277-4-3; "appendix checked in print (Oct 2026); chapter entries via master-list transcriptions"). Leave every other source blank. The build emits citation counts by division for each source.
-- [ ] **2.16** **Itinerary titles (I5).** Make `tripTitle` idempotent and test it on:
+- [x] **2.15** **Structured source fields.** Add optional columns to `sources.csv`: `author`, `publisher`, `edition`, `isbn`, `verification_method`. Fill them **for SRC-0001 only** from its existing confirmed text (Md. Mahmud Ali; Dibyaprakash; first edition, February 2024; ISBN 978-984-97277-4-3; "appendix checked in print (Oct 2026); chapter entries via master-list transcriptions"). Leave every other source blank. The build emits citation counts by division for each source.
+- [x] **2.16** **Itinerary titles (I5).** Make `tripTitle` idempotent and test it on:
   - a title with two groups;
   - a title with one group;
   - an already clean title that contains parentheses;
   - a title with no parentheses.
-- [ ] **2.17** Update `lib/types.ts` and `docs/DATA_CONTRACT.md` together.
+- [x] **2.17** Update `lib/types.ts` and `docs/DATA_CONTRACT.md` together.
   - **Verify:** `npm run typecheck` and the index contract test both pass.
+
+**Done 22 Oct 2026 (2.1–2.17)**, specified in `.claude/specs/02-Data-contracts.md`; field-by-field reference in `docs/DATA_CONTRACT.md`. Verified with 177 passing tests, typecheck, lint, `npm run build:local` (exit 0), `npm run build` (release, exit 1 with 2,309 cells to edit) and two byte-identical data builds. Changes from the task text:
+- **Conflict attribution (2.2):** every conflict link in the data is `disputed_by` (none is `supports`), so the relation alone attributes nothing. A source goes on a version only when the version text names its publisher (normalized name, whole word, or a reviewed alias in `scripts/lib/rules.mjs`; names under 3 letters are not matched). Unmatched or ambiguous sources go to `unattributedSources`. Result: 267 versions with their own sources, 929 without, 1,422 unattributed links.
+- **Hours known (2.9):** true only for a **clock time** in `opening_hours`. "Daylight hours" is access, not a schedule: **12 sites**, not the 286–289 first estimated.
+- **Route labels (2.5):** a reviewed table maps every `transport_mode` label; a label naming two or more modes is `mixed`; an unlisted label is a structural error. "Other / mixed" is inferred only on exactly one mode keyword (22 routes, all "Fly … then road" or easybike/rickshaw/trawler).
+- **Budgets (2.6, 2.7):** `costs.csv` gains `fare_basis` and `legs` (blank until researched), since the basis is prose. A cost with an amount needs a unit from the reviewed table (structural). An entry fee of 0 is `noTicket`, in neither the subtotal nor the omitted list. `basis_and_assumptions` is now published as each row's note, which added one internal-note cell (CO-RAJ-023-02).
+- **Manikganj check (2.7):** the CSV gives **Tk 180** known (transport 150 + Baliati entry 30), with food and local guide omitted. The Tk 405 figure needs the editor's 20 October fares, which move to Phase 12 (O15).
+- **Reviewed columns (2.10, 2.11):** `plan_status` and `closed_days` stay blank until Phase 12. A blank is published as unknown and counts as an editorial cell (fails release only): 385 and 413 cells. The report lists the O11 suggestions (37 timed, 266 circuit, 82 incomplete). An unverified "None reported" is `unknown`, not `none`.
+- **Dates (2.8):** `meta.generatedAt` and `lastUpdated` are renamed `compiledAt` and `lastVerified`. A trip has `costsEstimated` and a per-stop `visitingChecked`.
+- **Titles (2.16):** only `prefix (X) (Anchor)` titles are shortened; 218 single-group titles keep their full wording, such as "Suggested day-trip circuit (Baishrashi Zamindar Bari)".
+- **Also done:** the I7 field whitelist, checked by a marker test; `claims.field` became a required column.
+- **Open:** whether to seed the publisher alias list now (it starts empty), and whether to keep publishing the unreviewed `weekly_closing_days` text beside `closedDays`.
 
 **Acceptance criteria**
 - Every conflict version either has its own sources or sits under a visible "not matched" list.

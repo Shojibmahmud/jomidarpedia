@@ -50,5 +50,29 @@
     "sites": 111,
     "noPin": 42
   },
-  "indexRowsOnMap": 299
+  "indexRowsOnMap": 299,
+  "hoursKnown": 12,
+  "conflictVersions": {
+    "withSources": 267,
+    "withoutSources": 929
+  },
+  "unattributedConflictLinks": 1422,
+  "routesByMode": {
+    "air": 25,
+    "boat": 8,
+    "bus": 434,
+    "car": 153,
+    "ferry": 17,
+    "launch": 49,
+    "mixed": 63,
+    "train": 198,
+    "unknown": 3
+  },
+  "routesModeInferred": 22,
+  "suggestedPlanStatus": {
+    "circuit": 266,
+    "incomplete": 82,
+    "timed": 37
+  },
+  "bnMissing": 2
 }
