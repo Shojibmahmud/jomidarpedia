@@ -1,0 +1,107 @@
+/* Jomidarpedia design tokens.
+   Colours are stored as space-separated RGB channels so Tailwind can add alpha:
+   bg-primary/20, text-ink/70 …  (see tailwind.config.ts).
+   Light is the default. Dark applies when the visitor chose it (data-theme="dark")
+   or when the OS asks for it and the visitor has not picked light. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 247 242 232;              /* #F7F2E8 lime plaster */
+  --surface: 255 252 245;         /* #FFFCF5 cards, sheets */
+  --surface-2: 239 231 216;       /* #EFE7D8 panels, placeholders */
+  --ink: 33 29 24;                /* #211D18  15.0:1 on bg */
+  --muted: 92 84 72;              /* #5C5448   6.7:1 */
+  --line: 221 211 193;            /* #DDD3C1 dividers (decorative) */
+  --line-strong: 140 130 111;     /* #8C826F   3.4:1 input/chip borders */
+  --primary: 163 66 42;           /* #A3422A terracotta 5.6:1 */
+  --primary-hover: 134 51 31;     /* #86331F */
+  --on-primary: 255 255 255;      /* 6.2:1 on primary */
+  --primary-tint: 246 225 216;    /* #F6E1D8 */
+  --primary-tint-ink: 122 47 28;  /* #7A2F1C 7.4:1 on tint */
+  --moss: 70 102 54;              /* #466636 preserved */
+  --moss-tint: 225 235 214;
+  --moss-ink: 51 80 42;
+  --teal: 43 106 106;             /* #2B6A6A other use */
+  --teal-tint: 220 235 233;
+  --teal-ink: 33 81 90;
+  --indigo: 46 61 120;            /* #2E3D78 day trip, focus */
+  --indigo-tint: 227 230 243;
+  --on-indigo: 255 252 245;
+  --gold: 122 90 18;              /* #7A5A12 warnings, '?' flag */
+  --gold-tint: 243 231 200;
+  --lost: 74 68 60;
+  --lost-tint: 231 226 216;
+  --unknown: 110 103 91;
+  --focus: 46 61 120;
+  --map-land: 238 233 222;
+  --shadow-1: 0 1px 2px rgb(33 29 24 / .08);
+  --shadow-2: 0 4px 14px rgb(33 29 24 / .10);
+  --shadow-3: 0 14px 36px rgb(33 29 24 / .18);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: 25 23 18;  --surface: 36 33 27;  --surface-2: 46 42 35;
+  --ink: 241 234 219;  --muted: 181 171 152;  --line: 58 53 45;  --line-strong: 125 116 100;
+  --primary: 229 139 108;  --primary-hover: 240 166 140;  --on-primary: 25 23 18;
+  --primary-tint: 58 38 32;  --primary-tint-ink: 242 180 157;
+  --moss: 157 193 132;  --moss-tint: 34 48 28;  --moss-ink: 191 217 172;
+  --teal: 127 195 190;  --teal-tint: 23 50 49;  --teal-ink: 169 218 214;
+  --indigo: 163 177 234;  --indigo-tint: 32 38 74;  --on-indigo: 25 23 18;
+  --gold: 216 178 98;  --gold-tint: 53 43 21;
+  --lost: 201 192 176;  --lost-tint: 46 42 35;  --unknown: 156 148 131;
+  --focus: 163 177 234;  --map-land: 34 32 27;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / .4);
+  --shadow-2: 0 4px 14px rgb(0 0 0 / .45);
+  --shadow-3: 0 14px 36px rgb(0 0 0 / .6);
+  color-scheme: dark;
+}
+/* Same values when the OS prefers dark and the visitor hasn't chosen light.
+   Keep this block identical to the one above. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: 25 23 18;  --surface: 36 33 27;  --surface-2: 46 42 35;
+    --ink: 241 234 219;  --muted: 181 171 152;  --line: 58 53 45;  --line-strong: 125 116 100;
+    --primary: 229 139 108;  --primary-hover: 240 166 140;  --on-primary: 25 23 18;
+    --primary-tint: 58 38 32;  --primary-tint-ink: 242 180 157;
+    --moss: 157 193 132;  --moss-tint: 34 48 28;  --moss-ink: 191 217 172;
+    --teal: 127 195 190;  --teal-tint: 23 50 49;  --teal-ink: 169 218 214;
+    --indigo: 163 177 234;  --indigo-tint: 32 38 74;  --on-indigo: 25 23 18;
+    --gold: 216 178 98;  --gold-tint: 53 43 21;
+    --lost: 201 192 176;  --lost-tint: 46 42 35;  --unknown: 156 148 131;
+    --focus: 163 177 234;  --map-land: 34 32 27;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / .4);
+    --shadow-2: 0 4px 14px rgb(0 0 0 / .45);
+    --shadow-3: 0 14px 36px rgb(0 0 0 / .6);
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  html { scroll-padding-top: 88px; }              /* WCAG 2.4.11: sticky header never hides focus */
+  body { @apply bg-bg text-ink font-sans antialiased; }
+  :lang(bn) { @apply font-bn; line-height: 1.65; } /* Bangla never below 1.6 */
+  :lang(bn) :is(h1, h2, h3) { @apply font-bn-serif; line-height: 1.4; font-weight: 400; }
+  :lang(en) { font-family: var(--font-source-sans), system-ui, sans-serif; } /* Latin never falls into the Bangla font */
+  :focus-visible { outline: 3px solid rgb(var(--focus)); outline-offset: 2px; }
+  ::placeholder { color: rgb(var(--muted)); opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+}
+
+@layer components {
+  .chip { @apply inline-flex min-h-tap items-center gap-2 whitespace-nowrap rounded-full border border-line-strong bg-surface px-4 text-[15px] font-semibold; }
+  .chip[aria-pressed="true"] { @apply border-ink bg-ink text-bg; }
+  .badge { @apply inline-flex min-h-[26px] items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[13px] font-semibold; }
+}
+
+/* Print: the itinerary "Print or save as PDF" button calls window.print(). */
+@media print {
+  @page { size: A4; margin: 15mm; }
+  :root { --bg: 255 255 255; --surface: 255 255 255; --ink: 33 29 24; --muted: 92 84 72; }
+  header, nav, footer, [data-no-print] { display: none !important; }
+  [data-print-only] { display: block !important; }
+}
+[data-print-only] { display: none; }

@@ -1,0 +1,70 @@
+division,division_bn,district,district_bn,first_page,last_page
+Dhaka,ঢাকা,Gazipur,গাজীপুর,27,44
+Dhaka,ঢাকা,Gopalganj,গোপালগঞ্জ,45,53
+Dhaka,ঢাকা,Tangail,টাঙ্গাইল,54,71
+Dhaka,ঢাকা,Dhaka,ঢাকা,72,88
+Dhaka,ঢাকা,Narsingdi,নরসিংদী,89,94
+Dhaka,ঢাকা,Narayanganj,নারায়ণগঞ্জ,95,104
+Dhaka,ঢাকা,Faridpur,ফরিদপুর,105,120
+Dhaka,ঢাকা,Madaripur,মাদারীপুর,121,127
+Dhaka,ঢাকা,Manikganj,মানিকগঞ্জ,128,138
+Dhaka,ঢাকা,Munshiganj,মুন্সিগঞ্জ,139,152
+Dhaka,ঢাকা,Rajbari,রাজবাড়ি,153,157
+Dhaka,ঢাকা,Shariatpur,শরিয়তপুর,158,162
+Dhaka,ঢাকা,Kishoreganj,কিশোরগঞ্জ,163,176
+Mymensingh,ময়মনসিংহ,Mymensingh,ময়মনসিংহ,177,185
+Mymensingh,ময়মনসিংহ,Jamalpur,জামালপুর,186,187
+Mymensingh,ময়মনসিংহ,Netrokona,নেত্রকোণা,188,193
+Mymensingh,ময়মনসিংহ,Sherpur,শেরপুর,194,199
+Chattogram,চট্টগ্রাম,Cumilla,কুমিল্লা,200,215
+Chattogram,চট্টগ্রাম,Brahmanbaria,ব্রাহ্মণবাড়িয়া,216,225
+Chattogram,চট্টগ্রাম,Chandpur,চাঁদপুর,226,236
+Chattogram,চট্টগ্রাম,Lakshmipur,লক্ষ্মীপুর,237,243
+Chattogram,চট্টগ্রাম,Noakhali,নোয়াখালী,244,248
+Chattogram,চট্টগ্রাম,Feni,ফেনী,249,252
+Chattogram,চট্টগ্রাম,Khagrachhari,খাগড়াছড়ি,253,254
+Chattogram,চট্টগ্রাম,Rangamati,রাঙামাটি,255,256
+Chattogram,চট্টগ্রাম,Bandarban,বান্দরবান,257,257
+Chattogram,চট্টগ্রাম,Chattogram,চট্টগ্রাম,258,280
+Chattogram,চট্টগ্রাম,Cox's Bazar,কক্সবাজার,281,283
+Sylhet,সিলেট,Sylhet,সিলেট,284,289
+Sylhet,সিলেট,Moulvibazar,মৌলভীবাজার,290,292
+Sylhet,সিলেট,Habiganj,হবিগঞ্জ,293,303
+Sylhet,সিলেট,Sunamganj,সুনামগঞ্জ,304,317
+Khulna,খুলনা,Khulna,খুলনা,318,324
+Khulna,খুলনা,Chuadanga,চুয়াডাঙ্গা,325,329
+Khulna,খুলনা,Jhenaidah,ঝিনাইদহ,330,336
+Khulna,খুলনা,Narail,নড়াইল,337,340
+Khulna,খুলনা,Bagerhat,বাগেরহাট,341,346
+Khulna,খুলনা,Kushtia,কুষ্টিয়া,347,353
+Khulna,খুলনা,Magura,মাগুরা,354,358
+Khulna,খুলনা,Meherpur,মেহেরপুর,359,359
+Khulna,খুলনা,Jashore,যশোর,360,366
+Khulna,খুলনা,Satkhira,সাতক্ষীরা,367,374
+Barishal,বরিশাল,Barishal,বরিশাল,375,388
+Barishal,বরিশাল,Patuakhali,পটুয়াখালী,389,399
+Barishal,বরিশাল,Pirojpur,পিরোজপুর,400,405
+Barishal,বরিশাল,Barguna,বরগুনা,406,407
+Barishal,বরিশাল,Jhalokati,ঝালকাঠি,408,414
+Rajshahi,রাজশাহী,Chapainawabganj,চাঁপাইনবাবগঞ্জ,415,419
+Rajshahi,রাজশাহী,Joypurhat,জয়পুরহাট,420,422
+Rajshahi,রাজশাহী,Naogaon,নওগাঁ,423,436
+Rajshahi,রাজশাহী,Natore,নাটোর,437,451
+Rajshahi,রাজশাহী,Pabna,পাবনা,452,471
+Rajshahi,রাজশাহী,Bogura,বগুড়া,472,475
+Rajshahi,রাজশাহী,Rajshahi,রাজশাহী,476,491
+Rajshahi,রাজশাহী,Sirajganj,সিরাজগঞ্জ,492,501
+Rangpur,রংপুর,Kurigram,কুড়িগ্রাম,502,510
+Rangpur,রংপুর,Gaibandha,গাইবান্ধা,511,518
+Rangpur,রংপুর,Thakurgaon,ঠাকুরগাঁও,519,525
+Rangpur,রংপুর,Dinajpur,দিনাজপুর,526,533
+Rangpur,রংপুর,Nilphamari,নীলফামারী,534,534
+Rangpur,রংপুর,Panchagarh,পঞ্চগড়,535,537
+Rangpur,রংপুর,Rangpur,রংপুর,538,553
+Rangpur,রংপুর,Lalmonirhat,লালমনিরহাট,554,560
+(front matter),,Preface,মুখবন্ধ,9,10
+(chapter 1),,Origin and growth of zamindars in Bengal,বঙ্গে জমিদারের উৎপত্তি ও ক্রমবিকাশ,11,26
+(back matter),,Conclusion,উপসংহার,561,562
+(back matter),,Glossary,শব্দকোষ,563,567
+(back matter),,Appendix,পরিশিষ্ট,568,588
+(back matter),,Bibliography,গ্রন্থপঞ্জি,589,

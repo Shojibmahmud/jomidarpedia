@@ -1,0 +1,492 @@
+appendix_id,page,district,no_in_district,name_bn,match_status,site_ids,site_name_en,already_cites_book
+APX-001,568,Gazipur,1,ভাওয়াল জমিদার বাড়ি,exact,JB-DHK-030,Bhawal Rajbari (Bhawal Raj Palace),no
+APX-002,568,Gazipur,2,পলাসোনা জমিদার বাড়ি,manual (chapter read),JB-DHK-032,Palasona Zamindar Bari,yes
+APX-003,568,Gazipur,3,গাছা জমিদার বাড়ি,manual (chapter read),JB-DHK-107,Gachha Zamindar Bari,yes
+APX-004,568,Gazipur,4,দত্তপাড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-005,568,Gazipur,5,কাশিমপুর জমিদার বাড়ি,exact,JB-DHK-031,Kashimpur Zamindar Bari,no
+APX-006,568,Gazipur,6,পূবাইল জমিদার বাড়ি,not_in_our_data,,,
+APX-007,568,Gazipur,7,বলধা জমিদার বাড়ি,exact,JB-DHK-028,Baldha Zamindar Bari (Chowdhury Bari),no
+APX-008,568,Gazipur,8,কাপাসিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-009,568,Gazipur,9,শ্রীফলতলী জমিদার বাড়ি,exact,JB-DHK-033,Sreefaltali Zamindar Bari,no
+APX-010,568,Gazipur,10,বলিয়াদী জমিদার বাড়ি,exact,JB-DHK-029,Baliadi Zamindar Bari,no
+APX-011,568,Gazipur,11,গাড়ারিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-012,568,Gopalganj,1,উলপুর জমিদার বাড়ি,exact,JB-DHK-042,Ulpur Zamindar Bari,no
+APX-013,568,Gopalganj,2,আড়পাড়া জমিদার বাড়ি,exact,JB-DHK-034,Arpara Munshi Bari,no
+APX-014,568,Gopalganj,3,কাশিয়ানি জমিদার বাড়ি-১,manual (chapter read),JB-DHK-037,Girish Chandra Sen's Zamindar Bari (Kashiani Zamindar Bari 1),yes
+APX-015,568,Gopalganj,4,কাশিয়ানি জমিদার বাড়ি-২,manual (chapter read),JB-DHK-040,Sakhi Charan Roy's Zamindar Bari (Kashiani Zamindar Bari 2),yes
+APX-016,568,Gopalganj,5,হরিণাহাটি জমিদার বাড়ি,exact,JB-DHK-038,Horinahati Zamindar Bari (Sachchidananda's House),no
+APX-017,568,Gopalganj,6,উজানী জমিদার বাড়ি,exact,JB-DHK-041,Ujani Rajbari (Ujani Zamindar Bari),no
+APX-018,568,Gopalganj,7,ছোট বনগ্রাম জমিদার বাড়ি,exact,JB-DHK-035,Choto Bongram Zamindar Bari (Bhuiya Bari),no
+APX-019,568,Gopalganj,8,নারায়ণপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-020,568,Gopalganj,9,মহারাজপুর রাজবাড়ি,exact,JB-DHK-039,Maharajpur Rajbari (Bose Bari),no
+APX-021,569,Tangail,1,সন্তোষ জমিদার বাড়ি,exact,JB-DHK-106,Santosh Zamindar Bari (Santosh Rajbari),no
+APX-022,569,Tangail,2,অলোয়া জমিদার বাড়ি,exact,JB-DHK-094,Aloa Zamindar Bari (Aloa Rajbari),no
+APX-023,569,Tangail,3,করটিয়া জমিদার বাড়ি,exact,JB-DHK-100,Karatia Zamindar Bari (Karatia Rajbari),no
+APX-024,569,Tangail,4,আলিশাকানান্দা জমিদার বাড়ি,not_in_our_data,,,
+APX-025,569,Tangail,5,দেলদুয়ার জমিদার বাড়ি,exact,JB-DHK-096,Delduar Zamindar Bari (North House / Uttar Taraf),no
+APX-026,569,Tangail,6,ধনবাড়ি,exact,JB-DHK-098,Dhanbari Nawab Palace (Dhanbari Zamindar Bari),no
+APX-027,569,Tangail,7,পাকুটিয়া জমিদার বাড়ি,exact,JB-DHK-105,Pakutia Zamindar Bari,no
+APX-028,569,Tangail,8,নাগরপুর জমিদার বাড়ি,exact,JB-DHK-103,Nagarpur Zamindar Bari (Chowdhury Bari),no
+APX-029,569,Tangail,9,মোকনা জমিদার বাড়ি,exact,JB-DHK-102,Mokna Zamindar Bari,no
+APX-030,569,Tangail,10,হেমনগর জমিদার বাড়ি,exact,JB-DHK-099,Hemnagar Zamindar Bari (Porir Dalan),no
+APX-031,569,Tangail,11,পাকুল্লা জমিদার বাড়ি,exact,JB-DHK-104,Pakulla Zamindar Bari,no
+APX-032,569,Tangail,12,মহেড়া জমিদার বাড়ি,exact,JB-DHK-101,Mohera Zamindar Bari,no
+APX-033,569,Tangail,13,বাসাইল জমিদার বাড়ি,exact,JB-DHK-095,Basail Zamindar Bari (Charu Chandra Roy Bari),no
+APX-034,569,Tangail,14,ধলাপাড়া জমিদার বাড়ি,exact,JB-DHK-097,Dhalapara Zamindar Bari (Chowdhury Bari),no
+APX-035,569,Tangail,15,এলেঙ্গা জমিদার বাড়ি,not_in_our_data,,,
+APX-036,569,Dhaka,1,ঢাকা নবাব বাড়ি,not_in_our_data,,,
+APX-037,569,Dhaka,2,সূত্রাপুর জমিদার বাড়ি,exact,JB-DHK-019,Sutrapur Zamindar Bari (Revati Mohan Das House),no
+APX-038,569,Dhaka,3,বক্তারনগর জমিদার বাড়ি,exact,JB-DHK-004,Baktarnagar Zamindar Bari (Sab Bari),no
+APX-039,569,Dhaka,4,কলাকোপা জমিদার বাড়ি,exact,JB-DHK-013,Kokil Pyari Zamindar Bari (Kalakopa Zamindar Bari),no
+APX-040,569,Dhaka,5,জয়কৃষ্ণপুর জমিদার বাড়ি,exact,JB-DHK-010,Joykrishnapur Zamindar Bari,no
+APX-041,569,Dhaka,6,আগলা জমিদার বাড়ি,exact,JB-DHK-001,Agla Zamindar Bari (Agla Jamindar Bari),yes
+APX-042,569,Dhaka,7,বিরুলিয়া জমিদার বাড়ি,exact,JB-DHK-007,Birulia Zamindar Bari (Rajanikanta Ghosh House),no
+APX-043,569,Dhaka,8,দেওয়ান বাড়ি,manual,JB-DHK-017,"Savar Dewan Bari (Dewanbari / Haji Bari), Aminbazar",yes
+APX-044,569,Dhaka,9,আড়াপাড়া জমিদার বাড়ি,name,JB-DHK-003,"Arapara Zamindar Bari (Rai Shashi Nibas), Savar",no
+APX-045,569,Dhaka,10,সাভার জমিদার বাড়ি,manual,JB-DHK-018,Savar Zamindar Bari (Rakhal Chandra Saha's House),yes
+APX-046,570,Dhaka,11,বালিয়া জমিদার বাড়ি,exact,JB-DHK-005,Balia Zamindar Bari (Baliya Jamidar Bari),no
+APX-047,570,Dhaka,12,রোয়াইল জমিদার বাড়ি,exact,JB-DHK-015,Rowail Zamindar Bari (Rowail Jamindar Bari),yes
+APX-048,570,Dhaka,13,বেলিশ্বর জমিদার বাড়ি,exact,JB-DHK-006,Belishwar Zamindar Bari (Belishwar Jamindar Bari),yes
+APX-049,570,Dhaka,14,গাঙ্গুটিয়া জমিদার বাড়ি,exact,JB-DHK-009,Gangutia Zamindar Bari (Roy Bari),no
+APX-050,570,Dhaka,15,কেরানীগঞ্জ জমিদার বাড়ি,exact,JB-DHK-012,Keraniganj Zamindar Bari (Prashanta Karmakar's House),yes
+APX-051,570,Narsingdi,1,বালাপুর জমিদার বাড়ি,exact,JB-DHK-084,Balapur Zamindar Bari (Nabin Chandra Saha Zamindar Bari),no
+APX-052,570,Narsingdi,2,সাগরদী জমিদার বাড়ি,not_in_our_data,,,
+APX-053,570,Narsingdi,3,শিবপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-054,570,Narsingdi,4,ডাংগা জমিদার বাড়ি,exact,JB-DHK-086,Lakshman Saha Zamindar Bari (Danga Zamindar Bari),no
+APX-055,570,Narsingdi,5,ঘোড়াশাল জমিদার বাড়ি,exact,JB-DHK-085,Ghorashal Zamindar Bari (Monu Mia's Zamindar Bari),no
+APX-056,570,Narayanganj,1,বড় সর্দার বাড়ি,exact,JB-DHK-080,Boro Sardar Bari (Bara Sardar Bari),no
+APX-057,570,Narayanganj,2,গোপালদী জমিদার বাড়ি,exact,JB-DHK-081,Gopaldi Zamindar Bari (Sadasadi Zamindar Bari / Bhuiyan Bari),no
+APX-058,570,Narayanganj,3,বালিয়াপাড়া জমিদার বাড়ি,exact,JB-DHK-079,Baliapara Zamindar Bari,no
+APX-059,570,Narayanganj,4,সাতগ্রাম জমিদার বাড়ি,exact,JB-DHK-083,Satgram Zamindar Bari (Jogesh Babu's House),no
+APX-060,570,Narayanganj,5,ইলমদী জমিদার বাড়ি,not_in_our_data,,,
+APX-061,570,Narayanganj,6,মুড়াপাড়া জমিদার বাড়ি,exact,JB-DHK-082,Murapara Rajbari (Murapara Zamindar Bari),no
+APX-062,570,Narayanganj,7,ভোলাব জমিদার বাড়ি,not_in_our_data,,,
+APX-063,570,Narayanganj,8,শিষমহল জমিদার বাড়ি,not_in_our_data,,,
+APX-064,570,Faridpur,1,কানাইপুর জমিদার বাড়ি,exact,JB-DHK-025,Kanaipur Zamindar Bari (Shikdar Bari),no
+APX-065,570,Faridpur,2,ঈশান গোপালপুর জমিদার বাড়ি,exact,JB-DHK-024,Ishan Gopalpur Zamindar Bari (Babu Bari),no
+APX-066,570,Faridpur,3,বাইশরশি জমিদার বাড়ি,exact,JB-DHK-021,Baishrashi Zamindar Bari,no
+APX-067,570,Faridpur,4,খরসূতি জমিদার বাড়ি,not_in_our_data,,,
+APX-068,570,Faridpur,5,বাগডাঙ্গা জমিদার বাড়ি,not_in_our_data,,,
+APX-069,570,Faridpur,6,শ্রীনগর জমিদার বাড়ি,not_in_our_data,,,
+APX-070,571,Faridpur,7,সৈয়দপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-071,571,Faridpur,8,ধোপাডাঙ্গা জমিদার বাড়ি,not_in_our_data,,,
+APX-072,571,Faridpur,9,চাঁদড়া জমিদার বাড়ি,exact,JB-DHK-023,Chandra Zamindar Bari,no
+APX-073,571,Faridpur,10,মহিষারঘোপ জমিদার বাড়ি,not_in_our_data,,,
+APX-074,571,Faridpur,11,টগরবন্দ জমিদার বাড়ি,not_in_our_data,,,
+APX-075,571,Faridpur,12,ফলিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-076,571,Faridpur,13,ডুমাইন জমিদার বাড়ি,not_in_our_data,,,
+APX-077,571,Faridpur,14,সোনাপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-078,571,Faridpur,15,বাউশখালি জমিদার বাড়ি,exact,JB-DHK-022,Baushkhali Zamindar Bari (Singha Bari),no
+APX-079,571,Faridpur,16,আলগী জমিদার বাড়ি,not_in_our_data,,,
+APX-080,571,Faridpur,17,রায়পাড়া জমিদার বাড়ি,exact,JB-DHK-027,Raipara Zamindar Bari (Roy Bari),no
+APX-081,571,Faridpur,18,পরানপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-082,571,Madaripur,1,কুলপদ্দি জমিদার বাড়ি,exact,JB-DHK-060,Kulpaddi Zamindar Bari (Saha Bari),no
+APX-083,571,Madaripur,2,মিঠাপুর জমিদার বাড়ি,exact,JB-DHK-061,Mithapur Zamindar Bari,no
+APX-084,571,Madaripur,3,চণ্ডিবদী জমিদার বাড়ি,not_in_our_data,,,
+APX-085,571,Madaripur,4,মস্তফাপুর নতুন জমিদার বাড়ি,not_in_our_data,,,
+APX-086,571,Madaripur,5,মস্তফাপুর পুরানা জমিদার বাড়ি,not_in_our_data,,,
+APX-087,571,Madaripur,6,রাজৈর জমিদার বাড়ি,not_in_our_data,,,
+APX-088,571,Madaripur,7,খালিয়া জমিদার বাড়ি,exact,JB-DHK-059,Khalia Zamindar Bari (Rajaram Roy Chowdhury's Estate),no
+APX-089,571,Manikganj,1,বেতিলা জমিদার বাড়ি,exact,JB-DHK-065,Betila Zamindar Bari,no
+APX-090,571,Manikganj,2,হাটিপাড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-091,571,Manikganj,3,বালিয়াটি জমিদার বাড়ি,exact,JB-DHK-064,Baliati Palace (Baliati Zamindar Bari),no
+APX-092,571,Manikganj,4,ধানকোড়া জমিদার বাড়ি,exact,JB-DHK-066,Dhankora Zamindar Bari (Babu Hem Chandra Roy Chowdhury House),no
+APX-093,571,Manikganj,5,তেওতা জমিদার বাড়ি,exact,JB-DHK-067,Teota Zamindar Bari,no
+APX-094,571,Manikganj,6,বাউলিকান্দা জমিদার বাড়ি,not_in_our_data,,,
+APX-095,571,Manikganj,7,জয়মন্টপ জমিদার বাড়ি,not_in_our_data,,,
+APX-096,571,Manikganj,8,বায়রা জমিদার বাড়ি,not_in_our_data,,,
+APX-097,571,Manikganj,9,নালী জমিদার বাড়ি,not_in_our_data,,,
+APX-098,571,Manikganj,10,তেরশ্রী জমিদার বাড়ি,not_in_our_data,,,
+APX-099,571,Manikganj,11,বলড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-100,572,Munshiganj,1,ভাগ্যকুল জমিদার বাড়ি,exact,JB-DHK-070,Bhagyakul Zamindar Bari (Roy Bari),no
+APX-101,572,Munshiganj,2,বালাশুর জমিদার বাড়ি,exact,JB-DHK-068,Balashur Zamindar Bari (Jadunath Roy's House),no
+APX-102,572,Munshiganj,3,মাইজপাড়া জমিদার বাড়ি,exact,JB-DHK-075,Maijpara Zamindar Bari (Roy Bari),no
+APX-103,572,Munshiganj,4,কলমা জমিদার বাড়ি,exact,JB-DHK-074,Kolma Zamindar Bari (Laxmikanta Babu's House),no
+APX-104,572,Munshiganj,5,আউটশাহী জমিদার বাড়ি,exact,JB-DHK-078,Outshahi Zamindar Bari (Bijoy Kor Babu's House),no
+APX-105,572,Munshiganj,6,বেতকা জমিদার বাড়ি,exact,JB-DHK-069,Betka Zamindar Bari (Ghoshal Bari),no
+APX-106,572,Munshiganj,7,মালখানগর জমিদার বাড়ি,exact,JB-DHK-076,Malkhanagar Zamindar Bari (Bose Bari),no
+APX-107,572,Munshiganj,8,হরিখালি জমিদার বাড়ি,exact,JB-DHK-072,Horikhali Zamindar Bari,no
+APX-108,572,Munshiganj,9,ফুলদি জমিদার বাড়ি,exact,JB-DHK-071,Fuldi Zamindar Bari,no
+APX-109,572,Munshiganj,10,মিরকাদিম জমিদার বাড়ি,exact,JB-DHK-077,Mirkadim Zamindar Bari (Panchu Bepari's House),no
+APX-110,572,Rajbari,1,লক্ষীকোল রাজার বাড়ি,exact,JB-DHK-087,Lakshmikol Raja Bari (site),no
+APX-111,572,Rajbari,2,কুঠি পাঁচুরিয়া জমিদার বাড়ি,manual (chapter read),JB-DHK-108,Kuthi Pachuria Zamindar Bari,yes
+APX-112,572,Rajbari,3,খোলাবাড়িয়া,manual (chapter read),JB-DHK-109,Kholabaria Zamindar Bari,yes
+APX-113,572,Rajbari,4,মুকুন্দিয়া জমিদার বাড়ি,manual (chapter read),JB-DHK-110,Mukundia Zamindar Bari,yes
+APX-114,572,Rajbari,5,পাঁচুরিয়া জমিদার বাড়ি,manual (chapter read),JB-DHK-111,"Pachuria Zamindar Bari (Babu Bari), Goalanda",yes
+APX-115,572,Shariatpur,1,কার্তিকপুর জমিদার বাড়ি,exact,JB-DHK-091,Kartikpur Zamindar Bari (Chowdhury Bari),no
+APX-116,572,Shariatpur,2,রুদ্রকর জমিদার বাড়ি,exact,JB-DHK-092,Rudrakar Zamindar Bari and Math (Babu Bari),no
+APX-117,572,Shariatpur,3,ছয়গাঁও জমিদার বাড়ি,exact,JB-DHK-089,Choygaon Zamindar Bari,no
+APX-118,572,Shariatpur,4,হাঁটুরিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-119,572,Kishoreganj,1,ইটনা জমিদার বাড়ি,exact,JB-DHK-049,Itna Zamindar Bari,no
+APX-120,572,Kishoreganj,2,মসূয়া জমিদার বাড়ি,exact,JB-DHK-052,Masua Zamindar Bari (Satyajit Ray's ancestral home),no
+APX-121,572,Kishoreganj,3,হয়বতনগর দেওয়ান বাড়ি,exact,JB-DHK-048,Haibatnagar Zamindar Bari (Dewan Bari),no
+APX-122,572,Kishoreganj,4,বৌলাই জমিদার বাড়ি,not_in_our_data,,,
+APX-123,572,Kishoreganj,5,গাঙ্গাটিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-124,573,Kishoreganj,6,ধলা জমিদার বাড়ি,exact,JB-DHK-045,Dhola Zamindar Bari (Girish Chandra Pal's House),no
+APX-125,573,Kishoreganj,7,তালজাঙ্গা,exact,JB-DHK-057,Taljanga Zamindar Bari,no
+APX-126,573,Kishoreganj,8,জাওয়ার জমিদার বাড়ি,exact,JB-DHK-051,Jawar Zamindar Bari,no
+APX-127,573,Kishoreganj,9,অষ্টগ্রাম জমিদার বাড়ি,exact,JB-DHK-043,Austagram Zamindar Bari,no
+APX-128,573,Kishoreganj,10,নিকলী জমিদার বাড়ি,exact,JB-DHK-053,Nikli Zamindar Bari,no
+APX-129,573,Kishoreganj,11,সরারচর জমিদার বাড়ি,not_in_our_data,,,
+APX-130,573,Kishoreganj,12,পাকুন্দিয়া জমিদার বাড়ি,exact,JB-DHK-054,Pakundia Zamindar Bari,no
+APX-131,573,Kishoreganj,13,উড়িয়ন্দ জমিদার বাড়ি,not_in_our_data,,,
+APX-132,573,Kishoreganj,14,জঙ্গল বাড়ি,not_in_our_data,,,
+APX-133,573,Mymensingh,1,শশী লজ,exact,JB-MYM-013,Shashi Lodge,yes
+APX-134,573,Mymensingh,2,মুক্তাগাছা জমিদারবাড়ি,exact,JB-MYM-010,Muktagacha Zamindar Bari (Aat Ani Rajbari),yes
+APX-135,573,Mymensingh,3,আঠারবাড়ি জমিদারবাড়ি,exact,JB-MYM-007,Atharbari Zamindar Bari,yes
+APX-136,573,Mymensingh,4,গৌরীপুর জমিদার বাড়ি,manual (chapter read),JB-MYM-006; JB-MYM-014,"Anandakishore Zamindar Bari, Gouripur; Surendra Prasad Lahiri Zamindar Bari, Gouripur",yes
+APX-137,573,Mymensingh,5,রামগোপালপুর জমিদার বাড়ি,exact,JB-MYM-011,Ramgopalpur Zamindar Bari,yes
+APX-138,573,Mymensingh,6,বৈলর জমিদার বাড়ি,exact,JB-MYM-008,Bailor Zamindar Bari,yes
+APX-139,573,Mymensingh,7,সৈনবাড়ি,manual,JB-MYM-012,"Senbari Zamindar Bari, Kanihari",yes
+APX-140,573,Jamalpur,1,নিলাক্ষিয়া জমিদার বাড়ি,exact,JB-MYM-004,Nilakhia Zamindar Bari,yes
+APX-141,573,Netrokona,1,সুসং দুর্গাপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-142,573,Netrokona,2,নারায়ণ ডহর জমিদার বাড়ি,not_in_our_data,,,
+APX-143,573,Netrokona,3,বাঘবেড় জমিদারবাড়ী,exact,JB-MYM-015,Baghber Zamindar Bari,no
+APX-144,573,Netrokona,4,পূর্বধলা রাজবাড়ি,not_in_our_data,,,
+APX-145,573,Netrokona,5,কেন্দুয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-146,573,Netrokona,6,সিংহ জমিদার বাড়ি-১,not_in_our_data,,,
+APX-147,573,Netrokona,7,সিংহ জমিদারবাড়ি-২,not_in_our_data,,,
+APX-148,574,Sherpur,1,নয় আনি জমিদার বাড়ি,manual (chapter read),JB-MYM-018,"Nayani Zamindar Bari, Sherpur",yes
+APX-149,574,Sherpur,2,তিন আনি জমিদার বাড়ি,manual (chapter read),JB-MYM-020,"Tin Ani Zamindar Bari, Sherpur",yes
+APX-150,574,Sherpur,3,পৌনে তিন আনি জমিদার বাড়ি,manual (chapter read),JB-MYM-019,"Poune Tin Ani Zamindar Bari, Sherpur",yes
+APX-151,574,Sherpur,4,আড়াই আনি জমিদার বাড়ি (বড় তরফ),manual (chapter read),JB-MYM-021,"Arai Ani Zamindar Bari (Bara Taraf), Sherpur",yes
+APX-152,574,Sherpur,5,আড়াই আনি জমিদার বাড়ি (ছোট তরফ),manual (chapter read),JB-MYM-022,"Arai Ani Zamindar Bari (Chhoto Taraf), Sherpur",yes
+APX-153,574,Sherpur,6,দেড় আনি জমিদার বাড়ি,manual (chapter read),JB-MYM-023,"Dedh Ani Zamindar Bari, Sherpur",yes
+APX-154,574,Cumilla,1,জাহাপুর জমিদার বাড়ি,exact,JB-CTG-031,Jahapur Zamindar Bari,yes
+APX-155,574,Cumilla,2,কামাল্লা জমিদার বাড়ি,not_in_our_data,,,
+APX-156,574,Cumilla,3,বাঙ্গরা জমিদার বাড়ি,exact,JB-CTG-027,Bangra Zamindar Bari,yes
+APX-157,574,Cumilla,4,যাত্রাপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-158,574,Cumilla,5,ছালিয়াকান্দি জমিদার বাড়ি,not_in_our_data,,,
+APX-159,574,Cumilla,6,মজিদপুর জমিদার বাড়ি,exact,JB-CTG-032,Majidpur Zamindar Bari,yes
+APX-160,574,Cumilla,7,লাকসাম জমিদার বাড়ি,manual,JB-CTG-033,Nawab Faizunnesa Zamindar Bari,yes
+APX-161,574,Cumilla,8,মৈশান বাড়ি,manual,JB-CTG-026,Atul Krishna Roy Chowdhury Zamindar Bari (Maishan Bari),yes
+APX-162,574,Cumilla,9,মহিচাইল জমিদার বাড়ি,exact,JB-CTG-028,Bhairab Chandra Singha Zamindar Bari,yes
+APX-163,574,Cumilla,10,গালিমপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-164,574,Cumilla,11,ভাউকসার জমিদার বাড়ি,not_in_our_data,,,
+APX-165,574,Cumilla,12,মুন্সীকান্দি জমিদার বাড়ি,not_in_our_data,,,
+APX-166,574,Cumilla,13,পূর্ব কাশিপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-167,574,Cumilla,14,বরদৈন জমিদার বাড়ি,exact,JB-CTG-029,"Bhairab Majumder Zamindar Bari, Barodain",yes
+APX-168,574,Cumilla,15,কাশিনগর জমিদার বাড়ি,not_in_our_data,,,
+APX-169,574,Cumilla,16,চান্দিশকরা জমিদার বাড়ি,exact,JB-CTG-030,Chandishkara Zamindar Bari,yes
+APX-170,574,Cumilla,17,গৌরীপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-171,574,Cumilla,18,ধানুয়াখোলা জমিদার বাড়ি,not_in_our_data,,,
+APX-172,575,Cumilla,19,উত্তর তেতাভূমি জমিদার বাড়ি,exact,JB-CTG-035,Uttar Tetabhumi Zamindar Bari,yes
+APX-173,575,Cumilla,20,মরিচা জমিদার বাড়ি,not_in_our_data,,,
+APX-174,575,Cumilla,21,সোয়াগাজী জমিদার বাড়ি,not_in_our_data,,,
+APX-175,575,Cumilla,22,কমলপুর জমিদার বাড়ি,exact,JB-CTG-034,Rakhal Raja Zamindar Bari,yes
+APX-176,575,Brahmanbaria,1,হরিপুর জমিদার বাড়ি,exact,JB-CTG-003,Haripur Zamindar Bari (Haripur Barabari),no
+APX-177,575,Brahmanbaria,2,গোকর্ণ নবাববাড়ি কমপ্লেক্স,name,JB-CTG-002,Gokarna Nawab Bari (Nawab Sir Syed Shamsul Huda Complex),no
+APX-178,575,Brahmanbaria,3,বুড়িশ্বর জমিদার বাড়ি,not_in_our_data,,,
+APX-179,575,Brahmanbaria,4,গুনিয়াউক জমিদার বাড়ি,not_in_our_data,,,
+APX-180,575,Brahmanbaria,5,চাতলপাড় জমিদার বাড়ি,not_in_our_data,,,
+APX-181,575,Brahmanbaria,6,কাইতলা জমিদার বাড়ি,exact,JB-CTG-004,Kaitola Zamindar Bari,no
+APX-182,575,Brahmanbaria,7,গোসাইপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-183,575,Brahmanbaria,8,শ্রীঘর জমিদার বাড়ি,not_in_our_data,,,
+APX-184,575,Brahmanbaria,9,রূপসদী জমিদার বাড়ি,exact,JB-CTG-005,Rupsadi Zamindar Bari,no
+APX-185,575,Brahmanbaria,10,উজানচর জমিদার বাড়ি,not_in_our_data,,,
+APX-186,575,Brahmanbaria,11,জয়নগর জমিদার বাড়ি,not_in_our_data,,,
+APX-187,575,Brahmanbaria,12,হরষপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-188,575,Brahmanbaria,13,কাঙ্গাল দেবনাথ জমিদার বাড়ি,not_in_our_data,,,
+APX-189,575,Brahmanbaria,14,তালশহর জমিদার বাড়ি,not_in_our_data,,,
+APX-190,575,Brahmanbaria,15,গঙ্গাসাগর রাজবাড়ি,not_in_our_data,,,
+APX-191,575,Chandpur,1,বলাখাল জমিদার বাড়ি,exact,JB-CTG-006,Balakhal Zamindar Bari,no
+APX-192,575,Chandpur,2,বড়কুল জমিদার বাড়ি,exact,JB-CTG-007,Barkul Zamindar Bari,no
+APX-193,575,Chandpur,3,মকিমাবাদ জমিদার বাড়ি,not_in_our_data,,,
+APX-194,575,Chandpur,4,বোয়ালিয়া জমিদার বাড়ি,exact,JB-CTG-008,Boalia Zamindar Bari,no
+APX-195,575,Chandpur,5,কাশিমপুর রাজবাড়ি,not_in_our_data,,,
+APX-196,575,Chandpur,6,রায়েরদিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-197,575,Chandpur,7,গজরা জমিদার বাড়ি,exact,JB-CTG-009,Gajra Zamindar Bari,no
+APX-198,575,Chandpur,8,লুধুয়া জমিদার বাড়ি,exact,JB-CTG-012,Ludhua Zamindar Bari,no
+APX-199,575,Chandpur,9,সাহাপুর রাজবাড়ি,exact,JB-CTG-014,Sahapur Rajbari,no
+APX-200,575,Chandpur,10,সুচিপাড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-201,575,Chandpur,11,রূপসা জমিদার বাড়ি,exact,JB-CTG-013,Rupsa Zamindar Bari,no
+APX-202,576,Chandpur,12,কড়ৈতলী জমিদার বাড়ি,exact,JB-CTG-010,Koraitoli Zamindar Bari,no
+APX-203,576,Chandpur,13,লোহাগড় জমিদার বাড়ি,exact,JB-CTG-011,Lohagarh Zamindar Bari,no
+APX-204,576,Chandpur,14,শোল্লা জমিদার বাড়ি,exact,JB-CTG-015,Sholla Zamindar Bari,no
+APX-205,576,Lakshmipur,1,দালালবাজার জমিদার বাড়ি,not_in_our_data,,,
+APX-206,576,Lakshmipur,2,কামানখোলা জমিদার বাড়ি,exact,JB-CTG-041,Kamankhola Zamindar Bari,no
+APX-207,576,Lakshmipur,3,ইসহাক জমিদার বাড়ি,exact,JB-CTG-040,Ishak Zamindar Bari,no
+APX-208,576,Lakshmipur,4,দত্তপাড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-209,576,Lakshmipur,5,শায়েস্তানগর জমিদার বাড়ি,not_in_our_data,,,
+APX-210,576,Lakshmipur,6,রায়পুর জমিদার বাড়ি,not_in_our_data,,,
+APX-211,576,Lakshmipur,7,করপাড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-212,576,Lakshmipur,8,কাঞ্চনপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-213,576,Lakshmipur,9,শ্রীরামপুর জমিদার বাড়ি,exact,JB-CTG-042,Sreerampur Rajbari,no
+APX-214,576,Noakhali,1,কল্যান্দি জমিদার বাড়ি,not_in_our_data,,,
+APX-215,576,Noakhali,2,চাটখিল রাজবাড়ি,not_in_our_data,,,
+APX-216,576,Noakhali,3,বারইপাড়া জমিদার বাড়ি,exact,JB-CTG-043,Baraipara Zamindar Bari (Lakshmichandra Majumdar's house),no
+APX-217,576,Noakhali,4,রুহিতখালি জমিদার বাড়ি,not_in_our_data,,,
+APX-218,576,Noakhali,5,জয়াগ জমিদার বাড়ি,exact,JB-CTG-044,Joyag Zamindar Bari (Gandhi Ashram),no
+APX-219,576,Noakhali,6,হাতিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-220,576,Feni,1,কালিদহ জমিদার বাড়ি,not_in_our_data,,,
+APX-221,576,Feni,2,বাঁশপাড়া জমিদার বাড়ি,name,JB-CTG-036,Banshpara Zamindar Bari and Sat Math,no
+APX-222,576,Feni,3,প্রতাপপুর জমিদার বাড়ি,exact,JB-CTG-037,Pratappur Zamindar Bari,no
+APX-223,576,Feni,4,পূর্ব চন্দ্রপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-224,576,Feni,5,সোনাগাজী জমিদার বাড়ি,not_in_our_data,,,
+APX-225,576,Khagrachhari,1,মং রাজবাড়ি,exact,JB-CTG-038,Mong Rajbari (Manikchhari Rajbari),no
+APX-226,577,Rangamati,1,চাকমা রাজবাড়ি,exact,JB-CTG-045,Chakma Rajbari (Rangamati),no
+APX-227,577,Bandarban,1,বোমাং রাজবাড়ি,exact,JB-CTG-001,Bohmong Rajbari,no
+APX-228,577,Chattogram,1,চন্দনপুরা জমিদার বাড়ি,exact,JB-CTG-019,Chandanpura Zamindar Bari (Zamindar Sajjalela's house),no
+APX-229,577,Chattogram,2,পাঁচলাইশ জমিদার বাড়ি,not_in_our_data,,,
+APX-230,577,Chattogram,3,বড় উঠান জমিদার বাড়ি,exact,JB-CTG-017,Boro Uthan Mia Bari (Deyang Pahar Zamindar Bari),no
+APX-231,577,Chattogram,4,পাঁচকড়ি জমিদার বাড়ি,not_in_our_data,,,
+APX-232,577,Chattogram,5,চৌধুরীহাট জমিদার বাড়ি,not_in_our_data,,,
+APX-233,577,Chattogram,6,নন্দীরহাট জমিদার বাড়ি,exact,JB-CTG-020,Nandirhat Zamindar Bari (Laxmicharan Saha Zamindar Bari),no
+APX-234,577,Chattogram,7,ডাবুয়া জমিদার বাড়ি-১,manual (chapter read),JB-CTG-023,"Ramdhan Dhar Zamindar Bari, Dabua",yes
+APX-235,577,Chattogram,8,ডাবুয়া জমিদার বাড়ি-২,manual (chapter read),JB-CTG-046,Bhairab Saodagar Bari (Dabua Zamindar Bari 2),yes
+APX-236,577,Chattogram,9,পরৈকোড়া জমিদার বাড়ি-১,exact,JB-CTG-022,Poraikora Zamindar Bari,no
+APX-237,577,Chattogram,10,পরৈকোড়া জমিদার বাড়ি-২,exact,JB-CTG-022,Poraikora Zamindar Bari,no
+APX-238,577,Chattogram,11,তৈলারদ্বীপ জমিদার বাড়ি,not_in_our_data,,,
+APX-239,577,Chattogram,12,ভূজপুর জমিদার বাড়ি,exact,JB-CTG-016,Bhujpur Kazi Bari (Bhujpur Zamindar Bari),no
+APX-240,577,Chattogram,13,চাকমা রাজবাড়ি,name,JB-CTG-018,"Chakma Rajbari, Rajanagar (Rangunia)",no
+APX-241,577,Chattogram,14,সারিকাইত জমিদার বাড়ি,not_in_our_data,,,
+APX-242,577,Chattogram,15,মঘাদিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-243,577,Chattogram,16,ছনুয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-244,577,Chattogram,17,পুঁইছড়ি জমিদার বাড়ি,not_in_our_data,,,
+APX-245,577,Chattogram,18,বড়ঘোনা জমিদার বাড়ি,not_in_our_data,,,
+APX-246,577,Chattogram,19,পদুয়ার জমিদার বাড়ি,not_in_our_data,,,
+APX-247,577,Cox's Bazar,1,গোরকঘাটা জমিদার বাড়ি,not_in_our_data,,,
+APX-248,577,Cox's Bazar,2,ইলিশিয়া জমিদার বাড়ি,exact,JB-CTG-024,Ilishia Zamindar Bari (Maqbulul Kader Chowdhury's house),no
+APX-249,577,Cox's Bazar,3,পেকুয়া জমিদার বাড়ি,exact,JB-CTG-025,Pekua Zamindar Bari (Alhaj Kabir Ahmad Chowdhury Zamindar Bari),no
+APX-250,578,Sylhet,1,জৈন্তা রাজবাড়ি,exact,JB-SYL-024,Jaintiapur Rajbari (Jaintia Royal Palace),no
+APX-251,578,Sylhet,2,রামপাশা জমিদার বাড়ি,exact,JB-SYL-027,Rampasha Zamindar Bari (Hason Raja's ancestral home),no
+APX-252,578,Sylhet,3,বিয়ানীবাজার রাজবাড়ি,not_in_our_data,,,
+APX-253,578,Moulvibazar,1,পৃথিমপাশা জমিদার বাড়ি,exact,JB-SYL-013,Prithimpassa Nawab Bari,no
+APX-254,578,Moulvibazar,2,পানিধার জমিদার বাড়ি,exact,JB-SYL-012,Panidhar Zamindar Bari (Purakayastha Bari),no
+APX-255,578,Moulvibazar,3,বনগাঁও জমিদার বাড়ি,not_in_our_data,,,
+APX-256,578,Habiganj,1,আলাপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-257,578,Habiganj,2,জগন্নাথপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-258,578,Habiganj,3,বহুলা জমিদারবাড়ি,exact,JB-SYL-003,Bahula Poddar Zamindar Bari,yes
+APX-259,578,Habiganj,4,হাতিরথান জমিদার বাড়ি,exact,JB-SYL-008,Radhanand Zamindar Bari,yes
+APX-260,578,Habiganj,5,পইল জমিদার বাড়ি,manual (chapter read),JB-SYL-006,Lamapoil Zamindar Bari,yes
+APX-261,578,Habiganj,6,জলসুখা জমিদার বাড়ি,exact,JB-SYL-005,Jalsukha Zamindar House Cluster,yes
+APX-262,578,Habiganj,7,সমীপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-263,578,Habiganj,8,মামুদপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-264,578,Habiganj,9,ছনাও জমিদারবাড়ি,not_in_our_data,,,
+APX-265,578,Habiganj,10,বানিয়াচং রাজবাড়ি,exact,JB-SYL-004,Baniachong Rajbari Ruins,yes
+APX-266,578,Habiganj,11,মহারত্নপাড়া জমিদার বাড়ি,exact,JB-SYL-007,Maharatna Bari,yes
+APX-267,578,Habiganj,12,সুজাতপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-268,578,Habiganj,13,আদাঐর জমিদার বাড়ি,exact,JB-SYL-001,Adair Zamindar Bari,yes
+APX-269,578,Habiganj,14,বাঘাসুরা জমিদার বাড়ি,exact,JB-SYL-002,Baghasura Zamindar Bari,yes
+APX-270,578,Habiganj,15,রাড়িশাল জমিদার বাড়ি,not_in_our_data,,,
+APX-271,578,Habiganj,16,তেঘরিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-272,579,Sunamganj,1,লক্ষণশ্রী জমিদার বাড়ি,exact,JB-SYL-017,"Hason Raja's House, Lakkhansree (Tegharia)",yes
+APX-273,579,Sunamganj,2,গৌরারং জমিদার বাড়ি,exact,JB-SYL-016,Gourarang Zamindar Bari,yes
+APX-274,579,Sunamganj,3,সুখাইড় জমিদার বাড়ি,exact,JB-SYL-022,Sukhair Zamindar Bari,yes
+APX-275,579,Sunamganj,4,জয়শ্রী জমিদারবাড়ি,not_in_our_data,,,
+APX-276,579,Sunamganj,5,পানাইল জমিদার বাড়ি,exact,JB-SYL-020,Panail Zamindar Bari,yes
+APX-277,579,Sunamganj,6,পাইলগাঁও জমিদারবাড়ি,exact,JB-SYL-019,Pailgaon Zamindar Bari,yes
+APX-278,579,Sunamganj,7,হাওলি রাজবাড়ি,exact,JB-SYL-018,Howli Zamindar Bari (Laur Rajbari),yes
+APX-279,579,Sunamganj,8,ছাতক জমিদার বাড়ি,not_in_our_data,,,
+APX-280,579,Sunamganj,9,ভাটিপাড়া জমিদার বাড়ি,exact,JB-SYL-015,Bhatipara Zamindar Bari,yes
+APX-281,579,Sunamganj,10,রাজাপুর জমিদার বাড়ি,exact,JB-SYL-021,Rajapur Zamindar Bari,yes
+APX-282,579,Khulna,1,ধামালিয়া জমিদার বাড়ি,exact,JB-KHL-025,Dhamalia Zamindar Bari,yes
+APX-283,579,Khulna,2,রুদাঘরা জমিদার বাড়ি,not_in_our_data,,,
+APX-284,579,Khulna,3,ভাণ্ডারপাড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-285,579,Khulna,4,আইচগাতী জমিদার বাড়ি,not_in_our_data,,,
+APX-286,579,Khulna,5,ঘাটভোগ জমিদার বাড়ি,not_in_our_data,,,
+APX-287,579,Khulna,6,কাটিপাড়া জমিদার বাড়ি,exact,JB-KHL-026,Katipara House of Madhusudan Dutt's Maternal Family,yes
+APX-288,579,Khulna,7,বাঁকা বাজার জমিদার বাড়ি,not_in_our_data,,,
+APX-289,579,Chuadanga,1,কাশিপুর জমিদার বাড়ি,exact,JB-KHL-010,Kashipur Zamindar Bari,yes
+APX-290,579,Chuadanga,2,কুমারী জমিদার বাড়ি,exact,JB-KHL-011,Kumari Saha Zamindar Bari,yes
+APX-291,579,Chuadanga,3,নাটুদহ জমিদার বাড়ি,not_in_our_data,,,
+APX-292,579,Jhenaidah,1,নলডাঙ্গা জমিদার বাড়ি,exact,JB-KHL-020,Naldanga Rajbari and Temples,yes
+APX-293,580,Jhenaidah,2,ঝিনাইদহ জমিদার বাড়ি,not_in_our_data,,,
+APX-294,580,Jhenaidah,3,সাধুহাটি জমিদার বাড়ি,not_in_our_data,,,
+APX-295,580,Jhenaidah,4,সলেমানপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-296,580,Jhenaidah,5,শৈলকূপা জমিদার বাড়ি,exact,JB-KHL-021,"Shailkupa Zamindar Bari (Shikdar Bari, Abaipur)",yes
+APX-297,580,Jhenaidah,6,কাচেরকোল জমিদার বাড়ি,not_in_our_data,,,
+APX-298,580,Jhenaidah,7,বকশীপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-299,580,Jhenaidah,8,সুন্দরপুর জমিদার বাড়ি,exact,JB-KHL-022,Sundarpur Zamindar Bari,yes
+APX-300,580,Jhenaidah,9,হরিণাকুণ্ডু জমিদার বাড়ি,exact,JB-KHL-018,Harinakunda Zamindar Bari,yes
+APX-301,580,Narail,1,নড়াইল জমিদার বাড়ি,exact,JB-KHL-042,Narail Zamindar Bari,yes
+APX-302,580,Narail,2,হাটবাড়িয়া,manual,JB-KHL-041,Hatbaria Zamindar Bari,yes
+APX-303,580,Narail,3,গোবরা জমিদার বাড়ি,not_in_our_data,,,
+APX-304,580,Narail,4,কুন্দশী জমিদার বাড়ি,not_in_our_data,,,
+APX-305,580,Narail,5,কৃষ্ণপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-306,580,Bagerhat,1,নওয়াপাড়া জমিদার বাড়ি,name,JB-KHL-007,Nawapara Ghosh Zamindar Bari,yes
+APX-307,580,Bagerhat,2,নলধা-মৌভোগ জমিদার বাড়ি,exact,JB-KHL-004,Khararia Zamindar Bari,yes
+APX-308,580,Bagerhat,3,নাগ জমিদার বাড়ি,not_in_our_data,,,
+APX-309,580,Bagerhat,4,ভাতছালা জমিদার বাড়ি,not_in_our_data,,,
+APX-310,580,Bagerhat,5,কাড়াপাড়া জমিদার বাড়ি,exact,JB-KHL-003,Karapara Zamindar Bari,yes
+APX-311,580,Bagerhat,6,দশানি জমিদার বাড়ি,exact,JB-KHL-002,Dashani Zamindar Bari,yes
+APX-312,580,Bagerhat,7,বাগেরহাট জমিদার বাড়ি,manual (chapter read),JB-KHL-052,Bagerhat Zamindar Bari (Kiran Chandra Das's house),yes
+APX-313,580,Bagerhat,8,বনগ্রাম রাজবাড়ি,exact,JB-KHL-001,Bongram Rajbari,yes
+APX-314,580,Bagerhat,9,মোরেলগঞ্জ জমিদার বাড়ি,name,JB-KHL-006,Morrelganj Kuthibari (Morrel family indigo house),yes
+APX-315,580,Bagerhat,10,মঘিয়া জমিদার বাড়ি,exact,JB-KHL-005,Maghia Zamindar Bari,yes
+APX-316,580,Bagerhat,11,রাঢ়ীপাড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-317,581,Kushtia,1,হোসেনাবাদ জমিদার বাড়ি,exact,JB-KHL-029,Hossenabad Rajbari,no
+APX-318,581,Kushtia,2,রিফাইতপুর জমিদার বাড়ি,exact,JB-KHL-030,Refayetpur Zamindar Bari,no
+APX-319,581,Kushtia,3,আমলা জমিদার বাড়ি,exact,JB-KHL-028,Bhagaban Chandra Saha Zamindar Bari,no
+APX-320,581,Kushtia,4,মিরপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-321,581,Kushtia,5,আলামপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-322,581,Kushtia,6,কুষ্টিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-323,581,Kushtia,7,নান্দিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-324,581,Kushtia,8,খোকসা জমিদার বাড়ি,not_in_our_data,,,
+APX-325,581,Kushtia,9,জানিপুর জমিদার বাড়ি,exact,JB-KHL-032,Zamindar Panchanan Saha's House,no
+APX-326,581,Kushtia,10,পরানখালী জমিদার বাড়ি,not_in_our_data,,,
+APX-327,581,Kushtia,11,খয়েরচারা জমিদার বাড়ি,not_in_our_data,,,
+APX-328,581,Magura,1,মহম্মদপুর রাজবাড়ি,exact,JB-KHL-036,"Raja Sitaram Ray's Palace-Fort, Mohammadpur",yes
+APX-329,581,Magura,2,শ্রীপুর জমিদার বাড়ি,exact,JB-KHL-038,Sreepur Zamindar Bari,yes
+APX-330,581,Magura,3,নাকোল জমিদার বাড়ি,exact,JB-KHL-035,Nakol Zamindar Bari,yes
+APX-331,581,Magura,4,কাদিরপাড়া জমিদার বাড়ি,exact,JB-KHL-034,Kadirpara Babu Zamindar Bari,yes
+APX-332,581,Magura,5,তালখড়ি জমিদার বাড়ি,not_in_our_data,,,
+APX-333,581,Magura,6,ছান্দড়া জমিদার বাড়ি,exact,JB-KHL-033,Chhandra Zamindar Bari,yes
+APX-334,581,Magura,7,হাজরাহাটি জমিদার বাড়ি,not_in_our_data,,,
+APX-335,581,Magura,8,রাউতড়া জমিদার বাড়ি,exact,JB-KHL-037,Rautara Zamindar Bari,yes
+APX-336,581,Jashore,1,চাঁচড়া রাজবাড়ি,exact,JB-KHL-013,Chanchra Rajbari and Shiva Temple,yes
+APX-337,581,Jashore,2,বিরামপুর জমিদার বাড়ি,exact,JB-KHL-012,Birampur Zamindar Bari,yes
+APX-338,582,Jashore,3,শ্রীধরপুর জমিদার বাড়ি,exact,JB-KHL-017,Sreedharpur Zamindar Bari,yes
+APX-339,582,Jashore,4,বাঘুটিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-340,582,Jashore,5,চৌগাছা জমিদার বাড়ি,not_in_our_data,,,
+APX-341,582,Satkhira,1,ধুমঘাট রাজবাড়ি,manual (chapter read),JB-KHL-046,Ishwaripur Rajbari (Pratapaditya's Palace Ruins),yes
+APX-342,582,Satkhira,2,নকিপুর জমিদার বাড়ি,exact,JB-KHL-049,Nakipur Zamindar Bari (Haricharan Roy Chowdhury's House),yes
+APX-343,582,Satkhira,3,ঈশ্বরীপুর জমিদার বাড়ি,manual (chapter read),JB-KHL-053,Ishwaripur Zamindar Bari (Kalikananda Chakraborty),yes
+APX-344,582,Satkhira,4,দেবহাটা জমিদার বাড়ি,exact,JB-KHL-044,Debhata Zamindar Bari,yes
+APX-345,582,Satkhira,5,লাবসা জমিদার বাড়ি,exact,JB-KHL-048,Labsa Zamindar Bari,yes
+APX-346,582,Satkhira,6,তেঁতুলিয়া জমিদার বাড়ি,manual (chapter read),JB-KHL-050,"Salam Manzil, Tetulia Zamindar Bari",yes
+APX-347,582,Satkhira,7,খলিশখালী জমিদার বাড়ি,not_in_our_data,,,
+APX-348,582,Satkhira,8,বসন্তপুর জমিদার বাড়ি,exact,JB-KHL-043,Basantapur Zamindar Bari,yes
+APX-349,582,Barishal,1,লাকুটিয়া জমিদার বাড়ি,exact,JB-BSL-008,Lakutia Zamindar Bari,yes
+APX-350,582,Barishal,2,বাকলা-চন্দ্রদ্বীপ রাজবাড়ি,manual (chapter read),JB-BSL-033,Bakla-Chandradwip Rajbari (ruins),yes
+APX-351,582,Barishal,3,মাধবপাশা জমিদার বাড়ি,manual (chapter read),JB-BSL-009,Madhabpasha Zamindar Bari,yes
+APX-352,582,Barishal,4,গৌরনদী জমিদার বাড়ি,exact,JB-BSL-006,"Gournadi Zamindar Bari (Mohon Lal Saha's house, Ashokathi)",yes
+APX-353,582,Barishal,5,কলসকাঠী জমিদার বাড়ি,exact,JB-BSL-007,Kalsakathi Zamindar Bari,yes
+APX-354,582,Barishal,6,শ্যামপুর জমিদার বাড়ি,exact,JB-BSL-010,Shyampur Zamindar Bari,yes
+APX-355,582,Barishal,7,উলানিয়া জমিদার বাড়ি,exact,JB-BSL-011,Ulania Zamindar Bari,yes
+APX-356,582,Barishal,8,চরহোগলা জমিদারবাড়ি,exact,JB-BSL-003,Charhogla Zamindar Bari,yes
+APX-357,582,Barishal,9,চাখার জমিদার বাড়ি,not_in_our_data,,,
+APX-358,582,Barishal,10,সাতআনি জমিদার বাড়ি,not_in_our_data,,,
+APX-359,582,Patuakhali,1,শ্রীরামপুর জমিদার বাড়ি,exact,JB-BSL-026,Sreerampur Zamindar Bari (Mia Bari),yes
+APX-360,582,Patuakhali,2,বাউফল জমিদার বাড়ি,exact,JB-BSL-025,"Mahendra and Rajendra Roy Chowdhury Kachari Bari, Bauphal",yes
+APX-361,583,Patuakhali,3,কাছিপাড়া জমিদার বাড়ি,exact,JB-BSL-027,West Kachipara Zamindar Bari,yes
+APX-362,583,Patuakhali,4,মদনপুরা জমিদার বাড়ি,exact,JB-BSL-024,Madanpura Sikder Bari,yes
+APX-363,583,Patuakhali,5,কেশবপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-364,583,Patuakhali,6,রানীপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-365,583,Bhola,1,বোরহানউদ্দিন জমিদার বাড়ি,name,JB-BSL-013,Borhanuddin Chowdhury Zamindar Bari,yes
+APX-366,583,Bhola,2,বড় মানিকা জমিদারবাড়ি,not_in_our_data,,,
+APX-367,583,Bhola,3,কুতবা জমিদার বাড়ি,manual,JB-BSL-016,Haydar Ali Zamindar Bari (Haydar Mahal),yes
+APX-368,583,Pirojpur,1,রায়েরকাঠি জমিদারবাড়ি,exact,JB-BSL-030,Rayerkathi Zamindar Bari,no
+APX-369,583,Pirojpur,2,কুলু জমিদারবাড়ি,exact,JB-BSL-028,Kulu Zamindar Bari,no
+APX-370,583,Pirojpur,3,সাপলেজা জমিদারবাড়ি,exact,JB-BSL-031,Sapleja Kuthibari,no
+APX-371,583,Pirojpur,4,জলাবাড়ি জমিদারবাড়ি,not_in_our_data,,,
+APX-372,583,Pirojpur,5,পাড়েরহাট জমিদারবাড়ি,exact,JB-BSL-029,Paderhat Zamindar Bari,no
+APX-373,583,Barguna,1,কাকচিড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-374,583,Jhalokati,1,ঘোষাল রাজবাড়ি,exact,JB-BSL-018,Ghoshal Rajbari,no
+APX-375,583,Jhalokati,2,কীর্তিপাশা জমিদারবাড়ি,exact,JB-BSL-019,Kirtipasha Zamindar Bari,no
+APX-376,583,Jhalokati,3,কেওড়া জমিদার বাড়ি,not_in_our_data,,,
+APX-377,583,Jhalokati,4,সিদ্ধকাঠি জমিদারবাড়ি,exact,JB-BSL-022,Siddhakathi Zamindar Bari,no
+APX-378,583,Jhalokati,5,কুলকাঠী জমিদারবাড়ি,not_in_our_data,,,
+APX-379,583,Jhalokati,6,সাতুরিয়া জমিদারবাড়ি,exact,JB-BSL-021,Saturia Zamindar Bari,no
+APX-380,583,Jhalokati,7,নৈকাঠি জমিদারবাড়ি,exact,JB-BSL-020,Naikathi Zamindar Bari,no
+APX-381,584,Chapainawabganj,1,কানসাট জমিদার বাড়ি,exact,JB-RAJ-010,Kansat Zamindar Bari,yes
+APX-382,584,Chapainawabganj,2,শিবগঞ্জ জমিদার বাড়ি,manual (chapter read),JB-RAJ-011,Shibganj Zamindar Bari (Kedar Babu's house),yes
+APX-383,584,Chapainawabganj,3,পুকুরিয়া জমিদার বাড়ি,exact,JB-RAJ-013,Pukhuria Zamindar Bari (ruins),yes
+APX-384,584,Chapainawabganj,4,রামচন্দ্রপুর জমিদার বাড়ি,exact,JB-RAJ-014,Ramchandrapur Zamindar Bari (Ila Mitra's in-laws' house),yes
+APX-385,584,Chapainawabganj,5,কলিহার জমিদার বাড়ি,exact,JB-RAJ-009,Kalihar Zamindar Bari,yes
+APX-386,584,Chapainawabganj,6,মল্লিকপুর জমিদার বাড়ি,exact,JB-RAJ-012,Mallikpur Zamindar Bari,yes
+APX-387,584,Joypurhat,1,লকমা জমিদার বাড়ি,exact,JB-RAJ-017,Lokma Rajbari,yes
+APX-388,584,Joypurhat,2,বেল আমলা জমিদার বাড়ি,exact,JB-RAJ-015,Bel Amla Barashibalay Temple,yes
+APX-389,584,Naogaon,1,বলিহার জমিদার বাড়ি,exact,JB-RAJ-018,Balihar Rajbari,yes
+APX-390,584,Naogaon,2,দুবলহাটি রাজবাড়ি,exact,JB-RAJ-020,Dubalhati Rajbari,yes
+APX-391,584,Naogaon,3,শৈলগাছী জমিদার বাড়ি,exact,JB-RAJ-024,Shoilgachhi Zamindar Bari,yes
+APX-392,584,Naogaon,4,মহাদেবপুর জমিদার বাড়ি,exact,JB-RAJ-022,Mahadebpur Rajbari,yes
+APX-393,584,Naogaon,5,ভবানীপুর জমিদার বাড়ি,exact,JB-RAJ-019,Bhabanipur Zamindar Bari,yes
+APX-394,584,Naogaon,6,কাশিমপুর জমিদার বাড়ি,exact,JB-RAJ-021,Kashimpur Rajbari,yes
+APX-395,584,Natore,1,দিঘাপতিয়া রাজবাড়ি (উত্তরা গণভবন),exact,JB-RAJ-032,Uttara Gonobhaban (Dighapatia Rajbari),yes
+APX-396,584,Natore,2,নাটোর রাজবাড়ি (রানী ভবানী রাজবাড়ি),exact,JB-RAJ-031,Natore Rajbari (Rani Bhabani Rajbari),yes
+APX-397,584,Natore,3,ধরাইল জমিদার বাড়ি,exact,JB-RAJ-027,Dharail Zamindar Bari,yes
+APX-398,584,Natore,4,দয়ারামপুর রাজবাড়ি,exact,JB-RAJ-026,Dayarampur Rajbari,yes
+APX-399,584,Natore,5,গালিমপুর জমিদার বাড়ি,manual (chapter read),JB-RAJ-028,Galimpur Zamindar Bari (Girish Roy's house),yes
+APX-400,585,Natore,6,চৌগ্রাম জমিদার বাড়ি,exact,JB-RAJ-025,Chaugram Zamindar Bari,yes
+APX-401,585,Natore,7,করচমাড়িয়া জমিদার বাড়ি,exact,JB-RAJ-030,Karachmaria Zamindar Bari (Jadunath Sarkar's ancestral home),yes
+APX-402,585,Natore,8,জোয়াড়ী জমিদার বাড়ি,exact,JB-RAJ-029,Joari Zamindar Bari,yes
+APX-403,585,Pabna,1,দুলাই জমিদার বাড়ি,exact,JB-RAJ-036,Dulai Zamindar Bari (Azim Chowdhury Zamindar Bari),no
+APX-404,585,Pabna,2,তাঁতিবন্দ জমিদার বাড়ি,exact,JB-RAJ-046,Tantibanda Zamindar Bari,no
+APX-405,585,Pabna,3,হেমরাজপুর জমিদার বাড়ি,exact,JB-RAJ-039,Hemrajpur Zamindar Bari,no
+APX-406,585,Pabna,4,বনওয়ারীনগর জমিদার বাড়ি,exact,JB-RAJ-033,Banwarinagar Rajbari (Faridpur Rajbari),no
+APX-407,585,Pabna,5,শিতলাই জমিদার বাড়ি,manual,JB-RAJ-044,Shitlai Zamindar Bari (Shitlai Palace),no
+APX-408,585,Pabna,6,হরিপুর জমিদার বাড়ি,exact,JB-RAJ-037,Haripur Zamindar Bari (Pramatha Chowdhury's ancestral home),no
+APX-409,585,Pabna,7,পার্শ্বডাঙ্গা জমিদার বাড়ি,exact,JB-RAJ-042,Parshadanga Zamindar Bari,no
+APX-410,585,Pabna,8,চাঁদভা জমিদার বাড়ি,exact,JB-RAJ-034,Chandbha Zamindar Bari,no
+APX-411,585,Pabna,9,গোড়রী জমিদার বাড়ি,not_in_our_data,,,
+APX-412,585,Pabna,10,করমজা জমিদার বাড়ি,exact,JB-RAJ-041,Koromja Zamindar Bari,no
+APX-413,585,Pabna,11,ক্ষেতুপাড়া জমিদার বাড়ি,exact,JB-RAJ-040,Khetupara Zamindar Bari,no
+APX-414,585,Pabna,12,তলট জমিদার বাড়ি,exact,JB-RAJ-045,Talat Zamindar Bari,no
+APX-415,585,Pabna,13,হাঁটুরিয়া জমিদার বাড়ি,exact,JB-RAJ-038,Haturia Zamindar Bari (village of 13 zamindars),no
+APX-416,585,Pabna,14,সাদুল্লাপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-417,585,Pabna,15,পয়দা জমিদার বাড়ি,not_in_our_data,,,
+APX-418,585,Pabna,16,দোগাছী জমিদার বাড়ি,exact,JB-RAJ-035,Dogachhi Zamindar Bari (Rashik Lal Saha Jamidar Bari),no
+APX-419,585,Pabna,17,শালগাড়িয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-420,585,Bogura,1,হরিণা জমিদার বাড়ি,exact,JB-RAJ-004,Harina Zamindar Bari,yes
+APX-421,585,Bogura,2,গুনাহার জমিদার বাড়ি,exact,JB-RAJ-003,Gunahar Zamindar Bari,yes
+APX-422,585,Bogura,3,সীমাবাড়ি,exact,JB-RAJ-008,Simabari Zamindar Bari,yes
+APX-423,585,Bogura,4,কাহালু জমিদার বাড়ি,exact,JB-RAJ-005,Kahaloo Zamindar Bari,yes
+APX-424,585,Bogura,5,মুরইল জমিদার বাড়ি,exact,JB-RAJ-007,Murail Zamindar Bari,yes
+APX-425,585,Bogura,6,ধুনট জমিদার বাড়ি,not_in_our_data,,,
+APX-426,585,Bogura,7,মাদলা জমিদার বাড়ি,exact,JB-RAJ-006,Madla Zamindar Bari,yes
+APX-427,586,Rajshahi,1,পুঠিয়া জমিদার বাড়ি,exact,JB-RAJ-053,Puthia Rajbari,yes
+APX-428,586,Rajshahi,2,গোয়ালকান্দি জমিদার বাড়ি,exact,JB-RAJ-049,Goalkandi Zamindar Bari,yes
+APX-429,586,Rajshahi,3,বীরকুৎসা জমিদার বাড়ি,exact,JB-RAJ-048,Birkutsa Zamindar Bari (Hazarduari),yes
+APX-430,586,Rajshahi,4,তাহিরপুর রাজবাড়ি,exact,JB-RAJ-054,Tahirpur Rajbari,yes
+APX-431,586,Rajshahi,5,মচমইল রাজবাড়ি,exact,JB-RAJ-052,Machmoil Rajbari,yes
+APX-432,586,Rajshahi,6,কাচাড়ী কোয়ালিপাড়া রাজবাড়ি,not_in_our_data,,,
+APX-433,586,Rajshahi,7,তালন্দ জমিদার বাড়ি,exact,JB-RAJ-055,Talando Zamindar Bari,yes
+APX-434,586,Rajshahi,8,তামলী জমিদার বাড়ি,exact,JB-RAJ-056,Tamli Zamindar Bari (Tamli Rajar Bari),yes
+APX-435,586,Sirajganj,1,পোতাজিয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-436,586,Sirajganj,2,রাউতারা জমিদার বাড়ি,exact,JB-RAJ-066,Rautara Zamindar Bari,yes
+APX-437,586,Sirajganj,3,পারকোলা জমিদার বাড়ি,exact,JB-RAJ-064,Parkola Zamindar Bari,yes
+APX-438,586,Sirajganj,4,পোরজনা জমিদার বাড়ি,exact,JB-RAJ-065,Porjona Zamindar Bari,yes
+APX-439,586,Sirajganj,5,মকিমপুর জমিদার বাড়ি,exact,JB-RAJ-063,Makimpur Zamindar Bari,yes
+APX-440,586,Sirajganj,6,ধুবিল কাটার মহল জমিদার বাড়ি,exact,JB-RAJ-060,Dhubil Katar Mahal Zamindar Bari,yes
+APX-441,586,Sirajganj,7,আটঘড়িয়া জমিদার বাড়ি,manual,JB-RAJ-057,Atgharia Zamindar Bari (Dhangara),yes
+APX-442,586,Sirajganj,8,সান্ন্যাল জমিদার বাড়ি,manual,JB-RAJ-068,"Sanyal Zamindar Bari (Dhangara, Raiganj)",yes
+APX-443,586,Sirajganj,9,ভাদুড়ী জমিদার বাড়ি,manual (chapter read),JB-RAJ-072,"Bhaduri Zamindar Bari, Dhangara",yes
+APX-444,586,Sirajganj,10,সেনভাঙ্গা জমিদার বাড়ি,not_in_our_data,,,
+APX-445,586,Sirajganj,11,বাগবাটি জমিদার বাড়ি,exact,JB-RAJ-058,Bagbati Zamindar Bari,yes
+APX-446,586,Sirajganj,12,তাড়াশ জমিদার বাড়ি,exact,JB-RAJ-070,Tarash Zamindar Bari,yes
+APX-447,586,Kurigram,1,নাওডাঙ্গা জমিদার বাড়ি,exact,JB-RNG-018,Naodanga Zamindar Bari,yes
+APX-448,586,Kurigram,2,ভিতরবন্দ জমিদার বাড়ি,exact,JB-RNG-014,Bhitarband Zamindar Bari,yes
+APX-449,586,Kurigram,3,বাহারবন্দ জমিদার বাড়ি,exact,JB-RNG-013,"Baharband Pargana Seat (Chandi and Dol Mancha temples), Dhamshreni",yes
+APX-450,587,Kurigram,4,ধরণীবাড়ি,exact,JB-RNG-020,Ulipur Munshibari (Dharanibari Zamindar Bari),yes
+APX-451,587,Kurigram,5,পাঙ্গা জমিদার বাড়ি,exact,JB-RNG-019,Panga Rajbari (Panga Zamindar Bari),yes
+APX-452,587,Kurigram,6,ঘড়িয়ালডাঙ্গা জমিদার বাড়ি,exact,JB-RNG-016,Gharialdanga Zamindar Bari (Raj Mandir),yes
+APX-453,587,Kurigram,7,জয়মনিরহাট জমিদার বাড়ি,exact,JB-RNG-017,Joymonirhat Zamindar Bari,yes
+APX-454,587,Kurigram,8,ঈদগাহ পাড়া জমিদার বাড়ি,exact,JB-RNG-015,Bhutan Sorkar Zamindar Bari (Eidgah Para),yes
+APX-455,587,Gaibandha,1,নলডাঙ্গা জমিদার বাড়ি,exact,JB-RNG-010,Naldanga Zamindar Bari,yes
+APX-456,587,Gaibandha,2,কামারপাড়া জমিদার বাড়ি,name,JB-RNG-009,Kamarpara Pyarimadhab Jotdar Bari,yes
+APX-457,587,Gaibandha,3,বামনডাঙ্গা জমিদার বাড়ি,exact,JB-RNG-006,Bamandanga Zamindar Bari,yes
+APX-458,587,Gaibandha,4,রামজীবন জোতদার বাড়ি,exact,JB-RNG-012,Ramjiban Jotdar Bari,yes
+APX-459,587,Gaibandha,5,ধর্মপুর জমিদার বাড়ি,not_in_our_data,,,
+APX-460,587,Gaibandha,6,বর্ধনকুঠি জমিদার বাড়ি,exact,JB-RNG-007,Bardhankuthi Zamindar Bari,yes
+APX-461,587,Gaibandha,7,হাট ভরতখালী জোতদার বাড়ি,exact,JB-RNG-008,Hat Bharatkhali Jotdar Bari,yes
+APX-462,587,Thakurgaon,1,জামালপুর জমিদার বাড়ি,exact,JB-RNG-046,Jamalpur Zamindar Bari Jame Mosque,yes
+APX-463,587,Thakurgaon,2,ঢোলারহাট জমিদার বাড়ি,exact,JB-RNG-043,Dholarhat Zamindar Bari (Gourlal Roy's Shiva temple),yes
+APX-464,587,Thakurgaon,3,জগদল জমিদার বাড়ি,exact,JB-RNG-045,Jagdal Rajbari,yes
+APX-465,587,Thakurgaon,4,রানীশংকৈল জমিদার বাড়ি,exact,JB-RNG-047,Raja Tonkanath's Rajbari,yes
+APX-466,587,Thakurgaon,5,হরিপুর জমিদার বাড়ি,exact,JB-RNG-044,Haripur Rajbari,yes
+APX-467,587,Thakurgaon,6,চাড়ল জমিদার বাড়ি,manual,JB-RNG-042,Charol Zamindar Bari (Bhabani Babu's house),yes
+APX-468,587,Dinajpur,1,দিনাজপুর রাজবাড়ি,exact,JB-RNG-001,Dinajpur Rajbari,no
+APX-469,587,Dinajpur,2,ঘুঘুডাঙ্গা জমিদার বাড়ি,exact,JB-RNG-002,Ghughudanga Zamindar Bari,no
+APX-470,587,Dinajpur,3,জয়গঞ্জ জমিদার বাড়ি,exact,JB-RNG-004,Joyganj Zamindar Bari,no
+APX-471,587,Dinajpur,4,রতনপুর জমিদার বাড়ি,exact,JB-RNG-005,Ratanpur Zamindar Bari,no
+APX-472,587,Dinajpur,5,হাবড়া জমিদার বাড়ি,exact,JB-RNG-003,Habra Zamindar Bari (Rani Rasmoni's Kachari),no
+APX-473,588,Panchagarh,1,কোচবিহার মহারাজার ট্রেজারী,name,JB-RNG-027,"Cooch Behar Maharaja's Treasury (Kachari), Debiganj",yes
+APX-474,588,Panchagarh,2,সোনাহার জমিদার বাড়ি,exact,JB-RNG-028,Sonahar Zamindar Bari,yes
+APX-475,588,Panchagarh,3,আলোয়াখোয়া জমিদার বাড়ি,not_in_our_data,,,
+APX-476,588,Panchagarh,4,আটোয়ারী জমিদার বাড়ি,exact,JB-RNG-026,"Atwari Zamindar Bari (Bhabani Prasad Chowdhury's Kali temple, Toria)",yes
+APX-477,588,Rangpur,1,তাজহাট জমিদার বাড়ি,exact,JB-RNG-040,Tajhat Palace (Tajhat Zamindar Bari),no
+APX-478,588,Rangpur,2,ডিমলা জমিদার বাড়ি,exact,JB-RNG-030,"Dimla Rajbari (Dimla Raj town house, Rangpur)",no
+APX-479,588,Rangpur,3,দেওয়ানবাড়ি,exact,JB-RNG-029,Dewanbari Zamindar Bari (Phanibhushan Majumdar's house),no
+APX-480,588,Rangpur,4,টেপা পরগণার জমিদার বাড়ি,exact,JB-RNG-041,Tepa Zamindar Bari (Tepa Pargana),no
+APX-481,588,Rangpur,5,পায়রাবন্দ জমিদার বাড়ি,exact,JB-RNG-037,Pairaband Zamindar Bari (Begum Rokeya's ancestral home),no
+APX-482,588,Rangpur,6,মন্থনা জমিদার বাড়ি,exact,JB-RNG-036,Manthana Zamindar Bari (Pirgacha Rajbari),no
+APX-483,588,Rangpur,7,ইটাকুমারী জমিদার বাড়ি,exact,JB-RNG-033,Itakumari Zamindar Bari (Raja Shibchandra's Rajbari),no
+APX-484,588,Rangpur,8,রায়পুর জমিদার বাড়ি,exact,JB-RNG-038,Raypur Zamindar Bari,no
+APX-485,588,Rangpur,9,কাবিলপুর জমিদার বাড়ি,exact,JB-RNG-034,Kabilpur Zamindar Kachari (Sourendra Guha Roy's kachari),no
+APX-486,588,Rangpur,10,শ্যামগঞ্জ জমিদার বাড়ি,exact,JB-RNG-039,Shyamganj Zamindar Bari,no
+APX-487,588,Rangpur,11,গোপালপুর জমিদার বাড়ি,exact,JB-RNG-032,Gopalpur Zamindar Bari,no
+APX-488,588,Rangpur,12,মহিপুর জমিদার বাড়ি,exact,JB-RNG-035,"Mahipur Zamindar Bari (Mahipur Kuthi, Babu Miyar Bari)",no
+APX-489,588,Rangpur,13,গজঘণ্টা জমিদার বাড়ি,exact,JB-RNG-031,Gajaghanta Zamindar Bari,no
+APX-490,588,Lalmonirhat,1,কাকিনা জমিদার বাড়ি,exact,JB-RNG-021,Kakina Zamindar Bari (Kakina Rajbari),yes
+APX-491,588,Lalmonirhat,2,তুষভাণ্ডার জমিদার বাড়ি,manual,JB-RNG-022,Tushbhandar Zamindar Bari,yes
