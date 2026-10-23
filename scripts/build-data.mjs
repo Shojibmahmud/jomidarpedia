@@ -20,8 +20,9 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { BUCKET, DIVISIONS, CONDITIONS, CONFIDENCE, COORD_PAIR, isMappable, latlon, list, srcIds, slugify } from './lib/validate.mjs';
 import { loadTables, validateTables, TABLES, rowKey } from './lib/structure.mjs';
-import { scanOutputs, coordinateLeaks, notesByCell, ZERO_OR_FREE } from './lib/checks.mjs';
-import { UNKNOWN, BARE_UNKNOWN, hoursKnown, suggestPlanStatus, PLAN_STATUS, parseClosedDays, routeMode, UNIT, parseLegs, matchVersions, tripTitle } from './lib/rules.mjs';
+import { scanOutputs, coordinateLeaks, notesByCell, strings, ZERO_OR_FREE } from './lib/checks.mjs';
+import { UNKNOWN, BARE_UNKNOWN, hoursKnown, suggestPlanStatus, PLAN_STATUS, parseClosedDays, routeMode, UNIT, parseLegs, matchVersions, tripTitle,
+  isPlaceholderEvent, eventYear, BD_COORD_TEXT } from './lib/rules.mjs';
 import { LINE } from './csv.mjs';
 
 const OUTPUT_DIRS = ['sites', 'trips'];
@@ -38,7 +39,7 @@ export function compiledAt(env, lastVerified, notices = []) {
   return lastVerified;
 }
 
-// Safety rules on the generated output, fatal in every mode: hidden pins carry no coordinates,
+// Safety rules on the generated output, fatal in every mode: hidden pins carry no coordinates (in a URL or in text),
 // place stops have coordinates only with sources, only Ready images appear, and a known fee or
 // budget amount is always a real price.
 export function safetyChecks({ sites, readyImageIds, records, trips, credits }) {
@@ -48,6 +49,7 @@ export function safetyChecks({ sites, readyImageIds, records, trips, credits }) 
   const hidden = id => !siteById.has(id) || !isMappable(siteById.get(id));
   for (const r of records) if (hidden(r.id)) {
     coordinateLeaks(`sites/${r.id}.json`, r, []).forEach(gate);
+    for (const [path, s] of strings(r)) if (BD_COORD_TEXT.test(s)) gate(`sites/${r.id}.json ${path}: hidden site's text carries coordinates`);
     if (r.location.latlon) gate(`sites/${r.id}.json: hidden site has location.latlon`);
   }
   for (const t of trips) for (const st of t.stops) {
@@ -210,7 +212,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
   // A hidden site's map link must not carry coordinates (no guessed pin); search by name instead.
   const nameSearch = s => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.name_en}, ${s.district}`)}`;
 
-  const editorialPlan = [], editorialClosed = [], bnMissing = [];
+  const editorialPlan = [], editorialClosed = [], bnMissing = [], placeholderEvents = [], reversedYears = [];
   const cell = (table, row, column, outs) => ({ table, key: rowKey(table, row), column, line: row[LINE], value: row[column], outputs: outs });
 
   // ---------------------------------------------------------------- sites/<id>.json
@@ -245,10 +247,15 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       return route;
     }).sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'primary' ? -1 : 1));
 
-    const history = (historyBySite.get(id) ?? []).map(e => {
-      const approx = e.date_approximate === 'TRUE' ? 'c. ' : '';
+    // Placeholder events are dropped and reversed year ranges shortened (spec 05 FR-51, FR-52); both are reported.
+    const history = (historyBySite.get(id) ?? []).filter(e => {
+      if (!isPlaceholderEvent(e.description)) return true;
+      placeholderEvents.push(e.event_id);
+      return false;
+    }).map(e => {
+      if (e.year_start && e.year_end && Number(e.year_end) < Number(e.year_start)) reversedYears.push(e.event_id);
       const year = e.year_start
-        ? approx + (e.year_end && e.year_end !== e.year_start ? `${e.year_start}–${e.year_end}` : e.year_start)
+        ? eventYear(e, e.date_approximate === 'TRUE')
         : e.date_text.length <= 30 && !UNKNOWN.test(e.date_text) ? e.date_text : '';
       return { year, type: e.event_type, text: e.description, status: e.verification_status, sources: srcIds(e.source_ids).map(x => refFor(x)).filter(Boolean) };
     });
@@ -288,18 +295,27 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       conflicts.push({ field: name, versions });
     }
 
+    // One entry per other site. A pair listed twice keeps the relation that is not combine_on_trip (FR-50).
     const related = [];
-    const seen = new Set();
+    const byOther = new Map();
     for (const r of T.site_relationships) {
       const other = r.site_id === id ? r.related_site_id : r.related_site_id === id ? r.site_id : null;
-      if (!other || seen.has(other)) continue;
+      if (!other) continue;
+      const prev = byOther.get(other);
+      if (prev) {
+        if (prev.relation === 'combine_on_trip' && r.relation_type !== 'combine_on_trip') Object.assign(prev, { relation: r.relation_type, note: r.note });
+        continue;
+      }
       const o = siteById.get(other);
-      seen.add(other);
       const item = { id: o.site_id, slug: o.dataset_slug, en: o.name_en, ...(o.name_bn && { bn: o.name_bn }), c: o.condition_category };
       if (num(o.travel_time_hours_from_dhaka) !== undefined) item.h = num(o.travel_time_hours_from_dhaka);
       if (firstThumb(other)) item.thumb = firstThumb(other);
+      item.relation = r.relation_type;
+      item.note = r.note;
+      byOther.set(other, item);
       related.push(item);
     }
+    for (const item of related) if (!item.note) delete item.note;
 
     const images = (imagesBySite.get(id) ?? []).map(imageRecord);
     // An outbound photo link when there is no open photo (O10). A hidden pin gets a name-only search.
@@ -328,7 +344,8 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       location: {
         ...(latlon(s) && { latlon: latlon(s) }),
         status: s.coordinates_status, flagged: s.map_display === 'show_flagged',
-        note: s.coordinates_note,
+        // A hidden pin's note often names nearby landmarks with their coordinates (spec 05 FR-53): left out.
+        ...(!hidden(s) && { note: s.coordinates_note }),
         googleMapsUrl: hidden(s) && COORD_PAIR.test(s.google_maps_url) ? nameSearch(s) : s.google_maps_url
       },
       summary: s.short_description,
@@ -567,7 +584,9 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       ...Object.entries(modeCount).sort(([a], [b]) => a.localeCompare(b)).map(([m, n]) => `${m}: ${n}`),
       `inferred from the description (label "Other / mixed"): ${modeInferred}`] },
     { title: 'Suggested plan_status (O11; only the editor\'s value is published)', lines: PLAN_STATUS.map(p => `${p} (${planSuggestions[p].length}): ${ids(planSuggestions[p])}`) },
-    { title: 'Sites without a Bangla name', lines: [ids(bnMissing)] }
+    { title: 'Sites without a Bangla name', lines: [ids(bnMissing)] },
+    { title: 'History events dropped as placeholders ("Not documented" only)', lines: [`${placeholderEvents.length}: ${ids(placeholderEvents)}`] },
+    { title: 'History events with year_end before year_start (shown as year_start)', lines: [`${reversedYears.length}: ${ids(reversedYears)}`] }
   );
 
   // ---------------------------------------------------------------- write

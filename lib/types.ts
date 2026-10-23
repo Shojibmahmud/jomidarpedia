@@ -39,6 +39,8 @@ export interface IndexSite {
 export type Maybe<T> = { known: true; value: T; note?: string } | { known: false; text: string };
 
 export type Relation = 'supports' | 'disputed_by' | 'reported_by';
+/** site_relationships.relation_type. Only combine_on_trip is a trip suggestion; the others are notes about identity. */
+export type SiteRelation = 'combine_on_trip' | 'same_name_different_site' | 'possible_duplicate' | 'possibly_part_of' | 'same_complex' | 'same_family_separate_site';
 /** A footnote on this page. relation: how the source relates to the claim, where a claim link says so. */
 export interface SourceRef { id: string; n: number; relation?: Relation }
 /** A Maybe with the sources of the fact claims for the field (empty when none has a source). */
@@ -65,7 +67,7 @@ export interface SiteRecord {
   name: { en: string; bn?: string; alt: string[] };
   bnMissing?: true;           // no Bangla name yet: show the English name with lang="en" (O13)
   place: { division: string; divisionBn: string; district: string; districtBn: string; upazila: string; upazilaBn: string; union?: string; unionBn?: string; locality?: string; localityBn?: string };
-  location: { latlon?: [number, number]; status: LocationStatus; flagged: boolean; note: string; googleMapsUrl: string };
+  location: { latlon?: [number, number]; status: LocationStatus; flagged: boolean; note?: string; googleMapsUrl: string }; // no note for a hidden pin (it may name coordinates)
   summary: string;            // short_description, public text only (build fails on internal notes)
   era: Fact; founder: Fact; style: Fact;
   condition: Condition; preservation: Fact;
@@ -78,13 +80,13 @@ export interface SiteRecord {
     date?: string;            // visitor_info.last_verified: "Visiting info checked …"
   };
   travel: { hours?: number; bucket: TravelBucket; dayTrip?: boolean; oneWayCost?: number; routes: Route[] };
-  history: { year: string; type: string; text: string; status: string; sources: SourceRef[] }[];
+  history: { year: string; type: string; text: string; status: string; sources: SourceRef[] }[]; // placeholder events dropped; [] → "No history recorded yet"
   features: Feature[];        // from features.csv only; [] → FeatureList shows "Not documented"
   legends: { text: string; evidence: 'local_oral_account' | 'unattributed_report' | 'legend_or_folklore'; attribution: string; note: string; sources: SourceRef[] }[];
   conflicts: Conflict[];
   images: ImageRecord[];      // Ready only. 'Needs review' and 'Permission required' never reach this file.
   externalPhotos?: { label: string; url: string }; // only without Ready images; a hidden pin gets a name-only search (O10)
-  related: { id: string; slug: string; en: string; bn?: string; c: Condition; h?: number; thumb?: string }[];
+  related: { id: string; slug: string; en: string; bn?: string; c: Condition; h?: number; thumb?: string; relation: SiteRelation; note?: string }[];
   itineraries: { id: string; title: string; duration: string }[];
   sources: { n: number; id: string; title: string; publisher: string; date?: string; url?: string }[];
   stillToConfirm: string[];   // from unverified_fields, as plain words
