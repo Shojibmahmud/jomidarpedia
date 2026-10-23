@@ -88,6 +88,10 @@ Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 202
 - **Routes.** `mode` is one of `bus`, `train`, `launch`, `ferry`, `car`, `air`, `boat`, `unknown`, `mixed`; `unknown` and `mixed` use neutral icons. `inferred: true` means the label was "Other / mixed" and the description named exactly one mode. `estimateDate` per route.
 - **Photos.** `images` holds Ready images only. Without one, `externalPhotos` links out: a hidden pin gets "Search for visitor photos", a Google Maps search on name and district only (O10).
 - **Names.** `name.bn` is optional; `bnMissing: true` when it is blank (O13).
+- **Location note.** `location.note` (`coordinates_note`) only for mappable sites. Hidden-pin notes often name nearby landmarks with their coordinates, so they are left out, and the build fails if any text field of a hidden-pin record holds a coordinate pair inside Bangladesh (spec 05 FR-53, FR-54).
+- **History.** Events whose description only says nothing is known ("Not documented.", "Unknown", or a founding event whose period is a bare unknown) are dropped; `[]` → "No history recorded yet". A `year_end` before `year_start` is shown as `year_start` alone. Both are listed in the data report (spec 05 FR-51, FR-52).
+- **Related sites.** `related[]` has one entry per other site, with `relation` (`site_relationships.relation_type`) and `note`. Only `combine_on_trip` entries are trip suggestions ("Combine with"); the others (`same_name_different_site`, `possible_duplicate`, `possibly_part_of`, `same_complex`, `same_family_separate_site`) are identity notes under the summary. A pair listed twice keeps the relation that is not `combine_on_trip` (spec 05 FR-50).
+- **Conflicts and open questions.** A conflict with two or more versions is a disagreement ("Sources disagree"); one with a single version is shown as an open question and not counted as a disagreement (spec 05 FR-34, FR-35).
 
 ### Itinerary (`data/build/trips/<id>.json`)
 - `title`: shortened only for `prefix (X) (Anchor)` titles; others are kept as written (I5).
@@ -112,6 +116,7 @@ Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 202
 | `visitor_info.closed_days` | `unknown`, `none`, or `;`-separated `sat`…`fri` | unknown; an editorial cell. Never derived from `weekly_closing_days`. |
 | `costs.fare_basis` | `shared`, `reserved` | omitted |
 | `costs.legs` | stop-order pairs, `1-2;2-4` | omitted |
+| `site_relationships.relation_type` | `combine_on_trip`, `same_name_different_site`, `possible_duplicate`, `possibly_part_of`, `same_complex`, `same_family_separate_site` | structural (required) |
 | `costs.unit` | a key of `UNIT` in `scripts/lib/rules.mjs` | required when `amount_bdt` is set (structural) |
 | `travel_routes.transport_mode` | a key of `MODE_LABEL` in `scripts/lib/rules.mjs` | an unlisted label is structural |
 | `sources.author`, `publisher`, `edition`, `isbn`, `verification_method` | text | omitted |

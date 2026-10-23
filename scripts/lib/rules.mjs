@@ -128,3 +128,24 @@ export function tripTitle(t) {
   const m = TWO_GROUP.exec(t);
   return m && m[1].trim() ? m[1].trim() : t;
 }
+
+// ---------------------------------------------------------------- history events (Phase 5, spec 05 FR-51, FR-52)
+// An event that says only that nothing is documented ("Not documented.", or a founding event whose period is a
+// bare unknown) is a placeholder: the build drops it, and the founder line on the page carries the founder.
+const BARE_PERIOD = String.raw`(?:not documented|unknown)(?:\s+in (?:the|any) sources? (?:checked|read|found))?\.*`;
+const PLACEHOLDER_EVENT = new RegExp(String.raw`^(?:${BARE_PERIOD}|founding / building period:\s*${BARE_PERIOD}\s*(?:founder or family:.*)?)$`, 'is');
+export const isPlaceholderEvent = description => PLACEHOLDER_EVENT.test((description || '').trim());
+// "1884", "1884–1890", "c. 1850". A year_end before year_start is a data slip: show year_start alone.
+export function eventYear({ year_start: start, year_end: end }, approximate) {
+  const prefix = approximate ? 'c. ' : '';
+  if (!end || end === start || Number(end) < Number(start)) return prefix + start;
+  return `${prefix}${start}–${end}`;
+}
+
+// ---------------------------------------------------------------- site relations (spec 05 FR-50)
+export const RELATIONS = ['combine_on_trip', 'same_name_different_site', 'possible_duplicate', 'possibly_part_of', 'same_complex', 'same_family_separate_site'];
+
+// ---------------------------------------------------------------- coordinates in text (spec 05 FR-54)
+// A latitude and longitude inside Bangladesh with 3 or more decimals, in any wording: "24.6988, 89.5135",
+// "24.6751489 88.3677796". Hidden pins may carry none of these in any field.
+export const BD_COORD_TEXT = /(?<![\d.])2[0-6]\.\d{3,}[\s,°NnEe]*(?:%2C)?[\s,]*(?:8[89]|9[0-2])\.\d{3,}(?![\d.])/;

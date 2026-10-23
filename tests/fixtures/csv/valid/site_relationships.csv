@@ -1,2 +1,2 @@
-relation_id,site_id,related_site_id
-RL-0001,JB-DHK-001,JB-DHK-002
+relation_id,site_id,related_site_id,relation_type,note
+RL-0001,JB-DHK-001,JB-DHK-002,combine_on_trip,Nearby; pairs well on one trip.

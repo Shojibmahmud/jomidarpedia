@@ -525,19 +525,21 @@ Required dependencies between phases 5 and 11:
 - [x] **4.3** Create a minimal `app/page.tsx`: the title, counts from `meta.json`, and links to 5 site pages.
 - [x] **4.4** Add a Playwright config that serves `out/` with the pinned `serve` on a fixed port, run by `webServer` in the config, and installs browsers with `npx playwright install --with-deps chromium`.
 - [x] **4.5** Add a smoke test: `/`, one site page and one ID redirect each show the expected `<h1>`, or arrive at the canonical URL.
-- [ ] **4.6** *(Owner action.)* Import the repository into Vercel.
+- [x] **4.6** *(Owner action.)* Import the repository into Vercel.
   - Settings: Node 24, build command `npm run build`, output directory `out`.
   - Turn on Deployment Protection for previews.
   - Production deploys stay **off**: either turn off the production branch or keep `main` failing release, as it does now.
   - **Verify:** the preview URL asks for authentication when opened in a private window.
 
-**Done 23 Oct 2026 (4.1–4.5); 4.6 is the owner's**, specified in `.claude/specs/04-Walking-skeleton.md` (approved 23 Oct 2026). Verified with 235 passing unit tests, typecheck, lint, `npm run build:local` (830 pages: 413 site pages, 413 ID redirects), 7 passing Playwright smoke tests, and `npm run build` exiting 1 on editorial problems only (0 structural errors). Changes from the task text:
+**Done 23 Oct 2026 (4.1–4.6)**, specified in `.claude/specs/04-Walking-skeleton.md` (approved 23 Oct 2026). Verified with 235 passing unit tests, typecheck, lint, `npm run build:local` (830 pages: 413 site pages, 413 ID redirects), 7 passing Playwright smoke tests, and `npm run build` exiting 1 on editorial problems only (0 structural errors). Changes from the task text:
 - **Home samples (4.3):** a fixed, reviewed list in `lib/home.ts`: Baliati, Elangi, JB-DHK-008 (unverified), Amirabad (approximate) and JB-RAJ-059 (no Bangla name).
 - **noindex:** every local and preview page is `noindex, nofollow` (`lib/site-url.ts`); the ID redirects are noindex in every mode.
 - **Canonical links** stay root-relative until `SITE_URL` is set (14.2).
 - **Condition labels:** `condition.*` strings added for 5.1; their Bangla is a draft (`needsReview`).
 - **Production:** stays off through the release gate alone; `main` remains the production branch, and no `vercel.json` is added.
 - **Smoke tests** run in the CI `check` job after `build:local` (`npm run e2e`, `@playwright/test` 1.64.1, `serve` 14.2.6, port 4173).
+- **Vercel (4.6):** project `jomidarpedia` on Hobby, Next.js preset (no overrides), Vercel Authentication on previews. Previews build from the `preview` branch (push `main` to it to refresh). The production build of `main` fails on the release gate as intended (0 structural errors). Checked on the preview on 23 Oct 2026: unauthenticated requests redirect to Vercel sign-in; signed in, Baliati shows both names, its summary and "Preserved"; pages carry `noindex, nofollow`; `/site/JB-DHK-064/` reaches the slug URL; home shows 413 / 299 / 1,136 and the 5 samples. CI `check` (with the smoke tests) passed on `ef6e3e1`.
+- **Open:** `engines` is `>=24`, so Vercel will move to a newer Node major automatically; pin `<27` if that matters before launch.
 
 **Acceptance criteria**
 - The preview shows Baliati (`JB-DHK-064`) from real data, in `preview` mode.
@@ -558,31 +560,31 @@ Required dependencies between phases 5 and 11:
 - `Site page · Elangi · desktop (sparse, beside Baliati)`
 - `Site page · Elangi · no photo, no pin`
 
-- [ ] **5.1** Build the badges `ConditionBadge`, `AccessBadge`, `DayTripBadge` and `LocationBadge`. `LocationBadge` covers verified, single source, approximate, **unverified** (O9) and no pin. Add a unit test for each label in both languages.
-- [ ] **5.2** Build `Unknown`, which renders a `Maybe` value.
-- [ ] **5.3** Build `LastChecked`. The server renders the date. A small client island adds "May be out of date" when the date is more than 12 months before **now**, so the warning doesn't go stale between builds. Test it with a fixed clock.
-- [ ] **5.4** Build `BilingualName` (with the `bnMissing` fallback), `Breadcrumb` and `RecordBanner`.
-- [ ] **5.5** Build `AtAGlance`, with per-fact sources from 2.3.
-- [ ] **5.6** Build `LocationPanel` in its five states. The approximate circle is labelled "display radius, not a measured area".
-- [ ] **5.7** Build `HistoryTimeline` with its empty state.
-- [ ] **5.8** Build `LegendBox`, separate from the timeline, with the attribution of each legend.
-- [ ] **5.9** Build `ConflictNote`, with sources per version and the "not matched" list (2.2).
-- [ ] **5.10** Build `FeatureList`: the features from 2.14, or "Not documented".
-- [ ] **5.11** Build `VisitingInfo`. It shows the private-house notice and per-field dates.
-- [ ] **5.12** Build `RouteSteps`, `RouteAccordion` and `CostTable`. These show neutral icons for unknown and mixed modes, and the unit, basis and date of each cost.
-- [ ] **5.13** Build `SuggestCorrection`.
+- [x] **5.1** Build the badges `ConditionBadge`, `AccessBadge`, `DayTripBadge` and `LocationBadge`. `LocationBadge` covers verified, single source, approximate, **unverified** (O9) and no pin. Add a unit test for each label in both languages.
+- [x] **5.2** Build `Unknown`, which renders a `Maybe` value.
+- [x] **5.3** Build `LastChecked`. The server renders the date. A small client island adds "May be out of date" when the date is more than 12 months before **now**, so the warning doesn't go stale between builds. Test it with a fixed clock.
+- [x] **5.4** Build `BilingualName` (with the `bnMissing` fallback), `Breadcrumb` and `RecordBanner`.
+- [x] **5.5** Build `AtAGlance`, with per-fact sources from 2.3.
+- [x] **5.6** Build `LocationPanel` in its five states. The approximate circle is labelled "display radius, not a measured area".
+- [x] **5.7** Build `HistoryTimeline` with its empty state.
+- [x] **5.8** Build `LegendBox`, separate from the timeline, with the attribution of each legend.
+- [x] **5.9** Build `ConflictNote`, with sources per version and the "not matched" list (2.2).
+- [x] **5.10** Build `FeatureList`: the features from 2.14, or "Not documented".
+- [x] **5.11** Build `VisitingInfo`. It shows the private-house notice and per-field dates.
+- [x] **5.12** Build `RouteSteps`, `RouteAccordion` and `CostTable`. These show neutral icons for unknown and mixed modes, and the unit, basis and date of each cost.
+- [x] **5.13** Build `SuggestCorrection`.
   - It links to the corrections repository's issue form (O1), pre-filled with the site ID, field and page URL.
   - The email link is shown only if O2 is set.
   - A "Share a photo" variant uses the same channel with a photo template. It is **not** an upload.
-- [ ] **5.14** Build `NoPhotoPanel` on `PlaceholderArt` (built in 3.8, `components/art/PlaceholderArt.tsx`). `NoPhotoPanel` includes the external link from 2.12 and the photo-contribution link from 5.13.
-- [ ] **5.15** Build `SectionNav` (a sticky table of contents and a mobile `<select>`), `StillToConfirm` and `CombineWith`.
-- [ ] **5.16** Build `ShareButton`: `navigator.share` when it is available, otherwise copy the link, with a polite live-region message for success or failure. Add a "Copy coordinates" button for mappable sites, using Latin digits.
-- [ ] **5.17** Build `Gallery` and `Lightbox`:
+- [x] **5.14** Build `NoPhotoPanel` on `PlaceholderArt` (built in 3.8, `components/art/PlaceholderArt.tsx`). `NoPhotoPanel` includes the external link from 2.12 and the photo-contribution link from 5.13.
+- [x] **5.15** Build `SectionNav` (a sticky table of contents and a mobile `<select>`), `StillToConfirm` and `CombineWith`.
+- [x] **5.16** Build `ShareButton`: `navigator.share` when it is available, otherwise copy the link, with a polite live-region message for success or failure. Add a "Copy coordinates" button for mappable sites, using Latin digits.
+- [x] **5.17** Build `Gallery` and `Lightbox`:
   - arrow keys, Esc, swipe, and buttons as the alternative to dragging;
   - focus trapped while open and restored on close;
   - the credit and source link **below** each image.
-- [ ] **5.18** Add a "Directions" link for mappable sites (an outbound map link built from the coordinates, opening in a new tab with a visible label). Hidden sites get no directions link.
-- [ ] **5.19** Add Playwright tests:
+- [x] **5.18** Add a "Directions" link for mappable sites (an outbound map link built from the coordinates, opening in a new tab with a visible label). Hidden sites get no directions link.
+- [x] **5.19** Add Playwright tests:
   - **Baliati** (full record);
   - **Elangi**, `JB-RAJ-002`: no photo, no pin, unknowns;
   - a **conflict-heavy** site;
@@ -595,6 +597,16 @@ Required dependencies between phases 5 and 11:
   - no fee renders as a price or as "free entry";
   - no coordinates appear in hidden-pin HTML;
   - every image has its credit.
+
+**Done 23 Oct 2026 (5.1–5.19), apart from the owner's visual review**, specified in `.claude/specs/05-Site-page.md` (approved 23 Oct 2026). Verified with 257 passing unit tests, typecheck, lint, `npm run build:local` (830 pages), and 47 passing Playwright tests: the 6 sites of 5.19, axe in light and dark, no horizontal scroll at 390 px, and every one of the 114 hidden-pin pages free of coordinates and directions links. Changes from the task text:
+- **No map in `LocationPanel` yet:** the five states are text (status, place lines, coordinates with Copy, Directions, Open in Google Maps). Phase 7 adds the mini map; the "display radius" label is already in place.
+- **Added from the boards:** the "Little is documented" banner and the "What we know so far" checklist for sparse records (3 or more of 7 basic facts unknown: 147 sites; `lib/site-page.ts`), identity notes under the summary, and the itineraries listed without links until Phase 9.
+- **Conflicts:** only conflicts with 2 or more versions are "Sources disagree" (201); the 781 one-version conflicts are open questions under Sources. Baliati's "Site area" is one of them (its versions sit in one text).
+- **Data build:** `related[]` carries `relation` and `note` (`site_relationships.relation_type` is now required), and "Combine with" lists `combine_on_trip` only. Placeholder history events ("Not documented", "Unknown") are dropped (173), and a `year_end` before `year_start` shows `year_start` (342); both are listed in the data report. Hidden pins lose `location.note`, and a new safety rule (fatal in every mode) fails the build when a hidden-pin record holds a coordinate pair in any text. One claim (JB-RAJ-014) had a museum's coordinates removed in `claims.csv`.
+- **Elangi:** the Dhunat/Chaukibari house has no site record, so no `same_name_different_site` row was added; Elangi's "must not be merged" note shows as its open question.
+- **Tools:** `@axe-core/playwright` 4.13.0; `npm run screenshots` writes Baliati and Elangi at 390 and 1440 px (and Baliati at 390 px dark) to `screenshots/` (gitignored).
+- **Bangla:** every new interface string is a draft (`needsReview`).
+- **Open:** the owner's visual review against the four boards (acceptance criterion 3).
 
 **Acceptance criteria**
 - The sampled sites show every state without blanks.

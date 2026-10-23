@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { HOME_SAMPLE_IDS } from '../lib/home';
+import { BD_COORD_TEXT } from '../scripts/lib/rules.mjs';
 import type { IndexSite, SiteRecord } from '../lib/types';
 
 const index: IndexSite[] = JSON.parse(readFileSync('public/data/index.json', 'utf8'));
@@ -66,11 +67,12 @@ test.describe('static export', () => {
     }
   });
 
-  test('no site page contains its own coordinates', () => {
-    for (const s of index.filter(s => s.ll)) {
+  // Phase 5 shows coordinates for mappable sites (spec 05 FR-19); a hidden pin's page carries none (R5).
+  test('no hidden-pin page contains coordinates or a directions link', () => {
+    for (const s of index.filter(s => !s.ll)) {
       const page = html(`/site/${s.i}/${s.s}/`);
-      expect(page, s.i).not.toContain(String(s.ll![0]));
-      expect(page, s.i).not.toContain(String(s.ll![1]));
+      expect(BD_COORD_TEXT.test(page), s.i).toBe(false);
+      expect(page, s.i).not.toContain('/maps/dir/');
     }
   });
 });
