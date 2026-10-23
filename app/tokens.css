@@ -97,6 +97,12 @@
   .badge { @apply inline-flex min-h-[26px] items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[13px] font-semibold; }
 }
 
+/* Dual-language text (lib/i18n.ts, components/T.tsx): every interface string is in the HTML in both
+   languages, and the boot script in app/layout.tsx sets <html data-lang> before first paint.
+   English shows whenever data-lang is not "bn", including with JavaScript off. */
+html:not([data-lang="bn"]) [data-l="bn"] { display: none !important; }
+html[data-lang="bn"] [data-l="en"] { display: none !important; }
+
 /* Print: the itinerary "Print or save as PDF" button calls window.print(). */
 @media print {
   @page { size: A4; margin: 15mm; }

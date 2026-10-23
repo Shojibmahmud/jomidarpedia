@@ -34,7 +34,7 @@ jobs:
       - run: test -f out/index.html
 
   # Release-mode build on main. Not blocking until Phase 12 clears the editorial problems
-  # (DEVELOPMENT_ROADMAP.md task 1.13); its report is kept as an artifact either way.
+  # (roadmap/DEVELOPMENT_ROADMAP.md task 1.13); its report is kept as an artifact either way.
   release:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest

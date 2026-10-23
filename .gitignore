@@ -11,3 +11,4 @@ data/reports/
 !.claude/skills/
 !.claude/specs/
 *.tsbuildinfo
+public/maps/
