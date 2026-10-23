@@ -1,4 +1,4 @@
-// The dataset measures in DEVELOPMENT_ROADMAP.md §2.5, computed from the CSVs and the build output.
+// The dataset measures in roadmap/DEVELOPMENT_ROADMAP.md §2.5, computed from the CSVs and the build output.
 // tests/baseline.json holds the reviewed values. To change it on purpose, review the diff the failing
 // test prints, then: JP_DATA_MODE=local npm run data && node tests/measures.ts > tests/baseline.json
 import { readdirSync, readFileSync } from 'node:fs';

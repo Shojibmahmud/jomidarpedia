@@ -6,8 +6,10 @@
     "data:index": "node scripts/build-index.mjs",
     "data:build": "node scripts/build-data.mjs",
     "data": "node scripts/data.mjs",
-    "dev": "JP_DATA_MODE=local npm run data && next dev",
-    "build:local": "JP_DATA_MODE=local npm run data && next build",
+    "thumbs": "node scripts/build-thumbs.mjs",
+    "icons": "node scripts/build-icons.mjs",
+    "dev": "JP_DATA_MODE=local npm run data && JP_DATA_MODE=local next dev",
+    "build:local": "JP_DATA_MODE=local npm run data && JP_DATA_MODE=local next build",
     "build": "npm run data && next build",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -16,7 +18,8 @@
   "dependencies": {
     "next": "16.4.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
@@ -26,6 +29,7 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.2",
     "postcss": "8.5.31",
+    "sharp": "0.35.5",
     "tailwindcss": "3.4.19",
     "typescript": "5.9.3",
     "vitest": "5.0.5"

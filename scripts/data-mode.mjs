@@ -1,4 +1,4 @@
-// Resolves the data build mode (DEVELOPMENT_ROADMAP.md §2.4). It fails closed: anything
+// Resolves the data build mode (roadmap/DEVELOPMENT_ROADMAP.md §2.4). It fails closed: anything
 // unexpected is `release`, and Vercel production is always `release`, whatever JP_DATA_MODE says.
 // CI variables are never read; GitHub Actions selects a mode only through JP_DATA_MODE.
 

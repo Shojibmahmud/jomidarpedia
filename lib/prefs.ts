@@ -1,0 +1,48 @@
+// Visitor preferences: language and theme (roadmap tasks 3.3, 3.9). Stored in localStorage as
+// jp-lang ("bn", or absent for English) and jp-theme ("light" or "dark", or absent to follow the OS).
+// The boot script applies them before first paint; the toggles change them without a reload.
+// Storage can throw (private mode, blocked site data): a change then applies to the open page only.
+
+import type { Lang } from './i18n';
+
+export type Theme = 'system' | 'light' | 'dark';
+export const THEMES: readonly Theme[] = ['system', 'light', 'dark'];
+export const LANG_KEY = 'jp-lang';
+export const THEME_KEY = 'jp-theme';
+
+type Root = { lang: string; dataset: DOMStringMap };
+type Store = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+// Inlined in <head> by app/layout.tsx. <html> always ends with data-lang: "bn" only when stored, else "en".
+// A stored theme other than light or dark is ignored, and so is a storage exception.
+export const BOOT_SCRIPT =
+  `(function(d){d.dataset.lang='en';try{var t=localStorage.getItem('${THEME_KEY}');if(t==='light'||t==='dark')d.dataset.theme=t;` +
+  `if(localStorage.getItem('${LANG_KEY}')==='bn'){d.lang='bn';d.dataset.lang='bn'}}catch(e){}})(document.documentElement)`;
+
+export const currentLang = (root: Root): Lang => (root.dataset.lang === 'bn' ? 'bn' : 'en');
+export const currentTheme = (root: Root): Theme => (root.dataset.theme === 'light' || root.dataset.theme === 'dark' ? root.dataset.theme : 'system');
+
+function save(storage: Store | undefined, key: string, value: string | null) {
+  try {
+    if (value === null) storage?.removeItem(key);
+    else storage?.setItem(key, value);
+  } catch { /* the change still applies to this page */ }
+}
+
+export function applyLang(lang: Lang, root: Root, storage?: Store) {
+  root.dataset.lang = lang;
+  root.lang = lang;
+  save(storage, LANG_KEY, lang === 'bn' ? 'bn' : null);
+}
+
+/** "system" removes the stored choice, so the prefers-color-scheme block in app/tokens.css applies. */
+export function applyTheme(theme: Theme, root: Root, storage?: Store) {
+  if (theme === 'system') delete root.dataset.theme;
+  else root.dataset.theme = theme;
+  save(storage, THEME_KEY, theme === 'system' ? null : theme);
+}
+
+/** localStorage, or undefined when even reading the property throws. */
+export function browserStorage(): Store | undefined {
+  try { return window.localStorage; } catch { return undefined; }
+}

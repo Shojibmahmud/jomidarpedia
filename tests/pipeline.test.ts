@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -134,11 +134,15 @@ describe('determinism (task 1.7)', () => {
 });
 
 describe('command line (tasks 1.2, 1.8)', () => {
-  // Runs a script in a scratch project whose data/csv is the valid fixture.
+  // Runs a script in a scratch project whose data/csv is the valid fixture, with fixture boundaries
+  // (data/geo) and a thumbnail for its one Ready image (the check only needs the file to exist).
   function project() {
     const dir = tempDir('project');
     mkdirSync(join(dir, 'data'), { recursive: true });
     cpSync(join(FIXTURES, 'valid'), join(dir, 'data', 'csv'), { recursive: true });
+    cpSync(join(FIXTURES, '..', 'geo'), join(dir, 'data', 'geo'), { recursive: true });
+    mkdirSync(join(dir, 'public', 'thumbs'), { recursive: true });
+    writeFileSync(join(dir, 'public', 'thumbs', 'IMG-DHK-001-001.webp'), '');
     return dir;
   }
   const run = (cwd: string, script: string, env: Record<string, string>) =>

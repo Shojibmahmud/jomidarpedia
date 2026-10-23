@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveMode } from '../scripts/data-mode.mjs';
 
-// Expected mode for every VERCEL_ENV × JP_DATA_MODE combination (DEVELOPMENT_ROADMAP.md §2.4).
+// Expected mode for every VERCEL_ENV × JP_DATA_MODE combination (roadmap/DEVELOPMENT_ROADMAP.md §2.4).
 const VERCEL = [undefined, 'preview', 'production', 'development'];
 const ASKED = [undefined, 'local', 'preview', 'release', 'garbage'];
 

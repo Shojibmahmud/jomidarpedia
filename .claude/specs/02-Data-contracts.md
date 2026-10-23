@@ -1,7 +1,7 @@
 # Data contracts
 
 **Status:** Draft
-**Roadmap reference:** `DEVELOPMENT_ROADMAP.md` §3 Phase 2 (tasks 2.1–2.17); also §2.2 I5 and I7, §2.3 O10, O11 and O13, §2.5 Dataset baseline
+**Roadmap reference:** `roadmap/DEVELOPMENT_ROADMAP.md` §3 Phase 2 (tasks 2.1–2.17); also §2.2 I5 and I7, §2.3 O10, O11 and O13, §2.5 Dataset baseline
 **Source task:** "Generated JSON that carries what the designs need, with attribution, units and dates preserved, and with uncertainty kept rather than filled in."
 **Branch:** `03-phase-2-data-contracts`
 **Date:** 2026-10-22

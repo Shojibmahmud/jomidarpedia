@@ -1,7 +1,7 @@
 # Data pipeline gates, validation and determinism
 
 **Status:** Draft
-**Roadmap reference:** `DEVELOPMENT_ROADMAP.md` §3 Phase 1 (tasks 1.1–1.13); also §2.4 Build modes and gates, §2.5 Dataset baseline, I6
+**Roadmap reference:** `roadmap/DEVELOPMENT_ROADMAP.md` §3 Phase 1 (tasks 1.1–1.13); also §2.4 Build modes and gates, §2.5 Dataset baseline, I6
 **Source task:** "Data builds that are safe by default. They validate structure, enforce the non-negotiable rules in every mode, and produce the same output every time they run."
 **Branch:** `02-phase-1-data-pipeline`
 **Date:** 2026-10-22

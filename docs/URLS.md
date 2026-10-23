@@ -1,0 +1,100 @@
+# URL contract
+
+Roadmap task 3.7. This file is the single list of the site's routes, query keys and page anchors. Pages, links, the sitemap and tests follow it, and `tests/urls.test.ts` checks it against the roadmap and the shell's links. Change it when a route or key changes, in the same commit.
+
+## Rules for every URL
+
+- **Static and trailing slash.** Every route is a static page with a trailing slash (`next.config.mjs`: `output: 'export'`, `trailingSlash: true`). Dynamic segments are pre-rendered with `generateStaticParams()` and `dynamicParams = false` (R1).
+- **Permanent IDs.** Site, trip and source IDs never change. A slug may change; the ID route (`/site/<id>/`) always leads to the current slug.
+- **No coordinates in URLs.** A URL never carries a hidden site's coordinates (R5). Selection is by ID (`sel`, `ids`), never by latitude and longitude.
+- **Unknown keys and values are dropped.** A key not listed here, or a value not allowed for its key, is removed from the URL (with `history.replaceState`). The page then shows a notice the visitor can dismiss: "Some filters in this link were not recognised and have been removed." (`url.droppedFilters` in `lib/i18n.ts`). Dismissing it is not remembered. A district that is not in the selected division is dropped the same way (6.3).
+- **Multi-value keys** are a comma list of the full tokens listed below, for example `cond=in_ruins,lost`. Commas are not encoded. Duplicates are removed.
+- **One URL per view.** The app rewrites the query into canonical form: keys in the order of the tables below, values in the order listed for their key, defaults left out. So a shared link and a rebuilt link are byte-identical.
+- **Free text** (`q`) is URL-encoded, trimmed, and capped at 100 characters.
+- **Language and theme are never in the URL.** They live in `localStorage` (`jp-lang`, `jp-theme`; `lib/prefs.ts`). Separate `/bn/...` routes may come after the MVP.
+
+## Routes
+
+Status: **built** means the page exists in `app/` now; **planned** names the task that builds it. Links to planned routes are allowed in the shell until then: they show the static 404.
+
+| Route | Page | Status | Task |
+|---|---|---|---|
+| `/` | Home | built (placeholder) | 4.3, 11.x |
+| `/explore/` | Explore list and map | planned | 6.5, 7.x |
+| `/search/` | Search results | planned | 8.x |
+| `/site/<id>/<slug>/` | Site page | planned | 4.1, 5.x |
+| `/site/<id>/` | ID redirect to the canonical site URL (noindex) | planned | 4.2 |
+| `/division/<slug>/` | Division page (8) | planned | 10.1 |
+| `/district/<slug>/` | District page (64) | planned | 10.2 |
+| `/trips/` | Day trips listing | planned | 9.2 |
+| `/trips/<id>/` | Itinerary page, with print layout | planned | 9.3 |
+| `/sources/` | Sources list | planned | 10.3 |
+| `/sources/<id>/` | Source page | planned | 10.4 |
+| `/about/` | About and methodology | planned | 10.x |
+| `/credits/` | Image credits and licences | planned | 10.x |
+| `/404.html` | Not found (served for any unknown path) | built (Next default) | 10.x |
+| `/dev/i18n/` | Language test page: local and preview builds only, never in release | built | 3.1 |
+
+Slugs come from the data: site `dataset_slug`; division and district `slug` in `data/build/divisions.json` and `districts.json`. A district and a division may share a slug (Dhaka), because they live under different prefixes.
+
+## Query keys
+
+### Explore (`/explore/`)
+
+| Key | Values (canonical order) | Multi | Default | Meaning | Task |
+|---|---|---|---|---|---|
+| `day` | `1` | no | off | Only day trips from Dhaka (`dt = 1`) | 6.2 |
+| `tt` | `0-1`, `1-2`, `2-3`, `3-4`, `4+`, `unknown` | no | any | Travel time from Dhaka (`tb`); one segment | 6.2 |
+| `cond` | `preserved`, `preserved_adaptive_reuse`, `in_ruins`, `lost`, `unknown` | yes | all | Condition (`c`) | 6.2 |
+| `acc` | `ticketed`, `open_no_ticket_reported`, `restricted_or_permission`, `unknown`, `not_applicable_lost` | yes | all | Visitor access (`ac`) | 6.2 |
+| `div` | division slugs, in `divisions.json` order | yes | all | Division | 6.2 |
+| `dist` | district slugs, in `districts.json` order | yes | all | District; dropped with a notice if not in a selected division | 6.2, 6.3 |
+| `type` | `site_type` tokens, in `TYPE_GROUP` order (`scripts/lib/validate.mjs`) | yes | all | Site type (`ty`) | 6.2 |
+| `doc` | `1` | no | off | Only well-documented (`rc` is `confirmed` or `partially_confirmed`) | 6.2 |
+| `vloc` | `1` | no | off | Only verified locations (`lc = verified`) | 6.2 |
+| `photo` | `1` | no | off | Has photos (`p`) | 6.2 |
+| `hours` | `1` | no | off | Has visiting hours (`hv`) | 6.2 |
+| `q` | free text | no | none | Text filter within the list | 6.x |
+| `view` | `list`, `map` | no | `list` on phones; both panes on desktop | Which pane is shown | 6.5, 7.x |
+| `sel` | one site ID | no | none | Selected site (summary sheet or popover); must be on the map | 7.x |
+| `ids` | site IDs | yes | none | Show only these sites ("Open all stops on the map") | 9.8 |
+
+### Search (`/search/`)
+
+| Key | Values | Multi | Default | Meaning | Task |
+|---|---|---|---|---|---|
+| `q` | free text | no | none | The query; English and Bangla, spelling variants folded | 8.x |
+| `field` | `family` | no | all fields | Limit the match to founder or family (`fm`) | 8.x |
+
+### Trips listing (`/trips/`)
+
+| Key | Values (canonical order) | Multi | Default | Meaning | Task |
+|---|---|---|---|---|---|
+| `len` | `one-day`, `multi-day`, `not-stated` | yes | all | Trip length (`duration`: One day, Overnight / multi-day, Not stated) | 9.2 |
+| `tt` | `0-1`, `1-2`, `2-3`, `3-4`, `4+`, `unknown` | no | any | Travel time from Dhaka to the anchor site | 9.2 |
+| `div` | division slugs | yes | all | Division of the anchor site | 9.2 |
+| `plan` | `timed` | no | off | Has a timed plan (`plan_status = timed`, O11) | 9.2 |
+| `sort` | `time`, `name` | no | `time` | Travel time (unknown last), or name | 9.2 |
+
+### Credits (`/credits/`)
+
+| Key | Values | Multi | Default | Meaning | Task |
+|---|---|---|---|---|---|
+| `site` | one site ID | no | none | Show only that site's image credits | 10.x |
+
+## Anchors
+
+| Anchor | On | Section |
+|---|---|---|
+| `#visiting` | `/site/<id>/<slug>/` | Visiting: hours, closing days, fees, access |
+| `#getting-there` | `/site/<id>/<slug>/` | Routes from Dhaka |
+| `#sources` | `/site/<id>/<slug>/` | Sources and citations |
+| `#sites` | `/sources/<id>/` | Every site citing the source |
+| `#licences` | `/about/` | Text, data and photo licences |
+| `#main` | every page | Skip-link target |
+
+## Outbound links
+
+- **Corrections:** `https://github.com/Shojibmahmud/jomidarpedia-corrections/issues/new?template=correction.yml`, prefilled where known with `site_id`, `page_url` and `field` (task 5.13; `lib/nav.ts` `CORRECTIONS_URL`). The email fallback stays hidden until O2 is decided.
+- **Photo offers:** the same repository with `template=photo-offer.yml`.
+- **Visitor photos for hidden-pin sites:** a name-only Google Maps search, with no coordinates (O10, 2.12).
