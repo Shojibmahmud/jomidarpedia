@@ -35,7 +35,7 @@ export const REQUIRED = {
   site_sources: ['site_id', 'source_id', 'citation_title', 'citation_publisher', 'citation_date'],
   claims: ['claim_id', 'site_id', 'field', 'claim_type', 'claim_text'],
   claim_source_links: ['claim_id', 'site_id', 'source_id', 'relation'],
-  site_relationships: ['relation_id', 'site_id', 'related_site_id'],
+  site_relationships: ['relation_id', 'site_id', 'related_site_id', 'relation_type', 'note'],
   itinerary_places: ['itinerary_id', 'stop_order', 'latitude', 'longitude', 'source_ids'],
   itinerary_legs: ['itinerary_id', 'from_stop', 'to_stop', 'mode', 'duration', 'cost_row', 'source_ids'],
   features: ['site_id', 'feature', 'feature_bn', 'measurement', 'unit', 'source_ids', 'status']
