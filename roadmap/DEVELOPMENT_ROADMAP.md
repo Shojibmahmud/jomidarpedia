@@ -525,19 +525,21 @@ Required dependencies between phases 5 and 11:
 - [x] **4.3** Create a minimal `app/page.tsx`: the title, counts from `meta.json`, and links to 5 site pages.
 - [x] **4.4** Add a Playwright config that serves `out/` with the pinned `serve` on a fixed port, run by `webServer` in the config, and installs browsers with `npx playwright install --with-deps chromium`.
 - [x] **4.5** Add a smoke test: `/`, one site page and one ID redirect each show the expected `<h1>`, or arrive at the canonical URL.
-- [ ] **4.6** *(Owner action.)* Import the repository into Vercel.
+- [x] **4.6** *(Owner action.)* Import the repository into Vercel.
   - Settings: Node 24, build command `npm run build`, output directory `out`.
   - Turn on Deployment Protection for previews.
   - Production deploys stay **off**: either turn off the production branch or keep `main` failing release, as it does now.
   - **Verify:** the preview URL asks for authentication when opened in a private window.
 
-**Done 23 Oct 2026 (4.1–4.5); 4.6 is the owner's**, specified in `.claude/specs/04-Walking-skeleton.md` (approved 23 Oct 2026). Verified with 235 passing unit tests, typecheck, lint, `npm run build:local` (830 pages: 413 site pages, 413 ID redirects), 7 passing Playwright smoke tests, and `npm run build` exiting 1 on editorial problems only (0 structural errors). Changes from the task text:
+**Done 23 Oct 2026 (4.1–4.6)**, specified in `.claude/specs/04-Walking-skeleton.md` (approved 23 Oct 2026). Verified with 235 passing unit tests, typecheck, lint, `npm run build:local` (830 pages: 413 site pages, 413 ID redirects), 7 passing Playwright smoke tests, and `npm run build` exiting 1 on editorial problems only (0 structural errors). Changes from the task text:
 - **Home samples (4.3):** a fixed, reviewed list in `lib/home.ts`: Baliati, Elangi, JB-DHK-008 (unverified), Amirabad (approximate) and JB-RAJ-059 (no Bangla name).
 - **noindex:** every local and preview page is `noindex, nofollow` (`lib/site-url.ts`); the ID redirects are noindex in every mode.
 - **Canonical links** stay root-relative until `SITE_URL` is set (14.2).
 - **Condition labels:** `condition.*` strings added for 5.1; their Bangla is a draft (`needsReview`).
 - **Production:** stays off through the release gate alone; `main` remains the production branch, and no `vercel.json` is added.
 - **Smoke tests** run in the CI `check` job after `build:local` (`npm run e2e`, `@playwright/test` 1.64.1, `serve` 14.2.6, port 4173).
+- **Vercel (4.6):** project `jomidarpedia` on Hobby, Next.js preset (no overrides), Vercel Authentication on previews. Previews build from the `preview` branch (push `main` to it to refresh). The production build of `main` fails on the release gate as intended (0 structural errors). Checked on the preview on 23 Oct 2026: unauthenticated requests redirect to Vercel sign-in; signed in, Baliati shows both names, its summary and "Preserved"; pages carry `noindex, nofollow`; `/site/JB-DHK-064/` reaches the slug URL; home shows 413 / 299 / 1,136 and the 5 samples. CI `check` (with the smoke tests) passed on `ef6e3e1`.
+- **Open:** `engines` is `>=24`, so Vercel will move to a newer Node major automatically; pin `<27` if that matters before launch.
 
 **Acceptance criteria**
 - The preview shows Baliati (`JB-DHK-064`) from real data, in `preview` mode.
