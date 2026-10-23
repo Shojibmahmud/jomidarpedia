@@ -52,6 +52,19 @@ export const STRINGS = {
   'common.dismiss': { en: 'Dismiss', bn: 'বন্ধ করুন', needsReview: true },
   'url.droppedFilters': { en: 'Some filters in this link were not recognised and have been removed.', bn: 'এই লিংকের কিছু ফিল্টার চেনা যায়নি, তাই সরিয়ে দেওয়া হয়েছে।', needsReview: true },
   'common.sitesOnMap': { en: '{count} on the map', bn: 'মানচিত্রে {count}টি' },
+
+  // Condition (Condition in lib/types.ts); Phase 5's ConditionBadge reuses these
+  'condition.label': { en: 'Condition', bn: 'অবস্থা', needsReview: true },
+  'condition.preserved': { en: 'Preserved', bn: 'সংরক্ষিত', needsReview: true },
+  'condition.preserved_adaptive_reuse': { en: 'Preserved, in new use', bn: 'সংরক্ষিত, নতুন ব্যবহারে', needsReview: true },
+  'condition.in_ruins': { en: 'In ruins', bn: 'ধ্বংসাবশেষ', needsReview: true },
+  'condition.lost': { en: 'Lost', bn: 'বিলুপ্ত', needsReview: true },
+  'condition.unknown': { en: 'Condition unknown', bn: 'অবস্থা অজানা', needsReview: true },
+
+  // Home and the ID redirect pages (Phase 4 skeleton)
+  'home.sourceCount': { en: '{count} sources', bn: '{count}টি তথ্যসূত্র', needsReview: true },
+  'home.samples': { en: 'Five sites to start with', bn: 'শুরু করার জন্য পাঁচটি জমিদার বাড়ি', needsReview: true },
+  'redirect.moved': { en: 'This page has moved to:', bn: 'এই পাতাটি সরানো হয়েছে:', needsReview: true },
 } as const satisfies Record<string, Entry>;
 
 export type StringKey = keyof typeof STRINGS;

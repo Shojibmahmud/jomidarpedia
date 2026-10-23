@@ -19,11 +19,11 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 
 | Route | Page | Status | Task |
 |---|---|---|---|
-| `/` | Home | built (placeholder) | 4.3, 11.x |
+| `/` | Home | built (minimal: counts and five sample sites) | 4.3, 11.x |
 | `/explore/` | Explore list and map | planned | 6.5, 7.x |
 | `/search/` | Search results | planned | 8.x |
-| `/site/<id>/<slug>/` | Site page | planned | 4.1, 5.x |
-| `/site/<id>/` | ID redirect to the canonical site URL (noindex) | planned | 4.2 |
+| `/site/<id>/<slug>/` | Site page | built (text skeleton) | 4.1, 5.x |
+| `/site/<id>/` | ID redirect to the canonical site URL (noindex) | built | 4.2 |
 | `/division/<slug>/` | Division page (8) | planned | 10.1 |
 | `/district/<slug>/` | District page (64) | planned | 10.2 |
 | `/trips/` | Day trips listing | planned | 9.2 |

@@ -5,11 +5,14 @@ import { SiteFooter } from '@/components/shell/SiteFooter';
 import { SiteHeader } from '@/components/shell/SiteHeader';
 import { getMeta } from '@/lib/data';
 import { BOOT_SCRIPT } from '@/lib/prefs';
+import { indexable } from '@/lib/site-url';
 import './tokens.css';
 
 // Titles and descriptions stay English (O6); the count comes from the data, never from copy.
+// Local and preview builds are noindex on every page (§2.4, spec 04 FR-9); release pages may be indexed.
 export function generateMetadata(): Metadata {
   return {
+    ...(indexable() ? {} : { robots: { index: false, follow: false } }),
     title: { default: 'Jomidarpedia · জমিদারপিডিয়া', template: '%s · Jomidarpedia' },
     description: `The zamindar palaces of Bangladesh: ${getMeta().counts.sites} sites with sources, conditions and day trips from Dhaka.`,
     icons: { icon: '/icon.svg', apple: '/apple-touch-icon.png' },
