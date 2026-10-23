@@ -2,6 +2,8 @@ import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
+  // e2e/ holds the Playwright page tests (npm run e2e), which need a built out/.
+  test: { exclude: ['**/node_modules/**', 'e2e/**'] },
   resolve: {
     alias: {
       '@/': fileURLToPath(new URL('./', import.meta.url)),

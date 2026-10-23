@@ -12,3 +12,5 @@ data/reports/
 !.claude/specs/
 *.tsbuildinfo
 public/maps/
+playwright-report/
+test-results/
