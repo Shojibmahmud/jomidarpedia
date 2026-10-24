@@ -139,11 +139,11 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     return {
       id: im.image_id,
       thumb: `/thumbs/${im.image_id}.webp`,
-      full: (im.direct_image_url || '').replace(/[?&]utm_[^#]*$/, ''),
+      full: (im.direct_image_url || '').replace(/[?&]utm_[^#]*$/, '') || `/thumbs/${im.image_id}.webp`, // an owner's photo has no hosted file
       alt, altLang: /[ঀ-৿]/.test(alt) ? 'bn' : 'en',
       view: im.view_category,
       credit: im.required_credit,
-      sourcePage: im.source_page_url
+      sourcePage: im.source_page_url || undefined
     };
   }
   const firstThumb = id => (imagesBySite.get(id)?.[0] ? `/thumbs/${imagesBySite.get(id)[0].image_id}.webp` : undefined);
@@ -523,7 +523,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     const s = siteById.get(im.site_id);
     return {
       imageId: im.image_id, thumb: `/thumbs/${im.image_id}.webp`, siteId: im.site_id, siteSlug: s.dataset_slug, siteEn: s.name_en, ...(s.name_bn && { siteBn: s.name_bn }),
-      creator: im.creator, license: im.license_rights_status.replace(/^Open license:\s*/i, ''), credit: im.required_credit, sourcePage: im.source_page_url
+      creator: im.creator, license: im.license_rights_status.replace(/^Open license:\s*/i, ''), credit: im.required_credit, sourcePage: im.source_page_url || undefined
     };
   });
 

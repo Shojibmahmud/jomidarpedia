@@ -28,13 +28,14 @@
   "imagesByReadiness": {
     "Needs review": 24,
     "Permission required": 1322,
-    "Ready": 936
+    "Ready": 937
   },
   "readyImageHosts": {
+    "none (own photo)": 1,
     "thumb.wikimedia.org": 814,
     "upload.wikimedia.org": 122
   },
-  "sitesWithReadyImages": 126,
+  "sitesWithReadyImages": 127,
   "claims": {
     "conflict": 982,
     "fact": 3866,

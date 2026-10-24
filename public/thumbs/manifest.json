@@ -377,6 +377,7 @@
     "IMG-DHK-082-014": {"source":"2964122d5212f7eda9cbcd88abfab5b8f6d55d4d04f908c95a0e8a891b0cc679","params":"fc00b7a42bbb","output":"9e73a238b3dd8721974634dd099494cafef845f5d77fd61c192761494bbb107d","bytes":32324},
     "IMG-DHK-082-015": {"source":"a10258c1c40377cb2f5cc84f015784524b8e5657ca28790f23ceec193d47af2a","params":"fc00b7a42bbb","output":"1259aef5883a64319e2a143faf610f18b062e411b86ae725d5282f861864cb38","bytes":18810},
     "IMG-DHK-082-020": {"source":"c810ccee398b25faadcf5fe21c6e4690c1325c2639f7c8c216499c70fa76ec16","params":"fc00b7a42bbb","output":"f105fb11ede5a3c1afe8ed0224e33d92fdcae543d90e22e4ac2259768127f5d5","bytes":37436},
+    "IMG-DHK-083-004": {"source":"f5de97d4b9a31b5675e76dabfe77d28069de7302930a63a521c617da9ecd27cc","params":"fc00b7a42bbb","output":"cdf877566cb5bfa39bad9f158b59ad18ed2c0ea6d5389405e6a2b23e57c6d8cc","bytes":48884},
     "IMG-DHK-086-002": {"source":"fdff6ac95d562df241ad6fc3a6a38d8fc5dad1cb8ce99b389c3353f37c059f1e","params":"fc00b7a42bbb","output":"fb7799fe26bb85e594585da4b9862ea7e6cd572dacd826b62060b5f7896d5c1b","bytes":60338},
     "IMG-DHK-086-003": {"source":"db9af0662159c823169b63da641dde02e718fd71d5b5976b7cb6b1260d1e92a0","params":"fc00b7a42bbb","output":"4efa9fea1abc4b01eaf9170c93f3de852cfb242d2114c60803cc6e4691362d56","bytes":40540},
     "IMG-DHK-086-005": {"source":"1c401471caf6a354561d19134d4f9358016cc3d4f940ab3da4a38a562f98ab11","params":"fc00b7a42bbb","output":"e4c5ddbe30ee22ca7bcd6ec19963364ce6f5a01bf49b4dd9fb5dcf3d8eab4f54","bytes":26950},

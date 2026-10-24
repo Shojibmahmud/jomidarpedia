@@ -3,7 +3,8 @@
 // the full-size Wikimedia file is requested only when the lightbox opens. Every image has its credit and
 // source link below it (R4). The lightbox is a modal <dialog>: focus stays inside while it is open and
 // returns to the photo that opened it. Arrow keys, Esc, swipe, and Previous/Next/Close buttons all work.
-// Without JavaScript each thumbnail links to its source page.
+// Without JavaScript each thumbnail links to its source page. An owner's photo has no web page: it shows
+// its credit without a Source link, and the lightbox shows its thumbnail.
 
 import { useEffect, useRef, useState } from 'react';
 import { T } from '@/components/T';
@@ -16,7 +17,7 @@ const n = (v: number) => both(formatCount, v);
 function Credit({ image }: { image: ImageRecord }) {
   return (
     <p className="mt-1 text-xs text-muted [overflow-wrap:anywhere]" lang="en" data-credit>
-      {image.credit} · <a href={image.sourcePage} target="_blank" rel="noopener noreferrer" className="underline"><T k="gallery.source" /></a>
+      {image.credit}{image.sourcePage ? <> · <a href={image.sourcePage} target="_blank" rel="noopener noreferrer" className="underline"><T k="gallery.source" /></a></> : null}
     </p>
   );
 }
@@ -38,7 +39,7 @@ export function Gallery({ images }: { images: ImageRecord[] }) {
   const [first, ...rest] = images;
   const tiles = rest.slice(0, TILES);
   const thumb = (im: ImageRecord, k: number, className: string, eager = false) => (
-    <a href={im.sourcePage} onClick={show(k)} className="block" data-gallery-open={k}>
+    <a href={im.sourcePage ?? im.full} onClick={show(k)} className="block" data-gallery-open={k}>
       {/* eslint-disable-next-line @next/next/no-img-element -- static export: committed, pre-sized thumbnails */}
       <img src={im.thumb} alt={im.alt} lang={im.altLang} width={480} height={360} loading={eager ? 'eager' : 'lazy'} className={className} />
       <span className="sr-only"><T k="gallery.open" vars={{ n: n(k + 1), count: n(images.length) }} /></span>
@@ -107,7 +108,7 @@ function Lightbox({ images, start, onClose }: { images: ImageRecord[]; start: nu
             className="max-h-full min-h-0 max-w-full select-none object-contain" />
           <figcaption className="max-w-3xl text-center text-sm [overflow-wrap:anywhere]">
             {failed.has(k) ? <p className="font-semibold"><T k="lightbox.unavailable" /></p> : null}
-            <p lang="en">{im.credit} · <a href={im.sourcePage} target="_blank" rel="noopener noreferrer" className="underline"><T k="gallery.source" /></a></p>
+            <p lang="en">{im.credit}{im.sourcePage ? <> · <a href={im.sourcePage} target="_blank" rel="noopener noreferrer" className="underline"><T k="gallery.source" /></a></> : null}</p>
           </figcaption>
         </figure>
         {count > 1 ? (
