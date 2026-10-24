@@ -28,11 +28,11 @@
   "imagesByReadiness": {
     "Needs review": 24,
     "Permission required": 1322,
-    "Ready": 935
+    "Ready": 936
   },
   "readyImageHosts": {
     "thumb.wikimedia.org": 814,
-    "upload.wikimedia.org": 121
+    "upload.wikimedia.org": 122
   },
   "sitesWithReadyImages": 126,
   "claims": {
