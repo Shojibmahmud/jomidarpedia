@@ -742,6 +742,7 @@
     "IMG-RAJ-031-013": {"source":"50191bea0e5712ba19e43c376acc2a1c1115574891aee07a5b13a203b6150d2c","params":"fc00b7a42bbb","output":"fde2563651c01ac9304ce5c3065108acf95a45c937abd807997fc251b8de4b7a","bytes":25852},
     "IMG-RAJ-031-014": {"source":"9227f15c29be45dab7869d1b065ca746a3d0f1d4f61aab8b8865343282c5a7bb","params":"fc00b7a42bbb","output":"001c7aed8fb78c388bcae7d994d8772646ae24f33d29defbbb8eecc181960683","bytes":33976},
     "IMG-RAJ-031-015": {"source":"72cb19db8f79afd5977b8f8cc2d43ea331792afb6faa9b20a4e1fd6bac17ffd3","params":"fc00b7a42bbb","output":"55e287e5d58f6699f56f6d4a48097298c8bccf8e35b08eb2d73a7a5b24e40dee","bytes":22118},
+    "IMG-RAJ-031-019": {"source":"c2e47dce459e09b3d73adc812dc605861670afea6bda7dbe6ba9b8c93da69786","params":"fc00b7a42bbb","output":"7ef0c25fc4d718ab1ea6eb70f3ec0f7f6f9a735e973b51a438d8ddcc8fd1dfe0","bytes":30670},
     "IMG-RAJ-032-001": {"source":"42b12cac558afe81e1123aabe43a7722d4deeb3e490449008c78fd5605e5bd5d","params":"fc00b7a42bbb","output":"43fe89edcbdf9af12ee508db33229484090c4ce46482bbd4b2f0ad42f48fc7be","bytes":19646},
     "IMG-RAJ-032-002": {"source":"9dcd4273467a8fb7c31385b801f695952d2faee0d0285a7dacf10d06c21834c9","params":"fc00b7a42bbb","output":"a0409bce47fc1ae4ab9691cf994ca48d89417e7dcc26b61e6794d9023abbb18f","bytes":42500},
     "IMG-RAJ-032-003": {"source":"0fa11d80d11c157b21ff43684364d112862175dd639bc0c49901dbfe02e1103b","params":"fc00b7a42bbb","output":"8212b7707538374f7d0b84413ae41826da14f96fdd73211a83b0f1bf8f765736","bytes":24360},
