@@ -55,11 +55,11 @@ export interface Conflict { field: string; versions: { text: string; sources: So
 export interface ImageRecord {
   id: string;                 // IMG-DHK-064-001
   thumb: string;              // /thumbs/IMG-DHK-064-001.webp (4:3, in the repo)
-  full: string;               // Wikimedia Commons file URL, loaded only in the lightbox
+  full: string;               // the source file (Wikimedia Commons), loaded only in the lightbox; the thumbnail when there is none (an owner's photo)
   alt: string; altLang: 'en' | 'bn';
   view: string;               // view_category
   credit: string;             // required_credit, printed verbatim
-  sourcePage: string;         // source_page_url
+  sourcePage?: string;        // source_page_url; absent for a photo with no web page (an owner's photo)
 }
 
 /** data/build/sites/<id>.json — read at build time by /site/[id]/[slug]. */
@@ -186,7 +186,7 @@ export interface SourceEntry {
 /** data/build/credits.json — Ready images only. */
 export interface Credit {
   imageId: string; thumb: string; siteId: string; siteSlug: string; siteEn: string; siteBn?: string;
-  creator: string; license: string; credit: string; sourcePage: string;
+  creator: string; license: string; credit: string; sourcePage?: string;
 }
 
 /** data/build/meta.json */

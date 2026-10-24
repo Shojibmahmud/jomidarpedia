@@ -31,6 +31,34 @@ describe('valid fixture', () => {
   });
 });
 
+describe('lead photo (images.csv lead)', () => {
+  const lines = (dir: string) => readFileSync(join(dir, 'images.csv'), 'utf8').trimEnd().split('\n');
+  /** The valid images with a lead column, plus a second Ready photo of JB-DHK-001; `lead` marks which leads. */
+  function withLead(lead?: string) {
+    const dir = fixtureDir();
+    const [head, ...rows] = lines(dir);
+    const second = rows[0].replace('IMG-DHK-001-001', 'IMG-DHK-001-002').replace('test-house-one-1.jpg', 'test-house-one-2.jpg');
+    const all = [rows[0], second, ...rows.slice(1)].map(r => `${r},${r.startsWith(lead ?? '-') ? 'yes' : ''}`);
+    writeFileSync(join(dir, 'images.csv'), `${[`${head},lead`, ...all].join('\n')}\n`);
+    return dir;
+  }
+  const card = (out: string) => readJson(join(out, 'public', 'index.json')).find((r: { i: string }) => r.i === 'JB-DHK-001').img.id;
+  const gallery = (out: string) => readJson(join(out, 'build', 'sites', 'JB-DHK-001.json')).images.map((i: { id: string }) => i.id);
+
+  it('without a lead, the first Ready photo leads', () => {
+    const { out } = runBuilders(withLead());
+    expect(card(out)).toBe('IMG-DHK-001-001');
+    expect(gallery(out)).toEqual(['IMG-DHK-001-001', 'IMG-DHK-001-002']);
+  });
+
+  it('the marked lead is the card photo and opens the gallery', () => {
+    const { out, results } = runBuilders(withLead('IMG-DHK-001-002'));
+    expect(report(results, 'release').structural).toEqual([]);
+    expect(card(out)).toBe('IMG-DHK-001-002');
+    expect(gallery(out)).toEqual(['IMG-DHK-001-002', 'IMG-DHK-001-001']);
+  });
+});
+
 describe('structural errors (tasks 1.5, 1.6)', () => {
   for (const name of caseNames('invalid')) {
     it(`${name}: fails in every mode, naming file, line and column`, () => {

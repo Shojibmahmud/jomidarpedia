@@ -17,7 +17,10 @@ export interface MapLink {
   onHover(id: string | null): void;
 }
 
-export function ResultsList({ sites, pages, onMore, map }: { sites: IndexSite[]; pages: number; onMore: () => void; map?: MapLink }) {
+/** `terms` marks the words a search within the results matched (spec 08 FR-17). */
+export function ResultsList({ sites, pages, onMore, map, terms }: {
+  sites: IndexSite[]; pages: number; onMore: () => void; map?: MapLink; terms?: ReadonlyMap<string, ReadonlySet<string>>;
+}) {
   const shown = Math.min(sites.length, pages * PAGE_SIZE);
   return (
     <div className="space-y-4">
@@ -26,7 +29,7 @@ export function ResultsList({ sites, pages, onMore, map }: { sites: IndexSite[];
           <li key={s.i} data-result-index={k}
             onMouseEnter={map ? () => map.onHover(s.i) : undefined} onMouseLeave={map ? () => map.onHover(null) : undefined}
             onFocus={map ? () => map.onHover(s.i) : undefined} onBlur={map ? () => map.onHover(null) : undefined}>
-            <SiteCard site={s} variant="row" highlight={map?.selected === s.i}
+            <SiteCard site={s} variant="row" highlight={map?.selected === s.i} terms={terms?.get(s.i)}
               action={map && s.ll ? (
                 <button type="button" onClick={e => map.onShow(s.i, e.currentTarget)} data-show-on-map={s.i}
                   className="inline-flex min-h-tap items-center gap-1.5 rounded-md border border-line-strong bg-surface px-3 text-sm font-semibold hover:bg-surface-2">

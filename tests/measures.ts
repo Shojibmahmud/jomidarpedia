@@ -46,7 +46,7 @@ export function measures(csvDir: string, indexPath: string, buildDir: string) {
     sources: read('sources').length,
     siteSources: read('site_sources').length,
     imagesByReadiness: count(images, i => i.publication_readiness.split(/[:(.;]/)[0].trim()),
-    readyImageHosts: count(ready, i => new URL(i.direct_image_url).host),
+    readyImageHosts: count(ready, i => (i.direct_image_url ? new URL(i.direct_image_url).host : 'none (own photo)')),
     sitesWithReadyImages: new Set(ready.map(i => i.site_id)).size,
     claims: count(read('claims'), c => c.claim_type),
     claimSourceLinks: count(read('claim_source_links'), l => l.relation),

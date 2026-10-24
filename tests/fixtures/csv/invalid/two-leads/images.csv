@@ -1,0 +1,4 @@
+image_id,site_id,site_name,relative_file_path,view_category,caption_alt_text,creator,source_page_url,direct_image_url,google_maps_url,license_rights_status,required_credit,publication_readiness,lead
+IMG-DHK-001-001,JB-DHK-001,Test House One,dhaka/test-house-one-1.jpg,Facade,Front of Test House One,A. Person,https://commons.wikimedia.org/wiki/File:Test.jpg,https://upload.wikimedia.org/test.jpg,,Open license: CC BY-SA 4.0,"Photo: A. Person / Wikimedia Commons, CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)",Ready,yes
+IMG-DHK-001-002,JB-DHK-001,Test House One,dhaka/test-house-one-2.jpg,Facade,Side of Test House One,A. Person,https://commons.wikimedia.org/wiki/File:Test2.jpg,https://upload.wikimedia.org/test2.jpg,,Open license: CC BY-SA 4.0,"Photo: A. Person / Wikimedia Commons, CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)",Ready,yes
+IMG-DHK-002-001,JB-DHK-002,Test House Two,,Facade,,,,,,,,Permission required,

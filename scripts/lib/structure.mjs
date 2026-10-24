@@ -174,8 +174,20 @@ export function validateTables(T) {
     unique('division', T.sites.map(s => [slugify(s.division), s, 'division']));
   }
 
-  if (has('images')) for (const im of T.images)
-    if ((im.publication_readiness || '').startsWith('Ready') && !im.relative_file_path) err('images', im, 'relative_file_path', 'a Ready image has no file path');
+  if (has('images')) {
+    const leadOf = new Map();
+    for (const im of T.images) {
+      if ((im.publication_readiness || '').startsWith('Ready') && !im.relative_file_path) err('images', im, 'relative_file_path', 'a Ready image has no file path');
+      // lead (optional column): "yes" on at most one Ready image per site, the photo that represents it.
+      const lead = im.lead ?? '';
+      if (lead !== '' && lead !== 'yes') err('images', im, 'lead', `lead must be "yes" or blank, not "${lead}"`);
+      else if (lead === 'yes') {
+        if (!(im.publication_readiness || '').startsWith('Ready')) err('images', im, 'lead', 'the lead photo must be a Ready image');
+        else if (leadOf.has(im.site_id)) err('images', im, 'lead', `${im.site_id} already has a lead photo, ${leadOf.get(im.site_id)}`);
+        else leadOf.set(im.site_id, im.image_id);
+      }
+    }
+  }
 
   // Foreign keys.
   const ids = (t, col) => (has(t) ? new Set(T[t].map(r => r[col])) : null);

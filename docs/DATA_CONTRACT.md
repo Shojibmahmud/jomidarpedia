@@ -73,7 +73,7 @@ Index fields only: `e`, `b`, `u`, `d`, `db`, `c`, `ac`, `fe`, `sm`, `h`, `tb`, `
 | `t`, `ty` | type group, raw type | `site_type` | always |
 | `hv` | opening times known | `visitor_info.opening_hours` | a clock time |
 | `oc` | one-way cost, Tk | `one_way_cost_bdt_estimate` | a number > 0 |
-| `p`, `img` | has photo; first Ready image `{ id, credit }` | `images.csv` | a Ready image exists |
+| `p`, `img` | has photo; the lead photo `{ id, credit }`: the Ready image marked `lead = yes`, else the first Ready one | `images.csv` | a Ready image exists |
 
 Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 2026 the index was 59 KB; with `sm` (24 Oct 2026, spec 07) it is 76 KB.
 
@@ -87,7 +87,7 @@ Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 202
 - **Features.** From `features.csv` only. `[]`: `FeatureList` shows "Not documented".
 - **Visiting.** `hours` (text), `hoursKnown`, `closed` (the unreviewed `weekly_closing_days` text), `closedDays` (reviewed `closed_days`; `known: false` → "Closing days not documented"; `days: []` → no closing day), `date` ("Visiting info checked …").
 - **Routes.** `mode` is one of `bus`, `train`, `launch`, `ferry`, `car`, `air`, `boat`, `unknown`, `mixed`; `unknown` and `mixed` use neutral icons. `inferred: true` means the label was "Other / mixed" and the description named exactly one mode. `estimateDate` per route.
-- **Photos.** `images` holds Ready images only. Without one, `externalPhotos` links out: a hidden pin gets "Search for visitor photos", a Google Maps search on name and district only (O10).
+- **Photos.** `images` holds Ready images only, the lead photo (`images.csv` `lead = yes`, at most one per site, Ready only) first. Without one, `externalPhotos` links out: a hidden pin gets "Search for visitor photos", a Google Maps search on name and district only (O10).
 - **Names.** `name.bn` is optional; `bnMissing: true` when it is blank (O13).
 - **Location note.** `location.note` (`coordinates_note`) only for mappable sites. Hidden-pin notes often name nearby landmarks with their coordinates, so they are left out, and the build fails if any text field of a hidden-pin record holds a coordinate pair inside Bangladesh (spec 05 FR-53, FR-54).
 - **History.** Events whose description only says nothing is known ("Not documented.", "Unknown", or a founding event whose period is a bare unknown) are dropped; `[]` → "No history recorded yet". A `year_end` before `year_start` is shown as `year_start` alone. Both are listed in the data report (spec 05 FR-51, FR-52).
