@@ -627,8 +627,8 @@ Required dependencies between phases 5 and 11:
 - `Explore · mobile filter drawer`
 - `বাংলা · Explore · desktop`
 
-- [ ] **6.1** Build `SiteCard` in three variants: full, compact and row. Each has its photo and credit, or placeholder art, and shows "No map location yet".
-- [ ] **6.2** Write `lib/filters.ts`, a pure function covering every group:
+- [x] **6.1** Build `SiteCard` in three variants: full, compact and row. Each has its photo and credit, or placeholder art, and shows "No map location yet".
+- [x] **6.2** Write `lib/filters.ts`, a pure function covering every group:
   - day trip;
   - travel time (Unknown is its own option);
   - condition;
@@ -640,14 +640,14 @@ Required dependencies between phases 5 and 11:
   - **has photos**;
   - **has visiting hours** (`hv`).
 
-  Groups combine with AND and options within a group with OR. Each count shows the result if that option were toggled. Unit-test with fixtures, plus an invariant test on real data: every count is ≤ the total, and the sum of the condition counts equals the total when no other filter is on.
-- [ ] **6.3** Write `lib/urlState.ts` to the contract in `docs/URLS.md`. It handles:
+  Groups combine with AND and options within a group with OR. Each count shows how many sites match that option under the other groups' filters (spec 06 D2). Unit-test with fixtures, plus an invariant test on real data: every count is ≤ the total, and the sum of the condition counts equals the total when no other filter is on.
+- [x] **6.3** Write `lib/urlState.ts` to the contract in `docs/URLS.md`. It handles:
   - round trips;
   - invalid values, which are dropped and listed in a notice;
   - a district that doesn't belong to the selected division, which is dropped with a notice.
-- [ ] **6.4** Write `lib/sort.ts`: travel time ascending, with unknown times **last**; ties broken by English name, then ID, so the order is stable. Name and district sorts are also stable.
-- [ ] **6.5** Build `ExploreApp`. It fetches `index.json` once and shows a skeleton while loading and an error with Retry if the fetch fails. Results are paged by 24 with "Load more". Pagination resets when the filters change.
-- [ ] **6.6** Build the controls:
+- [x] **6.4** Write `lib/sort.ts`: travel time ascending, with unknown times **last**; ties broken by English name, then ID, so the order is stable. Name and district sorts are also stable. The order is in the URL as `sort` (spec 06 D5).
+- [x] **6.5** Build `ExploreApp`. It fetches `index.json` once and shows a skeleton while loading and an error with Retry if the fetch fails. Results are paged by 24 with "Load more". Pagination resets when the filters change.
+- [x] **6.6** Build the controls:
   - `DayTripSwitch` (`role="switch"`);
   - `TravelTimeSegmented`;
   - `ChipGroup`;
@@ -655,22 +655,34 @@ Required dependencies between phases 5 and 11:
   - `TypeChips`;
   - `QualitySwitches`;
   - `ActiveFilters`.
-- [ ] **6.7** Build `FilterRail` for desktop, which applies changes straight away.
-- [ ] **6.8** Build `FilterDrawer` for mobile:
+- [x] **6.7** Build `FilterRail` for desktop, which applies changes straight away.
+- [x] **6.8** Build `FilterDrawer` for mobile:
   - it works on a **draft** state;
   - "Show N sites" applies the draft and Cancel or Esc discards it;
   - focus is trapped in the drawer and returns to the trigger on close.
-- [ ] **6.9** Build `EmptyResults`, which names the single filter whose removal brings back the most results.
-- [ ] **6.10** Wrap `useSearchParams` in `<Suspense>`.
+- [x] **6.9** Build `EmptyResults`, which names the single filter whose removal brings back the most results.
+- [x] **6.10** Wrap `useSearchParams` in `<Suspense>`.
   - Apply on desktop and Show on mobile each create one history entry.
   - **Verify:** Back and Forward restore the filters and the scroll position of the list.
-- [ ] **6.11** Add a "Copy this view" button that copies the URL, with a success or failure message.
-- [ ] **6.12** Add Playwright tests:
+- [x] **6.11** Add a "Copy this view" button that copies the URL, with a success or failure message.
+- [x] **6.12** Add Playwright tests:
   - each filter group changes the results and the URL;
   - a draft is discarded on Cancel;
   - an invalid query shows the notice;
   - Back and Forward restore the state;
   - the counts match `lib/filters.ts`, computed in the test from `index.json`.
+
+**Done 24 Oct 2026 (6.1–6.12), apart from the owner's visual review**, specified in `.claude/specs/06-Explore-list.md` (approved 24 Oct 2026). Verified with 287 passing unit tests, typecheck, lint, a static build of 831 pages (`/explore/` added), and 77 passing Playwright tests (30 new for Explore: every group against the URL and `lib/filters.ts`, every displayed count against the facet counts, the drawer draft, Back/Forward with loaded rows and scroll, Copy link, the empty state, keyboard use, Bangla digits, no map requests, axe in light and dark). Changes from the task text:
+- **Counts are facet counts** (spec 06 D2): each option shows how many sites match it under the other groups, as on the boards, not the total after toggling it.
+- **Type filter uses the 9 groups** (`t`), and `docs/URLS.md` `type` takes group tokens (D1). **`sort`** (`time`, `name`, `district`) is a new URL key (D5); name and district sort in the interface language (D8).
+- **Where:** a district narrows its own division; a division with none ticked means all of it (D7).
+- **"Opening times known"** replaces "Has visiting hours" (12 sites with a clock time; closes spec 02 OQ-2).
+- **Not yet applied:** `q` (Phase 8), `view` and `sel` (Phase 7), `ids` (9.8) are validated and kept in the URL, with no effect.
+- **Drawer:** X, Esc and the backdrop discard the draft; there is no separate Cancel button, as on the boards. `<dialog>` with an explicit focus trap.
+- **History:** the loaded page count and the list's scroll position live in `history.state` (`jp`), which Next's router keeps across Back and Forward; Load more and canonicalisation add no entry.
+- **Tools:** `npm run screenshots` adds Explore at 1440 and 390 px (light), 390 px (dark), 1440 px in Bangla and the 390 px drawer.
+- **Bangla:** strings from the বাংলা · Explore · desktop board are final; every other new string is a draft (`needsReview`).
+- **Open:** the owner's visual review against the four Explore boards.
 
 **Acceptance criteria**
 - Every control on the filter-drawer board exists and works.

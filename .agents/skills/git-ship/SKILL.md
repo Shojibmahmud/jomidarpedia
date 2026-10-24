@@ -11,11 +11,11 @@ Ship the current feature branch: commit, push, merge into `main`, sync `main`, a
 
 Arguments (optional): `$ARGUMENTS` — a hint for the commit message.
 
-**Authorization.** Invoking this skill authorizes: staging all changes, committing after the user approves the message, pushing the feature branch, merging after the user chooses the merge method, updating remote `main`, and deleting the merged remote feature branch.
+**Authorization.** Invoking this skill authorizes: staging all changes, committing after the user approves the message, pushing the feature branch (and setting its upstream when it has none), merging after the user chooses the merge method, updating remote `main`, and deleting the merged remote feature branch.
 
 **Never:** delete the local feature branch, force-push, discard/reset/stash changes, or bypass branch protection. If any step fails, leave the state as it is and explain exactly what was done and what remains.
 
-Keep track of these values as you go: `ROOT`, `FEATURE`, `REMOTE`, `UPSTREAM` (e.g. `origin/01-foo`), `SHIPPED_SHA`, `MERGE_METHOD`, `COMMIT_MSG`.
+Keep track of these values as you go: `ROOT`, `FEATURE`, `REMOTE`, `UPSTREAM` (e.g. `origin/01-foo`), `NEW_UPSTREAM` (the branch had no upstream), `SHIPPED_SHA`, `MERGE_METHOD`, `COMMIT_MSG`.
 
 ## 1. Check the repository and branch
 
@@ -26,8 +26,11 @@ git -C "$ROOT" rev-parse --abbrev-ref --symbolic-full-name @{u}   # fails => no 
 ```
 
 - Detached HEAD, or the branch is `main` → refuse and stop.
-- No upstream → stop and explain (suggest `git push -u <remote> <branch>`, but don't run it).
-- Determine `REMOTE` as the remote that hosts `main` (normally `origin`: `git config branch.main.remote`, else `git ls-remote --heads <remote> main`). The upstream must be on that remote; if it is not, stop and explain.
+- Determine `REMOTE` as the remote that hosts `main` (normally `origin`: `git config branch.main.remote`, else `git ls-remote --heads <remote> main`).
+- Upstream set → it must be on `REMOTE`; if it is not, stop and explain. `UPSTREAM` is that upstream.
+- No upstream → the branch is set up in step 5. First check `git ls-remote --heads <REMOTE> <FEATURE>`:
+  - no such branch on `REMOTE` → `UPSTREAM` = `<REMOTE>/<FEATURE>`; continue, and note `NEW_UPSTREAM`;
+  - a branch of that name already exists there → stop and explain: it was pushed from elsewhere, and adopting it could merge work you haven't reviewed.
 - Unfinished operation → stop and explain:
   ```bash
   for p in MERGE_HEAD rebase-merge rebase-apply CHERRY_PICK_HEAD REVERT_HEAD; do
@@ -65,10 +68,12 @@ Inspect the complete staged diff, including anything that was already staged bef
 ## 5. Push the feature branch
 
 ```bash
-git push <REMOTE> HEAD:<upstream-branch-name>
+git push <REMOTE> HEAD:<upstream-branch-name>      # upstream already set
+git push -u <REMOTE> HEAD:<FEATURE>                # NEW_UPSTREAM: pushes and sets the upstream
 SHIPPED_SHA=$(git rev-parse HEAD)
 ```
 
+- With `NEW_UPSTREAM`, confirm the upstream is recorded: `git rev-parse --abbrev-ref --symbolic-full-name @{u}` gives `<REMOTE>/<FEATURE>`. If the push succeeded but recording failed (for example `.git/config` isn't writable), continue with `UPSTREAM` = `<REMOTE>/<FEATURE>` and say so in the report; the remote branch exists either way.
 - If the push is rejected, inspect why (`git fetch <REMOTE>`, `git rev-list --left-right --count HEAD...<UPSTREAM>`, hook/protection messages) and report. **Never force-push.** Stop.
 - Confirm `git rev-parse <UPSTREAM>` equals `SHIPPED_SHA` after fetching.
 
@@ -140,6 +145,7 @@ Then: `git push <REMOTE> --delete <upstream-branch-name>`. Otherwise keep it and
 Finish on local `main`, in sync with `<REMOTE>/main`. Report:
 
 - Commit message (or "no new commit — nothing staged") and `SHIPPED_SHA`
+- With `NEW_UPSTREAM`: that the branch was pushed for the first time, and whether its upstream was recorded
 - Merge method and route (direct / PR with URL)
 - Resulting `main` commit and sync status (`git status -sb` first line)
 - Whether the remote feature branch was deleted (and that the local one was kept)

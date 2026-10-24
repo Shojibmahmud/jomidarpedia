@@ -20,7 +20,7 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 | Route | Page | Status | Task |
 |---|---|---|---|
 | `/` | Home | built (minimal: counts and five sample sites) | 4.3, 11.x |
-| `/explore/` | Explore list and map | planned | 6.5, 7.x |
+| `/explore/` | Explore list and map | built (list; map in 7.x) | 6.5, 7.x |
 | `/search/` | Search results | planned | 8.x |
 | `/site/<id>/<slug>/` | Site page | built (text skeleton) | 4.1, 5.x |
 | `/site/<id>/` | ID redirect to the canonical site URL (noindex) | built | 4.2 |
@@ -49,12 +49,13 @@ Slugs come from the data: site `dataset_slug`; division and district `slug` in `
 | `acc` | `ticketed`, `open_no_ticket_reported`, `restricted_or_permission`, `unknown`, `not_applicable_lost` | yes | all | Visitor access (`ac`) | 6.2 |
 | `div` | division slugs, in `divisions.json` order | yes | all | Division | 6.2 |
 | `dist` | district slugs, in `districts.json` order | yes | all | District; dropped with a notice if not in a selected division | 6.2, 6.3 |
-| `type` | `site_type` tokens, in `TYPE_GROUP` order (`scripts/lib/validate.mjs`) | yes | all | Site type (`ty`) | 6.2 |
+| `type` | `house`, `rajbari`, `kachari`, `kuthi`, `chief`, `religious`, `fort`, `other`, `unclassified` | yes | all | Site type group (`t`; `TYPE_GROUP` in `scripts/lib/validate.mjs`); spec 06 D1 | 6.2 |
 | `doc` | `1` | no | off | Only well-documented (`rc` is `confirmed` or `partially_confirmed`) | 6.2 |
 | `vloc` | `1` | no | off | Only verified locations (`lc = verified`) | 6.2 |
 | `photo` | `1` | no | off | Has photos (`p`) | 6.2 |
-| `hours` | `1` | no | off | Has visiting hours (`hv`) | 6.2 |
-| `q` | free text | no | none | Text filter within the list | 6.x |
+| `hours` | `1` | no | off | Opening times known (`hv`: a clock time is recorded) | 6.2 |
+| `sort` | `time`, `name`, `district` | no | `time` | List order: travel time (unknown last), name or district, in the interface language (spec 06 D5, D8) | 6.4 |
+| `q` | free text | no | none | Text filter within the list; kept but not applied until Phase 8 (spec 06 D4) | 8.x |
 | `view` | `list`, `map` | no | `list` on phones; both panes on desktop | Which pane is shown | 6.5, 7.x |
 | `sel` | one site ID | no | none | Selected site (summary sheet or popover); must be on the map | 7.x |
 | `ids` | site IDs | yes | none | Show only these sites ("Open all stops on the map") | 9.8 |
