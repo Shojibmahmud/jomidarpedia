@@ -15,7 +15,7 @@ import { pathToFileURL } from 'node:url';
 import { TYPE_GROUP, BUCKET, latlon, isMappable } from './lib/validate.mjs';
 import { loadTables, validateTables } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, ZERO_OR_FREE } from './lib/checks.mjs';
-import { cardSummary, hoursKnown, isKnownText } from './lib/rules.mjs';
+import { cardSummary, hoursKnown, isKnownText, isReadyImage, leadFirst } from './lib/rules.mjs';
 
 export const INDEX_BUDGET = 150 * 1024;
 const DAY = { TRUE: 1, FALSE: 0 };
@@ -42,9 +42,9 @@ export function buildIndex({
     return result;
   }
 
-  // Only openly licensed, reviewed images may ever reach the site.
+  // Only openly licensed, reviewed images may ever reach the site; the card shows the lead photo.
   const firstImage = new Map();
-  for (const im of T.images) if ((im.publication_readiness || '').startsWith('Ready') && !firstImage.has(im.site_id)) firstImage.set(im.site_id, im);
+  for (const im of leadFirst(T.images.filter(isReadyImage))) if (!firstImage.has(im.site_id)) firstImage.set(im.site_id, im);
   const hours = new Map(T.visitor_info.map(v => [v.site_id, hoursKnown(v.opening_hours)]));
 
   const index = T.sites.map(s => {

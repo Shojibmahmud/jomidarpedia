@@ -7,6 +7,12 @@ export const UNKNOWN = /^(unknown|not documented|not researched|n\/a)\b/i;
 export const BARE_UNKNOWN = /^(unknown|not documented)\s*(\([^)]*\))?\.?$/i;
 export const isKnownText = v => !!(v || '').trim() && !UNKNOWN.test((v || '').trim());
 
+// ---------------------------------------------------------------- photos
+// Only Ready images may leave the CSV. A site's photos show in CSV order, except that the one the editor
+// marked `lead = yes` comes first: it is the card photo and opens the gallery. Unmarked, the first Ready one leads.
+export const isReadyImage = im => (im.publication_readiness || '').startsWith('Ready');
+export const leadFirst = images => [...images.filter(im => im.lead === 'yes'), ...images.filter(im => im.lead !== 'yes')];
+
 // ---------------------------------------------------------------- opening hours (2.9)
 // Hours are known only when the value gives a clock time: "10:00", "9 am", "10:30 AM".
 // "Daylight hours" and permission phrases describe access, not a schedule.
