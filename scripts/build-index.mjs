@@ -15,7 +15,7 @@ import { pathToFileURL } from 'node:url';
 import { TYPE_GROUP, BUCKET, latlon, isMappable } from './lib/validate.mjs';
 import { loadTables, validateTables } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, ZERO_OR_FREE } from './lib/checks.mjs';
-import { hoursKnown, isKnownText } from './lib/rules.mjs';
+import { cardSummary, hoursKnown, isKnownText } from './lib/rules.mjs';
 
 export const INDEX_BUDGET = 150 * 1024;
 const DAY = { TRUE: 1, FALSE: 0 };
@@ -54,6 +54,7 @@ export function buildIndex({
       i: s.site_id,                       // permanent ID
       s: s.dataset_slug,                  // URL slug
       e: s.name_en, b: s.name_bn || undefined, // no b: Bangla name not yet recorded (O13)
+      sm: cardSummary(s.short_description) || undefined, // the map card's one-liner (spec 07 FR-34)
       a: s.alternate_names || undefined,  // searched, not shown in the list
       fm: isKnownText(s.founder_or_family) ? s.founder_or_family : undefined, // founder or family, as text for search
       dv: s.division, d: s.district, db: s.district_bn, u: s.upazila || undefined,

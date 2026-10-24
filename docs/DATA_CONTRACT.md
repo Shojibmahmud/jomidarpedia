@@ -37,7 +37,7 @@ The specification is `.claude/specs/02-Data-contracts.md`.
 | Condition, access, division, district, travel time, confidence | `c`, `ac`, `dv`, `d`, `tb`, `rc` | |
 
 ### Map summary card (pin popover, mobile sheet)
-Index fields only: `e`, `b`, `d`, `c`, `ac`, `fe`, `h`, `tb`, `lc`, `f`, `img`, plus "Read more" to `/site/<i>/<s>/`. No summary text is in the index.
+Index fields only: `e`, `b`, `u`, `d`, `db`, `c`, `ac`, `fe`, `sm`, `h`, `tb`, `oc`, `dt`, `lc`, `f`, `ll`, `img`, plus "Read more" to `/site/<i>/<s>/` and "Directions" for a mappable site. The one-line summary is `sm` (spec 07 D1); the location line is the status label from `lc`, with no source count (D2).
 
 ### Search results
 | Group | Fields | From |
@@ -61,6 +61,7 @@ Index fields only: `e`, `b`, `d`, `c`, `ac`, `fe`, `h`, `tb`, `lc`, `f`, `img`, 
 |---|---|---|---|
 | `i`, `s` | ID, slug | `sites.site_id`, `dataset_slug` | always |
 | `e`, `b` | names | `name_en`, `name_bn` | `b` only when recorded |
+| `sm` | card summary | `short_description`: first sentence (two when the first is under 60 characters), cut at a word boundary to 160 characters with "…" (`cardSummary` in `scripts/lib/rules.mjs`) | not blank |
 | `a` | alternate names | `alternate_names` | not blank |
 | `fm` | founder or family | `founder_or_family` | known (not blank, not "Unknown…") |
 | `dv`, `d`, `db`, `u` | place | `division`, `district`, `district_bn`, `upazila` | `u` when not blank |
@@ -74,7 +75,7 @@ Index fields only: `e`, `b`, `d`, `c`, `ac`, `fe`, `h`, `tb`, `lc`, `f`, `img`, 
 | `oc` | one-way cost, Tk | `one_way_cost_bdt_estimate` | a number > 0 |
 | `p`, `img` | has photo; first Ready image `{ id, credit }` | `images.csv` | a Ready image exists |
 
-Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 2026 the index is 59 KB.
+Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 2026 the index was 59 KB; with `sm` (24 Oct 2026, spec 07) it is 76 KB.
 
 ## 3. Build-time shapes
 

@@ -19,7 +19,7 @@ const REQUIRED: Record<string, Check> = {
   ty: str
 };
 const OPTIONAL: Record<string, Check> = {
-  b: str, a: str, fm: str, u: str,
+  b: str, sm: v => str(v) && (v as string).length <= 160, a: str, fm: str, u: str,
   ll: v => Array.isArray(v) && v.length === 2 && v.every(num),
   f: one, fe: pos, h: num, dt: oneOf(0, 1), hv: one, oc: pos, p: one,
   img: v => !!v && typeof v === 'object' && Object.keys(v).sort().join() === 'credit,id' && str((v as { id: unknown }).id) && typeof (v as { credit: unknown }).credit === 'string'

@@ -1,6 +1,6 @@
 // Site header (roadmap task 3.9): logo, Explore, Day trips, Divisions (a menu of the 8 divisions),
-// About, search, and the language and theme toggles. On narrow screens the links and toggles move
-// into a Menu disclosure. Server component; only the disclosures and toggles run in the browser.
+// About, search, and the language, theme and Lite mode (task 7.9) toggles. On narrow screens the links
+// and toggles move into a Menu disclosure. Server component; only the disclosures and toggles run in the browser.
 
 import Link from 'next/link';
 import { Lockup } from '@/components/brand/Logo';
@@ -8,7 +8,7 @@ import { SrT, T } from '@/components/T';
 import { getDivisions } from '@/lib/data';
 import { divisionHref, HEADER_LINKS, SEARCH_HREF } from '@/lib/nav';
 import { Disclosure } from './Disclosure';
-import { LanguageToggle, ThemeToggle } from './Toggles';
+import { LanguageToggle, LiteToggle, ThemeToggle } from './Toggles';
 
 const navItem = 'inline-flex min-h-tap items-center rounded-md px-3 text-[15px] font-semibold hover:bg-surface-2';
 const iconButton = 'inline-flex min-h-tap min-w-tap items-center justify-center rounded-full hover:bg-surface-2';
@@ -59,6 +59,7 @@ export function SiteHeader() {
             <SrT k="nav.search" />
           </Link>
           <div className="hidden items-center gap-2 lg:flex">
+            <LiteToggle labelClassName="sr-only xl:not-sr-only" />
             <LanguageToggle />
             <ThemeToggle />
           </div>
@@ -76,6 +77,7 @@ export function SiteHeader() {
             <div className="mt-4 flex flex-wrap items-center gap-3 px-3">
               <LanguageToggle />
               <ThemeToggle />
+              <LiteToggle />
             </div>
           </Disclosure>
         </div>

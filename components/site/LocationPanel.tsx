@@ -1,8 +1,11 @@
-// "Location" (roadmap tasks 5.6, 5.16, 5.18; spec 05 FR-18 to FR-21). Five states: verified, single source,
-// approximate, unverified (O9) and no pin. No map yet (Phase 7). A hidden pin gets no coordinates, no copy
-// button and no outbound map link (R5); its note is left out by the build because it may name coordinates.
+// "Location" (roadmap tasks 5.6, 5.16, 5.18, 7.10; spec 05 FR-18 to FR-21, spec 07 FR-40, FR-41). Five states:
+// verified, single source, approximate, unverified (O9) and no pin. A mappable site gets the mini map and
+// "Open in Explore" (D13). A hidden pin gets no map, no coordinates, no copy button and no outbound map link
+// (R5); its note is left out by the build because it may name coordinates.
 
+import Link from 'next/link';
 import { Latin, T } from '@/components/T';
+import { MiniMap } from '@/components/map/MiniMap';
 import { formatCoords } from '@/lib/format';
 import { coordsText, directionsUrl } from '@/lib/site-page';
 import type { SiteRecord } from '@/lib/types';
@@ -19,7 +22,17 @@ export function LocationPanel({ site, pageUrl }: { site: SiteRecord; pageUrl: st
   const bn = [p.localityBn, p.unionBn, p.upazilaBn, p.districtBn].filter(Boolean).filter((x, k, a) => a.indexOf(x) === k).join(', ');
   const status = !ll ? 'noPin' : loc.status === 'not_found' ? 'unverified' : loc.status;
   return (
-    <div className="space-y-4 rounded-lg border border-line bg-surface p-5" data-location-state={status}>
+    <div className={`gap-5 rounded-lg border border-line bg-surface p-5 ${ll ? 'md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]' : ''}`} data-location-state={status}>
+      {ll ? (
+        <div className="mb-4 space-y-2 md:mb-0">
+          <MiniMap site={{ e: site.name.en, ll, lc: loc.status, f: loc.flagged ? 1 : undefined, c: site.condition }} />
+          <Link prefetch={false} href={`/explore/?view=map&sel=${site.id}`} data-open-explore
+            className="inline-flex min-h-tap items-center gap-2 rounded-md border border-line-strong px-4 font-semibold hover:bg-surface-2">
+            <T k="mini.openExplore" />
+          </Link>
+        </div>
+      ) : null}
+      <div className="space-y-4">
       <div>
         <p className="font-semibold" lang="en">{en}</p>
         {bn ? <p lang="bn" className="font-bn text-muted">{bn}</p> : null}
@@ -49,6 +62,7 @@ export function LocationPanel({ site, pageUrl }: { site: SiteRecord; pageUrl: st
       ) : (
         <SuggestCorrection siteId={site.id} pageUrl={pageUrl} field="location" k="location.suggest" look="button" />
       )}
+      </div>
     </div>
   );
 }

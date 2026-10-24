@@ -1,5 +1,6 @@
 'use client';
 // LanguageToggle and ThemeToggle (roadmap task 3.9). Each is a group of buttons with aria-pressed.
+// LiteToggle (task 7.9, spec 07 FR-37) is a switch; the header and Explore share the one preference.
 // They change <html> without a reload and store the choice (lib/prefs.ts); the boot script in
 // app/layout.tsx re-applies it before first paint on the next page. Labels use <T>, so they are in the
 // HTML in both languages like every other interface string. Until hydration the state reads as the
@@ -7,8 +8,8 @@
 
 import { useId } from 'react';
 import { T, SrT } from '@/components/T';
-import { applyLang, applyTheme, browserStorage, THEMES, type Theme } from '@/lib/prefs';
-import { useTheme, useUiLang } from '@/lib/use-ui-lang';
+import { applyLang, applyLite, applyTheme, browserStorage, THEMES, type Theme } from '@/lib/prefs';
+import { useLite, useTheme, useUiLang } from '@/lib/use-ui-lang';
 import type { Lang } from '@/lib/i18n';
 
 const group = 'inline-flex items-center rounded-full border border-line-strong bg-surface p-0.5';
@@ -50,5 +51,20 @@ export function ThemeToggle() {
         </button>
       ))}
     </div>
+  );
+}
+
+/** "Lite mode (no map)" as a switch. Turning it on unmounts any open map (FR-38). */
+export function LiteToggle({ className = '', labelClassName = '' }: { className?: string; labelClassName?: string }) {
+  const on = useLite();
+  return (
+    <button type="button" role="switch" aria-checked={on} data-lite-toggle
+      onClick={() => applyLite(!on, document.documentElement, browserStorage())}
+      className={`inline-flex min-h-tap items-center gap-2 rounded-full px-2 text-sm font-semibold ${className}`}>
+      <span aria-hidden="true" className={`relative h-6 w-10 shrink-0 rounded-full transition-colors ${on ? 'bg-indigo' : 'bg-line-strong'}`}>
+        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface shadow-1 transition-[left] ${on ? 'left-[18px]' : 'left-0.5'}`} />
+      </span>
+      <span className={labelClassName}><T k="lite.label" /></span>
+    </button>
   );
 }

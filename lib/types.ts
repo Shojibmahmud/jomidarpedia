@@ -14,6 +14,7 @@ export interface IndexSite {
   i: string;              // site_id, e.g. "JB-DHK-064"
   s: string;              // slug
   e: string; b?: string;  // name_en, name_bn; no b → "Bangla name not yet recorded" (O13)
+  sm?: string;            // first sentence of short_description, ≤160 chars: the map card's one-liner (spec 07 D1)
   a?: string;             // alternate_names (search only)
   fm?: string;            // founder or family, as text (search only; not a normalized family)
   dv: string; d: string; db: string; u?: string; // division, district, district_bn, upazila

@@ -8,6 +8,9 @@ import { bestRemoval, counts, EMPTY, filter, makePlaces, type FilterState } from
 import { sortSites } from '../lib/sort';
 import { parse } from '../lib/urlState';
 import type { District, Division, IndexSite } from '../lib/types';
+import { stubTiles } from './tiles';
+
+test.beforeEach(async ({ page }) => { await stubTiles(page); });
 
 const index: IndexSite[] = JSON.parse(readFileSync('public/data/index.json', 'utf8'));
 const divisions: Division[] = JSON.parse(readFileSync('data/build/divisions.json', 'utf8'));
@@ -202,11 +205,13 @@ test.describe('desktop rail', () => {
     await expect(page).toHaveURL(/div=khulna/);
   });
 
-  test('the page requests no map code or tiles (R7)', async ({ page }) => {
+  // Phase 7 shows the map at this width; map loading is tested in map.spec.ts (spec 07 AC-1).
+  test('the page fetches only index.json for data, and no tiles in Lite mode (R7)', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('jp-lite', '1'));
     const urls: string[] = [];
     page.on('request', r => urls.push(r.url()));
     await open(page);
-    expect(urls.filter(u => /leaflet|tile|basemap/i.test(u))).toEqual([]);
+    expect(urls.filter(u => /tile|basemap/i.test(u))).toEqual([]);
     expect(urls.filter(u => u.includes('/data/'))).toEqual([expect.stringMatching(/\/data\/index\.json$/)]);
   });
 
