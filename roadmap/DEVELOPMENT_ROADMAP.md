@@ -779,8 +779,8 @@ Required dependencies between phases 5 and 11:
 - `Search results · desktop`
 - `Search · did you mean + no results · mobile`
 
-- [ ] **8.1** Write `lib/fold.ts`: lower-case, Bangla normalization (NFC), and Latin variants (jomidar/jamidar/zamindar, bari/badi, Chowdhury spellings). Use it in the build and in the browser. Unit-test it.
-- [ ] **8.2** Write `lib/search.ts`: Fuse.js imported dynamically, over these fields with these weights:
+- [x] **8.1** Write `lib/fold.ts`: lower-case, Bangla normalization (NFC), and Latin variants (jomidar/jamidar/zamindar, bari/badi, Chowdhury spellings). Use it in the build and in the browser. Unit-test it.
+- [x] **8.2** Write `lib/search.ts`: Fuse.js imported dynamically, over these fields with these weights:
   - `e` 3, `b` 3, `a` 2, `d` 1, `fm` 1.
 
   Results are grouped as **Sites**, **Districts** (from `districts.json`) and **Families**:
@@ -788,16 +788,28 @@ Required dependencies between phases 5 and 11:
   - selecting it opens `/search?q=<family>&field=family`, which lists those sites.
 
   Test that "baliyati" finds Baliati and "jamidar bari teota" finds Teota.
-- [ ] **8.3** Build `SearchBox` as an ARIA 1.2 combobox:
+- [x] **8.3** Build `SearchBox` as an ARIA 1.2 combobox:
   - ↑ and ↓ move through results, Enter opens, Esc clears;
   - the number of results is announced;
   - matches are wrapped in `<mark>`.
-- [ ] **8.4** Build `SearchApp` with full results, "Did you mean" (the closest folded name) and the empty state, which shows the illustration and suggestions.
-- [ ] **8.5** Add Playwright tests:
+- [x] **8.4** Build `SearchApp` with full results, "Did you mean" (the closest folded name) and the empty state, which shows the illustration and suggestions.
+- [x] **8.5** Add Playwright tests:
   - a Bangla query;
   - a spelling variant;
   - a family result;
   - keyboard-only operation.
+
+**Done 24 Oct 2026 (8.1–8.5, plus `q` in Explore), apart from the owner's visual review**, specified in `.claude/specs/08-Search.md` (approved 24 Oct 2026, amended the same day: §10). Verified with 338 passing unit tests (35 new in `tests/search.test.ts`), typecheck, lint, a static build of 832 pages, and 125 passing Playwright tests (24 new in `e2e/search.spec.ts`; every spec file now passes).
+- **Matching (D4):** the query is folded (`lib/fold.ts`) and split into words; generic words (zamindar, bari, জমিদার…) count only when nothing else was typed. A word matches a site's word exactly or as a prefix; only when it matches nothing does Fuse.js look for close spellings, over single words rather than whole fields. Results rank by words matched, field weights (`e`, `b` 3, `a` 2, district 1, `fm` 1) and how much of the name the query covers.
+- **Did you mean (D5):** when no word matches as typed, the closest name word replaces it ("baliyati" → Baliati); "exactly instead" adds `exact=1`.
+- **Families (D1):** phrases cut from `fm` around the hit, up to three capitalised words, never a title or a place, grouped by folded form; a card leads to `/search/?q=<phrase>&field=family`. Phrase quality on the real text is OQ-3.
+- **Header:** the search icon is a link to `/search/` in the HTML and opens the overlay once the page runs; the overlay and Fuse.js (about 9 KB gzipped) load on first use. `index.json` is fetched once per page, shared with Explore.
+- **`/search/`:** All, Sites, Families and Districts tabs (`in`), "Searching as" for variant spellings, the empty state with Explore, the language switch and three example searches chosen by rule. Districts lead to Explore (`div` and `dist`) until 10.2.
+- **Explore:** "Search within results" in the rail (above the list on phones) applies `q` with the same matcher, ANDed with the filters; a chip removes it; the map refits.
+- **URLs:** `/search/` gains `in` and `exact`; Explore's `q` is applied.
+- **Tools:** `npm run screenshots` adds `/search/` (desktop results; phone Did you mean and no results) and the overlay at 1440 and 390 px.
+- **Bangla:** every new string is a draft (`needsReview`), and so is the Bangla fold list (OQ-1).
+- **Open:** the owner's visual review against the two search boards; the final generic-word list (OQ-2).
 
 **Acceptance criteria**
 - English names, Bangla names and variant spellings find the right sites.

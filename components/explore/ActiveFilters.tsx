@@ -1,27 +1,41 @@
 'use client';
 // Active filters above the list (roadmap task 6.6, spec 06 FR-23): one removable chip per active value
 // and Clear all. Each removal is one change, so one history entry. Hidden when nothing is on.
+// A search within the results is a chip too, "Search: q" (spec 08 FR-30).
 
 import { Both, T } from '@/components/T';
+import { dual } from '@/lib/i18n';
 import { valueLabel } from '@/lib/explore-labels';
 import { activeValues, removeValue, type FilterState, type Places } from '@/lib/filters';
 
-export function ActiveFilters({ state, places, onChange, onClear }: {
+const X = () => <svg viewBox="0 0 24 24" width={14} height={14} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>;
+
+export function ActiveFilters({ state, places, onChange, onClear, q, onRemoveQ }: {
   state: FilterState; places: Places; onChange: (next: FilterState) => void; onClear: () => void;
+  q?: string; onRemoveQ?: () => void;
 }) {
   const values = activeValues(state);
-  if (!values.length) return null;
+  if (!values.length && !q) return null;
   return (
     <section aria-labelledby="jp-active" className="flex flex-wrap items-center gap-2">
       <h3 id="jp-active" className="sr-only"><T k="active.label" /></h3>
       <ul className="contents">
+        {q && onRemoveQ ? (
+          <li>
+            <button type="button" onClick={onRemoveQ} data-active="q" className="chip min-h-10 border-ink px-3 text-sm">
+              <span className="sr-only"><T k="active.remove" /> </span>
+              <Both value={dual('active.search', { q: { en: q, bn: q } })} />
+              <X />
+            </button>
+          </li>
+        ) : null}
         {values.map(v => (
           <li key={`${v.group}:${'value' in v ? v.value : ''}`}>
             <button type="button" onClick={() => onChange(removeValue(state, v, places))} data-active={`${v.group}${'value' in v ? `:${v.value}` : ''}`}
               className="chip min-h-10 border-ink px-3 text-sm">
               <span className="sr-only"><T k="active.remove" /> </span>
               <Both value={valueLabel(v, places)} />
-              <svg viewBox="0 0 24 24" width={14} height={14} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+              <X />
             </button>
           </li>
         ))}

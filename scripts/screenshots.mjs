@@ -5,6 +5,8 @@
 // The map (spec 07 AC-16): 1440 px with Baliati's popover open, the 390 px map at peek, half and full, the
 // selected-site sheet, 390 px dark at full, and Baliati's Location section with its mini map. These load real
 // tiles from the development provider (O4).
+// Search (spec 08 AC-17): /search/ results at 1440 px, "Did you mean" and no results at 390 px, and the header
+// overlay with suggestions at 1440 and 390 px.
 // Serves out/ with the pinned `serve` on the Playwright port, so run `npm run build:local` first.
 // Output: screenshots/ (gitignored).
 
@@ -31,6 +33,12 @@ const maps = [
   ['map-popover', 'day=1&sel=JB-DHK-064', 1440, 'light', 0],
   ['map-peek', 'view=map', 390, 'light', 0], ['map-half', 'view=map', 390, 'light', 1], ['map-full', 'view=map', 390, 'light', 2],
   ['map-summary', 'day=1&view=map&sel=JB-DHK-064', 390, 'light', 0], ['map-full', 'day=1&view=map', 390, 'dark', 2],
+];
+
+// [name, query, width, theme]
+const searches = [
+  ['search-results', 'q=jamidar%20badi%20choudhury', 1440, 'light'],
+  ['search-did-you-mean', 'q=baliyati', 390, 'light'], ['search-no-results', 'q=lalbagh%20kella', 390, 'light'],
 ];
 
 const server = spawn('npx', ['serve', 'out', '--listen', String(PORT), '--no-clipboard', '--no-port-switching'], { stdio: 'ignore' });
@@ -84,6 +92,27 @@ try {
     await page.waitForTimeout(1200);
     const file = `${OUT}/baliati-location-${width}-light.png`;
     await panel.screenshot({ path: file });
+    console.log(file);
+    await page.close();
+  }
+  for (const [name, query, width, theme] of searches) {
+    const page = await browser.newPage({ viewport: { width, height: width < 1024 ? 844 : 900 }, colorScheme: theme });
+    await page.goto(`http://localhost:${PORT}/search/?${query}`, { waitUntil: 'networkidle' });
+    await page.waitForSelector('[data-tab], [data-search-empty]');
+    const file = `${OUT}/${name}-${width}-${theme}.png`;
+    await page.screenshot({ path: file, fullPage: true });
+    console.log(file);
+    await page.close();
+  }
+  for (const width of [1440, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: width < 1024 ? 844 : 900 } });
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' });
+    await page.click('[data-search-open]');
+    await page.waitForSelector('[data-search-overlay] [role="combobox"]:focus');
+    await page.keyboard.type('chowdhury');
+    await page.waitForSelector('[data-search-overlay] [role="option"]');
+    const file = `${OUT}/search-overlay-${width}-light.png`;
+    await page.screenshot({ path: file });
     console.log(file);
     await page.close();
   }

@@ -1,12 +1,14 @@
 // Site header (roadmap task 3.9): logo, Explore, Day trips, Divisions (a menu of the 8 divisions),
-// About, search, and the language, theme and Lite mode (task 7.9) toggles. On narrow screens the links
+// About, search (a link to /search/ that opens the search overlay once the page runs, spec 08 FR-18), and
+// the language, theme and Lite mode (task 7.9) toggles. On narrow screens the links
 // and toggles move into a Menu disclosure. Server component; only the disclosures and toggles run in the browser.
 
 import Link from 'next/link';
 import { Lockup } from '@/components/brand/Logo';
 import { SrT, T } from '@/components/T';
-import { getDivisions } from '@/lib/data';
-import { divisionHref, HEADER_LINKS, SEARCH_HREF } from '@/lib/nav';
+import { SearchButton } from '@/components/search/SearchButton';
+import { getDistricts, getDivisions } from '@/lib/data';
+import { divisionHref, HEADER_LINKS } from '@/lib/nav';
 import { Disclosure } from './Disclosure';
 import { LanguageToggle, LiteToggle, ThemeToggle } from './Toggles';
 
@@ -54,10 +56,8 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link prefetch={false} href={SEARCH_HREF} className={iconButton}>
-            <svg viewBox="0 0 24 24" width={20} height={20} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
-            <SrT k="nav.search" />
-          </Link>
+          <SearchButton className={iconButton}
+            districts={getDistricts().map(d => ({ slug: d.slug, en: d.en, bn: d.bn, divisionSlug: d.divisionSlug, count: d.count }))} />
           <div className="hidden items-center gap-2 lg:flex">
             <LiteToggle labelClassName="sr-only xl:not-sr-only" />
             <LanguageToggle />

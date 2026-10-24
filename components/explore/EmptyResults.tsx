@@ -1,6 +1,7 @@
 'use client';
 // No results (roadmap task 6.9, spec 06 FR-27, D6): names the one group or switch whose removal brings
-// back the most sites, with a button that removes it, and offers Clear all.
+// back the most sites, with a button that removes it, and offers Clear all. With a search within the
+// results, removing the search is offered too (spec 08 FR-30).
 
 import { Both, T } from '@/components/T';
 import { groupPhrase } from '@/lib/explore-labels';
@@ -9,8 +10,9 @@ import { both, formatCount } from '@/lib/format';
 import { dual } from '@/lib/i18n';
 import type { IndexSite } from '@/lib/types';
 
-export function EmptyResults({ sites, state, places, onChange, onClear }: {
+export function EmptyResults({ sites, state, places, onChange, onClear, q, onRemoveQ }: {
   sites: IndexSite[]; state: FilterState; places: Places; onChange: (next: FilterState) => void; onClear: () => void;
+  q?: string; onRemoveQ?: () => void;
 }) {
   const best = bestRemoval(sites, state, places);
   return (
@@ -21,6 +23,11 @@ export function EmptyResults({ sites, state, places, onChange, onClear }: {
           <button type="button" onClick={() => onChange(without(state, best.group))} data-suggest={best.group}
             className="min-h-tap rounded-md bg-primary px-4 text-left font-semibold text-on-primary">
             <Both value={dual(best.count === 1 ? 'empty.suggest.one' : 'empty.suggest', { filter: groupPhrase(best.group, state, places), count: both(formatCount, best.count) })} />
+          </button>
+        ) : null}
+        {q && onRemoveQ ? (
+          <button type="button" onClick={onRemoveQ} data-suggest="q" className="min-h-tap rounded-md border border-line-strong px-4 text-left font-semibold">
+            <Both value={dual('empty.removeSearch', { q: { en: q, bn: q } })} />
           </button>
         ) : null}
         <button type="button" onClick={onClear} className="min-h-tap rounded-md border border-line-strong px-4 font-semibold"><T k="empty.clear" /></button>

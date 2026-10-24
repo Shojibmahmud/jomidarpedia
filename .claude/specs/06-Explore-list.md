@@ -82,7 +82,7 @@ The boards, the URL contract and the roadmap disagree in places, which the inter
 - **FR-10** `lib/urlState.ts` is pure: `parse(search, lists) → { state, sort, kept, dropped: boolean }` and `serialize(state, sort, kept) → string`. `lists` carries the division and district slugs and the district→division map.
 - **FR-11** It follows `docs/URLS.md` exactly: keys in table order, values in their listed order, duplicates removed, defaults omitted, commas unencoded, `q` trimmed and capped at 100 characters. `serialize(parse(x))` is byte-identical for any canonical `x` (round trip), and any input becomes canonical after one parse.
 - **FR-12** Unknown keys, values not allowed for their key (including `1` keys with any other value, and a second value on a single-value key), and districts outside every selected division are dropped. When anything was dropped, the app rewrites the URL with `history.replaceState` (no new entry) and shows the dismissible notice `url.droppedFilters`. Dismissal is not remembered.
-- **FR-13** `q`, `view`, `sel` and `ids` are validated (`sel`/`ids`: IDs that exist in the index, dropped otherwise once the index loads) and kept in the canonical URL, but do not change the results (D4, D10).
+- **FR-13** `q`, `view`, `sel` and `ids` are validated (`sel`/`ids`: IDs that exist in the index, dropped otherwise once the index loads) and kept in the canonical URL, but do not change the results (D4, D10). *(Phase 8: `q` now applies, spec 08 D3; Phase 7 applied `view` and `sel`.)*
 - **FR-14** Division and district values are slugs: division slugs in `divisions.json` order; district slugs in `districts.json` order. A site's district slug comes from the districts list passed as props (A-6), never by lower-casing in the browser.
 
 ### Sort (6.4)

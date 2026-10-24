@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Both, T } from '@/components/T';
 import { PlaceholderArt } from '@/components/art/PlaceholderArt';
 import { AccessBadge, ConditionBadge } from '@/components/site/Badges';
+import { Marked } from '@/components/search/Marked';
 import { bucketLabel } from '@/lib/explore-labels';
 import { both, formatHours } from '@/lib/format';
 import { siteHref } from '@/lib/site-url';
@@ -31,9 +32,13 @@ function TravelTime({ site }: { site: IndexSite }) {
   return <T k="card.timeUnknown" />;
 }
 
-/** `action` is a control above the stretched link, such as Explore's "Show on map" (spec 07 FR-20). */
-export function SiteCard({ site, variant, highlight = false, headingLevel = 3, action }: {
+/**
+ * `action` is a control above the stretched link, such as Explore's "Show on map" (spec 07 FR-20).
+ * `terms` marks the words a search matched in the names, and `note` says where it matched (spec 08 FR-17, FR-8).
+ */
+export function SiteCard({ site, variant, highlight = false, headingLevel = 3, action, terms, note }: {
   site: IndexSite; variant: CardVariant; highlight?: boolean; headingLevel?: 2 | 3 | 4; action?: React.ReactNode;
+  terms?: ReadonlySet<string>; note?: React.ReactNode;
 }) {
   const Heading = `h${headingLevel}` as const;
   const place = { en: site.u ? `${site.u}, ${site.d}` : site.d, bn: site.u ? `${site.u}, ${site.db}` : site.db };
@@ -45,12 +50,13 @@ export function SiteCard({ site, variant, highlight = false, headingLevel = 3, a
       <div className="min-w-0 flex-1 space-y-1">
         <Heading className={variant === 'full' ? 'font-serif text-h3' : 'text-lg font-semibold'}>
           <Link prefetch={false} href={siteHref(site.i, site.s)} className="after:absolute after:inset-0 after:rounded-lg hover:underline">
-            <span lang="en" className="block">{site.e}</span>
-            {site.b ? <span lang="bn" className="block font-bn text-bn-sm font-normal text-muted">{site.b}</span> : null}
+            <span lang="en" className="block"><Marked text={site.e} terms={terms} /></span>
+            {site.b ? <span lang="bn" className="block font-bn text-bn-sm font-normal text-muted"><Marked text={site.b} terms={terms} /></span> : null}
           </Link>
         </Heading>
         {site.b ? null : <p className="text-xs text-muted"><T k="common.bnNameMissing" /></p>}
         <p className="text-sm text-muted"><Both value={place} /> · <TravelTime site={site} /></p>
+        {note ? <p className="text-sm text-muted" data-matched>{note}</p> : null}
         <p className="flex flex-wrap gap-1.5">
           <ConditionBadge condition={site.c} />
           <AccessBadge access={site.ac} fee={site.fe} />

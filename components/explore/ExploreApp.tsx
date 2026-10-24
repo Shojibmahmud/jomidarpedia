@@ -3,7 +3,9 @@
 // `view` and `sel` are read from it (lib/urlState.ts) and every applied change pushes one history entry
 // (spec 06 FR-28). Load more, the list's scroll position, the sheet's snap point and canonicalisation never
 // add an entry: they live in history.state under `jp` (A-4), which Next's router keeps across Back and Forward.
-// The browser fetches public/data/index.json once; division and district names come as props (A-6).
+// The browser fetches public/data/index.json once (shared with the search overlay, lib/search-client.ts);
+// division and district names come as props (A-6). `q` (spec 08 D3, FR-28 to FR-31) keeps the sites the
+// search matcher finds, ANDed with the filters; Fuse.js loads only once there is a query or the box is used.
 //
 // Layouts (spec 07 D7): from 1280 px rail | map | list; from 1024 px rail | a Map/List pane; below, the list
 // with a Map button, or the full-screen map with the results sheet. The map loads only when it is shown and
@@ -21,12 +23,14 @@ import { SummaryCard } from '@/components/map/SummaryCard';
 import { counts as countAll, EMPTY, filter, makePlaces, activeCount, type FilterState, type PlaceList } from '@/lib/filters';
 import { both, formatCount } from '@/lib/format';
 import { text, type StringKey } from '@/lib/i18n';
+import { useIndexData, useMatcher } from '@/lib/search-client';
 import { sortSites } from '@/lib/sort';
-import { exploreHref, parse, serialize, SORTS, type Extras, type Sort, type View } from '@/lib/urlState';
+import { exploreHref, parse, Q_MAX, serialize, SORTS, type Extras, type Sort, type View } from '@/lib/urlState';
 import { useLite, useMedia, useUiLang } from '@/lib/use-ui-lang';
 import type { IndexSite } from '@/lib/types';
 import { ActiveFilters } from './ActiveFilters';
 import { EmptyResults } from './EmptyResults';
+import { ExploreSearch } from './ExploreSearch';
 import { FilterDrawer } from './FilterDrawer';
 import { FilterRail } from './FilterRail';
 import { LiteNotices, LiteOffPanel } from './LiteNotices';
@@ -44,22 +48,11 @@ const memory = (): Memory => (window.history.state?.jp ?? {}) as Memory;
 const remember = (patch: Memory) => window.history.replaceState({ jp: { ...memory(), ...patch } }, '');
 const rawSearch = () => window.location.search.replace(/^\?/, '');
 const withoutSel = ({ sel: _sel, ...rest }: Extras): Extras => rest; // eslint-disable-line @typescript-eslint/no-unused-vars
+const withoutQ = ({ q: _q, ...rest }: Extras): Extras => rest; // eslint-disable-line @typescript-eslint/no-unused-vars
 
-function useIndex() {
-  const [load, setLoad] = useState<Load>({ status: 'loading' });
-  const [attempt, setAttempt] = useState(0);
-  useEffect(() => {
-    let live = true;
-    fetch('/data/index.json')
-      .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then((sites: unknown) => {
-        if (!Array.isArray(sites)) throw new Error('index.json is not a list');
-        if (live) setLoad({ status: 'ready', sites: sites as IndexSite[] });
-      })
-      .catch(() => { if (live) setLoad({ status: 'error' }); });
-    return () => { live = false; };
-  }, [attempt]);
-  const retry = useCallback(() => { setLoad({ status: 'loading' }); setAttempt(a => a + 1); }, []);
+function useIndex(): { load: Load; retry: () => void } {
+  const { state, retry } = useIndexData();
+  const load: Load = state.status === 'ready' ? { status: 'ready', sites: state.value } : { status: state.status === 'error' ? 'error' : 'loading' };
   return { load, retry };
 }
 
@@ -76,19 +69,31 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   const lg = useMedia('(min-width: 1024px)');
   const layout: 'three' | 'pane' | 'phone' = xl ? 'three' : lg ? 'pane' : 'phone';
   const { load, retry } = useIndex();
-  const ready = load.status === 'ready';
-  const sites = ready ? load.sites : NO_SITES;
+  const indexReady = load.status === 'ready';
+  const sites = indexReady ? load.sites : NO_SITES;
   const byId = useMemo(() => new Map(sites.map(s => [s.i, s])), [sites]);
-  const ids = useMemo(() => (ready ? new Set(byId.keys()) : undefined), [ready, byId]);
+  const ids = useMemo(() => (indexReady ? new Set(byId.keys()) : undefined), [indexReady, byId]);
   const raw = useMemo(() => parse(search, places, ids), [search, places, ids]);
-  const filtered = useMemo(() => filter(sites, raw.state, places), [sites, raw.state, places]);
 
-  // A sel that names a hidden pin or a filtered-out site is dropped with the notice (spec 07 FR-22, D12).
+  // q (spec 08 FR-29): the sites the matcher finds for it. If search can't load, the filters work without it (NFR-4).
+  const q = raw.extras.q;
+  const [searchWanted, setSearchWanted] = useState(false);
+  const { state: matcher, retry: retrySearch } = useMatcher(!!q || searchWanted);
+  const searchFailed = !!q && matcher.status === 'error';
+  const hits = useMemo(() => (q && matcher.status === 'ready' ? matcher.value.match(q) : undefined), [q, matcher]);
+  const pool = useMemo(() => (!q || searchFailed ? sites : hits ? sites.filter(s => hits.has(s.i)) : NO_SITES), [q, searchFailed, sites, hits]);
+  const ready = indexReady && (!q || searchFailed || !!hits);
+  const filtered = useMemo(() => filter(pool, raw.state, places), [pool, raw.state, places]);
+
+  // A sel that names a hidden pin or a filtered-out site is dropped with the notice (spec 07 FR-22, D12) —
+  // unless the visitor's own search, sent before the matcher could check it, excluded it (spec 08 FR-31).
+  const [quietSel, setQuietSel] = useState<{ q: string; sel: string } | null>(null);
   const parsed = useMemo(() => {
     const sel = raw.extras.sel;
     if (!ready || !sel || filtered.some(s => s.i === sel && s.ll)) return raw;
-    return { ...raw, extras: withoutSel(raw.extras), dropped: true };
-  }, [raw, ready, filtered]);
+    const quiet = quietSel?.sel === sel && quietSel.q === raw.extras.q;
+    return { ...raw, extras: withoutSel(raw.extras), dropped: raw.dropped || !quiet };
+  }, [raw, ready, filtered, quietSel]);
   const view: View = useMemo(() => ({ state: parsed.state, sort: parsed.sort, extras: parsed.extras }), [parsed]);
   const { state, sort, extras } = view;
   const selSite = extras.sel ? byId.get(extras.sel) : undefined;
@@ -121,10 +126,33 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   const suppressFocus = useRef(false);
   const apply = useCallback((next: FilterState) => {
     let ex = view.extras;
-    if (ex.sel && !filter(sites, next, places).some(s => s.i === ex.sel && s.ll)) { ex = withoutSel(ex); suppressFocus.current = true; }
+    if (ex.sel && !filter(pool, next, places).some(s => s.i === ex.sel && s.ll)) { ex = withoutSel(ex); suppressFocus.current = true; }
     go({ ...view, state: next, extras: ex });
-  }, [go, view, sites, places]);
-  const clear = useCallback(() => apply(EMPTY), [apply]);
+  }, [go, view, pool, places]);
+  /** Clear all: the filters and the search (FR-30); a selected site stays, since nothing then excludes it. */
+  const clear = useCallback(() => go({ ...view, state: EMPTY, extras: withoutQ(view.extras) }), [go, view]);
+
+  /**
+   * A new search text (FR-28, FR-31): the first update of a run of typing pushes an entry, the rest replace
+   * it. A query that excludes the selected site drops sel in the same entry, with no notice.
+   */
+  const setQuery = useCallback((text: string, push: boolean) => {
+    const next = text.trim().slice(0, Q_MAX).trim();
+    let ex: Extras = next ? { ...view.extras, q: next } : withoutQ(view.extras);
+    let quiet: { q: string; sel: string } | null = null;
+    if (ex.sel && matcher.status === 'ready') {
+      const kept = next ? matcher.value.match(next) : undefined;
+      const p = kept ? sites.filter(s => kept.has(s.i)) : sites;
+      if (!filter(p, view.state, places).some(s => s.i === ex.sel && s.ll)) { ex = withoutSel(ex); suppressFocus.current = true; }
+    } else if (ex.sel && next) quiet = { q: next, sel: ex.sel }; // checked once the matcher is ready, without the notice
+    const qs = serialize({ ...view, extras: ex });
+    if (qs === rawSearch()) return;
+    setQuietSel(quiet);
+    const jp: Memory = { pages: 1, snap: memory().snap };
+    if (push) window.history.pushState({ jp }, '', qs ? `?${qs}` : window.location.pathname);
+    else window.history.replaceState({ jp }, '', qs ? `?${qs}` : window.location.pathname);
+  }, [view, matcher, sites, places]);
+  const wantSearch = useCallback(() => setSearchWanted(true), []);
   const setView = (v: 'list' | 'map') => go({ ...view, extras: { ...extras, view: v } }, {});
 
   // Loaded pages and scroll position, restored for this history entry (FR-29).
@@ -141,11 +169,11 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   const pendingScroll = useRef<number | null>(null);
   useEffect(() => { pendingScroll.current = memory().scroll ?? null; }, [search]);
   useEffect(() => {
-    if (load.status !== 'ready' || pendingScroll.current === null) return;
+    if (!ready || pendingScroll.current === null) return;
     const y = pendingScroll.current;
     pendingScroll.current = null;
     requestAnimationFrame(() => window.scrollTo(0, y));
-  }, [load.status, pages, search]);
+  }, [ready, pages, search]);
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const save = () => remember({ scroll: Math.round(window.scrollY) });
@@ -176,16 +204,16 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
 
   const results = useMemo(() => sortSites(filtered.slice(), sort, lang), [filtered, sort, lang]);
   const onMap = useMemo(() => filtered.filter(s => s.ll), [filtered]);
-  const counts = useMemo(() => countAll(sites, state, places), [sites, state, places]);
+  const counts = useMemo(() => countAll(pool, state, places), [pool, state, places]);
   const unclassified = useMemo(() => sites.filter(s => s.t === 'unclassified').length, [sites]);
-  const fitKey = useMemo(() => serialize({ state, sort: 'time', extras: {} }), [state]);
+  const fitKey = useMemo(() => serialize({ state, sort: 'time', extras: { q: extras.q } }), [state, extras.q]);
 
   // The result count, announced once a run of changes settles (FR-32, A-5).
   const [announcement, setAnnouncement] = useState('');
   const announced = useRef<string | null>(null);
   const filterKey = `${fitKey}|${sort}|${results.length}`;
   useEffect(() => {
-    if (load.status !== 'ready') return;
+    if (!ready) return;
     if (announced.current === null) { announced.current = filterKey; return; } // not on first load
     if (announced.current === filterKey) return;
     const timer = setTimeout(() => {
@@ -193,7 +221,7 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
       setAnnouncement(text(results.length === 1 ? 'results.count.one' : 'results.count', lang, { count: both(formatCount, results.length) }));
     }, 500);
     return () => clearTimeout(timer);
-  }, [load.status, filterKey, results.length, lang]);
+  }, [ready, filterKey, results.length, lang]);
 
   // The drawer, below lg only (A-1): it closes, discarding its draft, if the window widens.
   const [drawer, setDrawer] = useState(false);
@@ -313,10 +341,20 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
     </div>
   ) : null;
 
-  const listBody = load.status === 'loading' ? <ListSkeleton />
-    : load.status === 'error' ? <LoadError onRetry={retry} />
-      : results.length ? <ResultsList sites={results} pages={pages} onMore={more} map={mapLink} />
-        : <EmptyResults sites={sites} state={state} places={places} onChange={apply} onClear={clear} />;
+  const listBody = load.status === 'error' ? <LoadError onRetry={retry} />
+    : !ready ? <ListSkeleton />
+      : results.length ? <ResultsList sites={results} pages={pages} onMore={more} map={mapLink} terms={hits} />
+        : <EmptyResults sites={pool} state={state} places={places} onChange={apply} onClear={clear} q={extras.q} onRemoveQ={() => setQuery('', true)} />;
+
+  const searchError = searchFailed ? (
+    <div role="alert" className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-surface p-3 text-sm" data-search-error>
+      <p className="flex-1 font-semibold"><T k="search.error" /></p>
+      <button type="button" onClick={retrySearch} className="min-h-tap rounded-md bg-primary px-4 font-semibold text-on-primary"><T k="results.retry" /></button>
+    </div>
+  ) : null;
+  const searchBox = (id: string, className = '') => (
+    <ExploreSearch id={id} q={extras.q ?? ''} onIntent={wantSearch} onChange={setQuery} className={className} />
+  );
 
   const listColumn = (
     <section aria-labelledby="jp-results-title" className="min-w-0 space-y-4">
@@ -328,13 +366,15 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
         {filtersButton(false)}
       </div>
       <LiteNotices />
+      {searchBox('jp-search-within-list', 'lg:hidden')}
+      {searchError}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         {sortGroup}
         <CopyButton value={shareUrl} label="explore.copyLink" ok="share.copied" failed="share.failed" />
         <LiteToggle />
       </div>
       {noticeBox}
-      <ActiveFilters state={state} places={places} onChange={apply} onClear={clear} />
+      <ActiveFilters state={state} places={places} onChange={apply} onClear={clear} q={extras.q} onRemoveQ={() => setQuery('', true)} />
       {listBody}
     </section>
   );
@@ -370,9 +410,10 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   }, [phoneMap, search]);
   const sheetHeading = useId();
 
-  const rail = <FilterRail state={state} counts={counts} places={places} unclassified={unclassified} disabled={!ready} onChange={apply} onClear={clear} />;
+  const rail = <FilterRail state={state} counts={counts} places={places} unclassified={unclassified} disabled={!ready} onChange={apply} onClear={clear}
+    search={searchBox('jp-search-within')} />;
   const drawerEl = (
-    <FilterDrawer open={drawer} applied={state} sites={sites} places={places} unclassified={unclassified}
+    <FilterDrawer open={drawer} applied={state} sites={pool} places={places} unclassified={unclassified}
       onApply={next => { setDrawer(false); apply(next); trigger.current?.focus(); }} onClose={closeDrawer} />
   );
   const live = <p role="status" aria-live="polite" className="sr-only" data-announce>{announcement}</p>;
@@ -451,6 +492,7 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
           </div>
           <LiteNotices />
           {noticeBox}
+          {searchError}
           <div className="sticky top-[77px] h-[calc(100vh-250px)] min-h-[420px] overflow-hidden rounded-lg border border-line" data-map-pane>{theMap()}</div>
         </section>
       ) : listColumn}

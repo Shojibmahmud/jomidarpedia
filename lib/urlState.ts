@@ -9,7 +9,7 @@ import type { TravelBucket } from './types';
 export const SORTS = ['time', 'name', 'district'] as const;
 export type Sort = (typeof SORTS)[number];
 
-/** Keys kept and validated but with no effect yet: q (Phase 8), view and sel (Phase 7), ids (9.8). */
+/** Keys beyond the filters: q (a search within the results, spec 08 D3), view and sel (Phase 7), ids (9.8; kept, no effect yet). */
 export interface Extras { q?: string; view?: 'list' | 'map'; sel?: string; ids?: string[] }
 
 export interface View { state: FilterState; sort: Sort; extras: Extras }
