@@ -1,0 +1,51 @@
+/* Map styles (spec 07). Imported only by the map modules (MapView, MiniMapView), so pages without a map
+   never load them (FR-2). Colours read the tokens in app/tokens.css, so light and dark both work. */
+
+.jp-map { background: rgb(var(--map-land)); font: inherit; }
+.jp-map .leaflet-container, .jp-map.leaflet-container { background: rgb(var(--map-land)); font: inherit; }
+
+/* Pins (board 19): the marker element is the 44 px control; the visible pin is 26 px wide. */
+.jp-pin { display: flex; align-items: flex-end; justify-content: center; border-radius: 9999px; }
+.jp-pin:focus { outline: none; }
+.jp-pin:focus-visible .jp-pin__body { outline: 3px solid rgb(var(--focus)); outline-offset: 2px; border-radius: 8px; }
+.jp-pin__body { display: block; line-height: 0; transform-origin: 50% 100%; transition: transform .12s ease-out; }
+.jp-pin:hover .jp-pin__body, .jp-pin.is-hover .jp-pin__body { transform: scale(1.15); }
+.jp-pin.is-selected .jp-pin__body { border-radius: 9999px; box-shadow: 0 0 0 3px rgb(var(--surface)), 0 0 0 6px rgb(var(--indigo)); }
+.jp-pin.is-selected { z-index: 1000 !important; }
+.jp-pin__label {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px;
+  display: none; white-space: nowrap; pointer-events: none;
+  padding: 1px 6px; border-radius: 6px; font-size: 12px; line-height: 18px; font-weight: 600;
+  background: rgb(var(--surface)); color: rgb(var(--ink)); box-shadow: var(--shadow-1);
+}
+.jp-pin:hover .jp-pin__label, .jp-pin:focus-visible .jp-pin__label, .jp-pin.is-hover .jp-pin__label,
+.jp-labels .jp-pin__label { display: block; }
+
+/* Clusters: a ring with the count. */
+.jp-cluster { display: flex; align-items: center; justify-content: center; }
+.jp-cluster__ring {
+  display: flex; align-items: center; justify-content: center; border-radius: 9999px;
+  background: rgb(var(--surface)); color: rgb(var(--primary-tint-ink)); font-weight: 700; font-size: 15px;
+  border: 3px solid rgb(var(--primary)); box-shadow: 0 0 0 6px rgb(var(--primary) / .22);
+}
+.jp-cluster:focus { outline: none; }
+.jp-cluster:focus-visible .jp-cluster__ring { outline: 3px solid rgb(var(--focus)); outline-offset: 4px; }
+.jp-cluster.is-hover .jp-cluster__ring { box-shadow: 0 0 0 6px rgb(var(--indigo) / .35); }
+
+/* markercluster's hover polygon ("Hover outlines the area a cluster covers"). */
+.jp-map .leaflet-interactive.jp-coverage { stroke: rgb(var(--primary)); fill: rgb(var(--primary)); }
+
+/* Your-location dot. */
+.jp-me { fill: rgb(var(--indigo)); stroke: rgb(var(--surface)); }
+
+/* Attribution: always readable (R8). */
+.jp-map .leaflet-control-attribution { background: rgb(var(--surface) / .9); color: rgb(var(--ink)); font-size: 11px; line-height: 16px; padding: 1px 6px; border-radius: 6px 0 0 0; }
+.jp-map .leaflet-control-attribution a { color: rgb(var(--primary-tint-ink)); text-decoration: underline; }
+[data-theme="dark"] .jp-map .leaflet-control-attribution a { color: rgb(var(--primary)); }
+
+/* Leaflet's own focus outline on the map container. */
+.jp-map.leaflet-container:focus-visible { outline: 3px solid rgb(var(--focus)); outline-offset: -3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .jp-map .leaflet-zoom-anim .leaflet-zoom-animated, .jp-map .leaflet-cluster-anim .leaflet-marker-icon { transition: none !important; }
+}

@@ -7,6 +7,9 @@ import { join } from 'node:path';
 import { HOME_SAMPLE_IDS } from '../lib/home';
 import { BD_COORD_TEXT } from '../scripts/lib/rules.mjs';
 import type { IndexSite, SiteRecord } from '../lib/types';
+import { stubTiles } from './tiles';
+
+test.beforeEach(async ({ page }) => { await stubTiles(page); });
 
 const index: IndexSite[] = JSON.parse(readFileSync('public/data/index.json', 'utf8'));
 const site = (id: string): SiteRecord => JSON.parse(readFileSync(`data/build/sites/${id}.json`, 'utf8'));
@@ -67,12 +70,15 @@ test.describe('static export', () => {
     }
   });
 
-  // Phase 5 shows coordinates for mappable sites (spec 05 FR-19); a hidden pin's page carries none (R5).
-  test('no hidden-pin page contains coordinates or a directions link', () => {
+  // Phase 5 shows coordinates for mappable sites (spec 05 FR-19); a hidden pin's page carries none (R5),
+  // and no mini map or "Open in Explore" (spec 07 FR-41, AC-15).
+  test('no hidden-pin page contains coordinates, a directions link or a map', () => {
     for (const s of index.filter(s => !s.ll)) {
       const page = html(`/site/${s.i}/${s.s}/`);
       expect(BD_COORD_TEXT.test(page), s.i).toBe(false);
       expect(page, s.i).not.toContain('/maps/dir/');
+      expect(page, s.i).not.toContain('data-mini-map-box');
+      expect(page, s.i).not.toContain('data-open-explore');
     }
   });
 });

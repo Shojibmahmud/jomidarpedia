@@ -1,7 +1,8 @@
 // Explore (roadmap Phase 6, spec .claude/specs/06-Explore-list.md): the filterable list of every site.
 // Static page; the list itself is client-side (<ExploreApp>), reading its filters from the URL, so it sits
 // in <Suspense> for the static export (FR-30). Division and district names are read here at build time
-// and passed down, so the browser fetches only index.json (A-6). The map arrives in Phase 7.
+// and passed down, so the browser fetches only index.json (A-6). The map (Phase 7, spec 07) is loaded by
+// ExploreApp only when it is shown; from 1280 px the page runs wider for rail | map | list (D7).
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -20,7 +21,7 @@ export default function ExplorePage() {
     districts: getDistricts().map(d => ({ slug: d.slug, en: d.en, bn: d.bn, divisionSlug: d.divisionSlug })),
   };
   return (
-    <main id="main" className="mx-auto max-w-page space-y-6 px-4 py-8 lg:px-8">
+    <main id="main" className="mx-auto max-w-page space-y-6 px-4 py-8 lg:px-8 xl:max-w-[1600px]">
       <h1 className="font-serif text-h1"><T k="explore.title" /></h1>
       <noscript>
         <p className="rounded-lg border border-line bg-surface p-4">

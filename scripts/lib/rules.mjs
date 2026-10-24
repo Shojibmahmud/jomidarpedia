@@ -18,6 +18,36 @@ export const hoursKnown = v => {
   return !!s && !UNKNOWN.test(s) && !RESTRICTION_ONLY.test(s) && CLOCK_TIME.test(s);
 };
 
+// ---------------------------------------------------------------- card summary (spec 07 FR-34, D1)
+// The map card's one-liner: the first sentence of short_description, or the first two when the first is
+// under CARD_MIN characters ("Not a zamindar house."), cut at a word boundary to CARD_MAX with "…".
+// A sentence ends at . ! or ? followed by a space and a capital letter, a digit or a quote, except after
+// an initial ("M.", "S.B.K.") or a short title ("Md.", "Dr.", "c.").
+export const CARD_MIN = 60;
+export const CARD_MAX = 160;
+const NOT_AN_END = /(?:^|[\s(])(?:[A-Z]|[A-Z]\.[A-Z]|Md|Mohd|Dr|Mr|Mrs|Sri|St|Mt|Lt|Col|Capt|Prof|Rev|Sk|c|ca|no|vs|e\.g|i\.e|approx)\.$/;
+function sentences(text) {
+  const out = [];
+  let start = 0;
+  for (const m of text.matchAll(/[.!?](?=\s+["'‘“(]?[A-Z0-9ঀ-৿])/g)) {
+    const end = m.index + 1;
+    if (m[0] === '.' && NOT_AN_END.test(text.slice(start, end))) continue;
+    out.push(text.slice(start, end).trim());
+    start = end;
+  }
+  const rest = text.slice(start).trim();
+  if (rest) out.push(rest);
+  return out;
+}
+export function cardSummary(text) {
+  const all = sentences((text || '').replace(/\s+/g, ' ').trim());
+  let s = all[0] ?? '';
+  if (s.length < CARD_MIN && all[1]) s = `${s} ${all[1]}`;
+  if (s.length <= CARD_MAX) return s;
+  const cut = s.slice(0, CARD_MAX);
+  return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,;:–—-]+$/, '')}…`;
+}
+
 // ---------------------------------------------------------------- itinerary plans (O11)
 // A stop time is a clock time ("7:30 AM"); labels such as "1", "Day 2" or "End" are not.
 export const STOP_CLOCK = /^\d{1,2}:\d{2}\s*(?:am|pm)?$|^\d{1,2}\s*(?:am|pm)$/i;

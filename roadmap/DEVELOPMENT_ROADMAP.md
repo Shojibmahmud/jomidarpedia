@@ -705,28 +705,28 @@ Required dependencies between phases 5 and 11:
 - `Explore · mobile list, sheet up (dark)`
 - `Explore · pin set and clusters by zoom`
 
-- [ ] **7.1** Install `leaflet`, `leaflet.markercluster`, `@types/leaflet` and `@types/leaflet.markercluster` at exact versions. Import both libraries' CSS **inside** the map module. Add Leaflet's default-icon fix, or use only `divIcon`.
-- [ ] **7.2** Create `components/map/MapLoader.tsx`, a `'use client'` component that calls `dynamic(() => import('./MapView'), { ssr: false })`.
+- [x] **7.1** Install `leaflet`, `leaflet.markercluster`, `@types/leaflet` and `@types/leaflet.markercluster` at exact versions. Import both libraries' CSS **inside** the map module. Add Leaflet's default-icon fix, or use only `divIcon`.
+- [x] **7.2** Create `components/map/MapLoader.tsx`, a `'use client'` component that calls `dynamic(() => import('./MapView'), { ssr: false })`.
   - The loader mounts `MapView` only when the map is actually shown: the desktop layout is visible, or the mobile view is `map`. Lite mode is off.
   - **Verify:** with the mobile List view or Lite mode on, no Leaflet chunk is requested.
-- [ ] **7.3** Build `MapView`:
+- [x] **7.3** Build `MapView`:
   - the initial view of Bangladesh;
   - the attribution (R8);
   - cleanup on unmount (`map.remove()`);
   - `invalidateSize()` through a `ResizeObserver`.
 
   Pins are `divIcon`s. The **marker element itself** is the focusable control, with `keyboard: true` and an accessible name. There is **no nested `<button>`**, so there are no duplicate tab stops. Fill styles: solid, outlined, hatched, and outlined with "?" for unverified (O9).
-- [ ] **7.4** Add clustering with `ClusterIcon` (sizes by count). Clusters can be focused, and Enter zooms in.
+- [x] **7.4** Add clustering with `ClusterIcon` (sizes by count). Clusters can be focused, and Enter zooms in.
   - Draw approximate circles from zoom 11. They are a display convention, labelled as such in the map key.
-- [ ] **7.5** Synchronise the map and the list:
+- [x] **7.5** Synchronise the map and the list:
   - the map shows only the filtered results;
   - selecting a pin sets `sel` in the URL and highlights the card;
   - selecting a card pans to its pin.
-- [ ] **7.6** Build the **selected-site sheet** (mobile) and popover (desktop), `SummaryCard`:
+- [x] **7.6** Build the **selected-site sheet** (mobile) and popover (desktop), `SummaryCard`:
   - it opens when a pin is selected;
   - Close, or Esc, clears `sel` and returns focus to the pin;
   - it has a "Read more" link and "Directions" (5.18).
-- [ ] **7.7** Build the **results sheet** (mobile), `BottomSheet`:
+- [x] **7.7** Build the **results sheet** (mobile), `BottomSheet`:
   - snap points peek, half and full;
   - the handle is a `<button aria-expanded>` that cycles through the snap points (the alternative to dragging);
   - the list scrolls inside the sheet only when it is at full height;
@@ -735,20 +735,31 @@ Required dependencies between phases 5 and 11:
   Define and test the transitions between the sheets:
   - **selecting a pin** swaps the results sheet for the selected-site sheet, and closing it restores the previous snap point and list position;
   - **the Map/List switch** keeps the filters and `sel`.
-- [ ] **7.8** Build `MapControls`: zoom, locate (asks for permission and handles a refusal) and a base-map menu (O4). Build `MapKey`, which includes the unverified and approximate-circle rows.
-- [ ] **7.9** Lite mode (O7):
+- [x] **7.8** Build `MapControls`: zoom, locate (asks for permission and handles a refusal) and a base-map menu (O4). Build `MapKey`, which includes the unverified and approximate-circle rows.
+- [x] **7.9** Lite mode (O7):
   - Explore shows the list only;
   - the site `MiniMap` shows the static location text and a "Show map" button;
-  - the trip `RouteMap` shows the stop list.
+  - the trip `RouteMap` shows the stop list (moved to 9.5 with the trip pages, spec 07 D3).
   - **Verify:** with Lite mode on, no Leaflet chunk and **no tile requests** appear in the Playwright request log.
-- [ ] **7.10** Build `MiniMap` for site pages: a pin, an approximate circle, or the no-pin panel. It loads only when scrolled into view (`IntersectionObserver`).
-- [ ] **7.11** Handle tile errors: an overlay message, the list keeps working, and Retry reloads the tiles.
-- [ ] **7.12** Add Playwright tests:
+- [x] **7.10** Build `MiniMap` for site pages: a pin, an approximate circle, or the no-pin panel. It loads only when scrolled into view (`IntersectionObserver`).
+- [x] **7.11** Handle tile errors: an overlay message, the list keeps working, and Retry reloads the tiles.
+- [x] **7.12** Add Playwright tests:
   - pins and clusters are reachable by keyboard;
   - Enter opens the summary and Esc restores focus;
   - the snap button cycles through the snap points;
   - Lite mode makes no requests;
   - blocked tiles show the overlay.
+
+**Done 24 Oct 2026 (7.1–7.12, RouteMap in 9.5), apart from the owner's visual review**, specified in `.claude/specs/07-Map.md` (approved 24 Oct 2026, amended the same day). Verified with 303 passing unit tests (16 new: pins, the card summary, Lite mode, the summary card), typecheck, lint, a static build of 831 pages, and 101 passing Playwright tests (24 new in `e2e/map.spec.ts`; every spec file now answers tile requests with a local image). Changes from the task text:
+- **Layouts (D7):** rail | map | list from 1280 px; from 1024 px rail plus a Map/List pane; below, the list with a Map button, or the full-screen map with the results sheet. Phones default to the list (R7); `view` is ignored from 1280 px.
+- **Pins:** Leaflet handles Enter only on markers with its own popup, so Enter and Space on a pin or cluster are handled by the map. Each pin is one tab stop with a name like "Baliati Palace, Preserved, Location confirmed".
+- **Selection (D9, D12):** selecting pushes one entry; Close goes back when the entry came from this view, otherwise drops `sel` in place. A `sel` naming a hidden pin or a filtered-out site is dropped with the notice. Rows with a pin get "Show on map".
+- **Data:** `index.json` gains `sm`, the card's one-line summary (first sentence, or two when the first is short; ≤ 160 characters); 61 → 76 KB gzipped.
+- **Base maps (D5, amended):** CARTO now answers "API KEY REQUIRED", so only OSM standard is offered, in both themes, until O4; the CARTO entries stay in `lib/map-config.ts`, off.
+- **Lite mode:** `jp-lite` (`1`, `0` or absent for automatic), applied by the boot script; a switch in the site header and in Explore; Save-Data turns it on with a note; 2G suggests it once per session. The site page's mini map shows "Show map" instead.
+- **Tools:** `npm run screenshots` adds the map at 1440 px with the popover, 390 px at peek, half and full, the summary sheet, 390 px dark, and Baliati's Location section.
+- **Bangla:** every new string is a draft (`needsReview`).
+- **Open:** the owner's visual review against the five map boards; the launch tile provider (O4).
 
 **Acceptance criteria**
 - The map shows exactly the mappable filtered sites, and the hidden ones appear only in the list.

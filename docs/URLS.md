@@ -20,9 +20,9 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 | Route | Page | Status | Task |
 |---|---|---|---|
 | `/` | Home | built (minimal: counts and five sample sites) | 4.3, 11.x |
-| `/explore/` | Explore list and map | built (list; map in 7.x) | 6.5, 7.x |
+| `/explore/` | Explore list and map | built (list and map) | 6.5, 7.x |
 | `/search/` | Search results | planned | 8.x |
-| `/site/<id>/<slug>/` | Site page | built (text skeleton) | 4.1, 5.x |
+| `/site/<id>/<slug>/` | Site page | built (with mini map for mappable sites, 7.10) | 4.1, 5.x, 7.10 |
 | `/site/<id>/` | ID redirect to the canonical site URL (noindex) | built | 4.2 |
 | `/division/<slug>/` | Division page (8) | planned | 10.1 |
 | `/district/<slug>/` | District page (64) | planned | 10.2 |
@@ -56,8 +56,8 @@ Slugs come from the data: site `dataset_slug`; division and district `slug` in `
 | `hours` | `1` | no | off | Opening times known (`hv`: a clock time is recorded) | 6.2 |
 | `sort` | `time`, `name`, `district` | no | `time` | List order: travel time (unknown last), name or district, in the interface language (spec 06 D5, D8) | 6.4 |
 | `q` | free text | no | none | Text filter within the list; kept but not applied until Phase 8 (spec 06 D4) | 8.x |
-| `view` | `list`, `map` | no | `list` on phones; both panes on desktop | Which pane is shown | 6.5, 7.x |
-| `sel` | one site ID | no | none | Selected site (summary sheet or popover); must be on the map | 7.x |
+| `view` | `list`, `map` | no | `list` below 1280 px; ignored at 1280 px and above, where map and list both show (kept in the URL) | Which pane is shown below 1280 px (spec 07 D6, D7) | 6.5, 7.5 |
+| `sel` | one site ID | no | none | Selected site (summary sheet or popover). Must have a pin and match the filters: a link whose `sel` names a hidden pin or a filtered-out site loses it with the notice; a filter change that excludes it drops it without one (spec 07 D12) | 7.5, 7.6 |
 | `ids` | site IDs | yes | none | Show only these sites ("Open all stops on the map") | 9.8 |
 
 ### Search (`/search/`)

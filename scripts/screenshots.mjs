@@ -2,6 +2,9 @@
 // Full-page screenshots for the owner's visual review against the design boards (roadmap Phase 5
 // acceptance, spec 05 FR-58): Baliati and Elangi at 390 and 1440 px in light, and Baliati at 390 px in dark.
 // Explore (spec 06 AC-12): 1440 and 390 px in light, 390 px in dark, 1440 px in Bangla, and the 390 px drawer.
+// The map (spec 07 AC-16): 1440 px with Baliati's popover open, the 390 px map at peek, half and full, the
+// selected-site sheet, 390 px dark at full, and Baliati's Location section with its mini map. These load real
+// tiles from the development provider (O4).
 // Serves out/ with the pinned `serve` on the Playwright port, so run `npm run build:local` first.
 // Output: screenshots/ (gitignored).
 
@@ -21,6 +24,13 @@ const explore = [
   ['explore', 'day=1', 1440, 'light', 'en', false], ['explore', 'day=1', 390, 'light', 'en', false],
   ['explore', 'day=1', 390, 'dark', 'en', false], ['explore-bn', 'day=1', 1440, 'light', 'bn', false],
   ['explore-drawer', 'day=1&tt=2-3&cond=preserved,in_ruins', 390, 'light', 'en', true],
+];
+
+// [name, query, width, theme, handle presses (phone sheet)]
+const maps = [
+  ['map-popover', 'day=1&sel=JB-DHK-064', 1440, 'light', 0],
+  ['map-peek', 'view=map', 390, 'light', 0], ['map-half', 'view=map', 390, 'light', 1], ['map-full', 'view=map', 390, 'light', 2],
+  ['map-summary', 'day=1&view=map&sel=JB-DHK-064', 390, 'light', 0], ['map-full', 'day=1&view=map', 390, 'dark', 2],
 ];
 
 const server = spawn('npx', ['serve', 'out', '--listen', String(PORT), '--no-clipboard', '--no-port-switching'], { stdio: 'ignore' });
@@ -51,6 +61,29 @@ try {
     }
     const file = `${OUT}/${name}-${width}-${theme}.png`;
     await page.screenshot({ path: file, fullPage: !drawer });
+    console.log(file);
+    await page.close();
+  }
+  for (const [name, query, width, theme, presses] of maps) {
+    const page = await browser.newPage({ viewport: { width, height: width < 1024 ? 844 : 900 }, colorScheme: theme });
+    await page.goto(`http://localhost:${PORT}/explore/?${query}`, { waitUntil: 'networkidle' });
+    await page.waitForSelector('.leaflet-marker-pane .jp-pin, .leaflet-marker-pane .jp-cluster');
+    for (let k = 0; k < presses; k++) await page.click('[data-sheet-handle]');
+    await page.waitForTimeout(1200); // fit, cluster and sheet animations, tiles
+    const file = `${OUT}/${name}-${width}-${theme}.png`;
+    await page.screenshot({ path: file });
+    console.log(file);
+    await page.close();
+  }
+  for (const width of [1440, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 900 } });
+    await page.goto(`http://localhost:${PORT}/site/JB-DHK-064/baliati-palace/`, { waitUntil: 'networkidle' });
+    const panel = page.locator('[data-location-state]');
+    await panel.scrollIntoViewIfNeeded();
+    await page.waitForSelector('[data-mini-map] .jp-pin');
+    await page.waitForTimeout(1200);
+    const file = `${OUT}/baliati-location-${width}-light.png`;
+    await panel.screenshot({ path: file });
     console.log(file);
     await page.close();
   }

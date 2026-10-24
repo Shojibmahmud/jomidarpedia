@@ -1,6 +1,8 @@
 'use client';
 // The results list (roadmap task 6.5, spec 06 FR-2, FR-3): row cards paged by 24, "Showing N of M" and
-// "Load more", plus the loading skeleton and the fetch error with Retry.
+// "Load more", plus the loading skeleton and the fetch error with Retry. With a map (spec 07 FR-20), the
+// selected site's row is highlighted, hovering or focusing a row highlights its pin, and a mappable row
+// has "Show on map".
 
 import { T } from '@/components/T';
 import { SiteCard } from '@/components/cards/SiteCard';
@@ -9,13 +11,32 @@ import type { IndexSite } from '@/lib/types';
 
 export const PAGE_SIZE = 24;
 
-export function ResultsList({ sites, pages, onMore }: { sites: IndexSite[]; pages: number; onMore: () => void }) {
+export interface MapLink {
+  selected?: string;
+  onShow(id: string, button: HTMLButtonElement): void;
+  onHover(id: string | null): void;
+}
+
+export function ResultsList({ sites, pages, onMore, map }: { sites: IndexSite[]; pages: number; onMore: () => void; map?: MapLink }) {
   const shown = Math.min(sites.length, pages * PAGE_SIZE);
   return (
     <div className="space-y-4">
       <ol className="grid gap-2" data-results>
         {sites.slice(0, shown).map((s, k) => (
-          <li key={s.i} data-result-index={k}><SiteCard site={s} variant="row" /></li>
+          <li key={s.i} data-result-index={k}
+            onMouseEnter={map ? () => map.onHover(s.i) : undefined} onMouseLeave={map ? () => map.onHover(null) : undefined}
+            onFocus={map ? () => map.onHover(s.i) : undefined} onBlur={map ? () => map.onHover(null) : undefined}>
+            <SiteCard site={s} variant="row" highlight={map?.selected === s.i}
+              action={map && s.ll ? (
+                <button type="button" onClick={e => map.onShow(s.i, e.currentTarget)} data-show-on-map={s.i}
+                  className="inline-flex min-h-tap items-center gap-1.5 rounded-md border border-line-strong bg-surface px-3 text-sm font-semibold hover:bg-surface-2">
+                  <svg viewBox="0 0 24 24" width={16} height={16} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth={2.2}>
+                    <path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11Z" /><circle cx={12} cy={10} r={2.2} />
+                  </svg>
+                  <T k="map.showOnMap" /><span className="sr-only">: <span lang="en">{s.e}</span></span>
+                </button>
+              ) : undefined} />
+          </li>
         ))}
       </ol>
       <div className="flex flex-wrap items-center gap-4">

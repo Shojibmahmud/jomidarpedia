@@ -7,6 +7,9 @@ import { readFileSync } from 'node:fs';
 import { BD_COORD_TEXT } from '../scripts/lib/rules.mjs';
 import { disagreements, openQuestions, isSparse } from '../lib/site-page';
 import type { SiteRecord } from '../lib/types';
+import { stubTiles } from './tiles';
+
+test.beforeEach(async ({ page }) => { await stubTiles(page); });
 
 const site = (id: string): SiteRecord => JSON.parse(readFileSync(`data/build/sites/${id}.json`, 'utf8'));
 const href = (s: SiteRecord) => `/site/${s.id}/${s.slug}/`;

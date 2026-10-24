@@ -31,8 +31,9 @@ function TravelTime({ site }: { site: IndexSite }) {
   return <T k="card.timeUnknown" />;
 }
 
-export function SiteCard({ site, variant, highlight = false, headingLevel = 3 }: {
-  site: IndexSite; variant: CardVariant; highlight?: boolean; headingLevel?: 2 | 3 | 4;
+/** `action` is a control above the stretched link, such as Explore's "Show on map" (spec 07 FR-20). */
+export function SiteCard({ site, variant, highlight = false, headingLevel = 3, action }: {
+  site: IndexSite; variant: CardVariant; highlight?: boolean; headingLevel?: 2 | 3 | 4; action?: React.ReactNode;
 }) {
   const Heading = `h${headingLevel}` as const;
   const place = { en: site.u ? `${site.u}, ${site.d}` : site.d, bn: site.u ? `${site.u}, ${site.db}` : site.db };
@@ -63,6 +64,7 @@ export function SiteCard({ site, variant, highlight = false, headingLevel = 3 }:
           </p>
         )}
         {site.img ? <p lang="en" className="text-xs text-muted [overflow-wrap:anywhere]" data-credit>{site.img.credit}</p> : null}
+        {action ? <div className="relative z-10 pt-1">{action}</div> : null}
       </div>
     </article>
   );
