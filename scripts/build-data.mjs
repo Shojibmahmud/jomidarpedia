@@ -499,6 +499,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     return { verified: n('verified'), singleSource: n('single_source'), approximate: n('approximate'), unverified: n('unverified'), noPin: rows.length - pinned.length };
   };
   const dayTripCount = rows => rows.filter(s => s.day_trip_from_dhaka === 'TRUE').length;
+  const OPEN_ACCESS = ['ticketed', 'open_no_ticket_reported'];
   // A district's sites in list order (spec 10 FR-15, FR-16): travel time as in Explore's default sort
   // (lib/sort.ts), unknown last, then English name and ID. The district page numbers its cards and
   // scripts/build-maps.mjs its pins from this one order.
@@ -568,6 +569,9 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       sites: sites.length, onMap: sites.filter(s => !hidden(s)).length, noPin: sites.filter(hidden).length, flagged: sites.filter(s => s.map_display === 'show_flagged').length,
       withPhotos: sites.filter(s => imagesBySite.has(s.site_id)).length, images: readyImages.length,
       trips: trips.length, dayTrips: trips.filter(t => t.duration === 'One day').length,
+      // Home's chips, tiles and numbers (spec 11 FR-7, FR-8, FR-10). dayTrips above counts one-day trip plans;
+      // dayTripSites counts sites (dt = 1) and equals the sum of divisions.json dayTrip.
+      dayTripSites: dayTripCount(sites), openToVisitors: sites.filter(s => OPEN_ACCESS.includes(s.visitor_access)).length,
       sources: T.sources.length, divisions: divisions.length, districts: districts.length,
       historyEvents: T.history_events.length, legends: T.legends.length,
       hoursKnown: records.filter(r => r.visiting.hoursKnown).length,

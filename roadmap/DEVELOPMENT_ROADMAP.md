@@ -937,13 +937,19 @@ Required dependencies between phases 5 and 11:
 - `Home · desktop`, `Home · mobile`
 - `বাংলা · Home · desktop`, `বাংলা · Home · mobile`
 
-- [ ] **11.1** Hero: the Mohera photo with its credit, the hero `SearchBox` and quick-filter chips linking to Explore URLs.
-- [ ] **11.2** Four photo tiles, each with a credit. Add the numbers strip using `StatStrip`, with counts from `meta.json`.
-- [ ] **11.3** `MapTeaser`: a static SVG from 3.8 linking to `/explore?view=map`.
-- [ ] **11.4** Eight division tiles with photos and credits.
-- [ ] **11.5** Three featured trip cards, chosen by a rule (`plan_status = timed`, then by travel time) and not hard-coded.
-- [ ] **11.6** The trust band, linking to methodology and sources.
-- [ ] **11.7** Bangla check: the layout is identical in both languages, with Bangla digits and the Bangla type scale.
+- [x] **11.1** Hero: the Mohera photo with its credit, the hero `SearchBox` and quick-filter chips linking to Explore URLs.
+- [x] **11.2** Four photo tiles, each with a credit. Add the numbers strip using `StatStrip`, with counts from `meta.json`.
+- [x] **11.3** `MapTeaser`: a static SVG from 3.8 linking to `/explore?view=map`.
+- [x] **11.4** Eight division tiles with photos and credits.
+- [x] **11.5** Three featured trip cards, chosen by a rule (`plan_status = timed`, then by travel time) and not hard-coded.
+- [x] **11.6** The trust band, linking to methodology and sources.
+- [x] **11.7** Bangla check: the layout is identical in both languages, with Bangla digits and the Bangla type scale.
+
+**Done 25 Oct 2026 (11.1–11.7), apart from the owner's review against the four boards**, specified in `.claude/specs/11-Home-page.md` (approved 25 Oct 2026, amended during implementation: §10). Verified with 418 passing unit tests (21 new in `tests/home.test.tsx`), typecheck, lint, a static build, and 203 passing Playwright tests (12 new in `e2e/home.spec.ts`; the home case in `e2e/smoke.spec.ts` rewritten).
+- **Counts:** `meta.json` gains `counts.dayTripSites` (132 sites; `counts.dayTrips`, 144, counts one-day plans) and `counts.openToVisitors` (151).
+- **Photos:** a reviewed list in `lib/home-images.json` (hero, 4 category tiles, 8 divisions), checked by `scripts/lib/home-check.mjs` in every mode. `npm run thumbs` also makes 14 larger WebP variants in `public/home/` (1.1 MB; the 1600 px hero is 233 KB).
+- **Featured trips** by rule, one per district: today Old Dhaka palaces, Gazipur and Narayanganj river heritage. No "Within 2 hours" chip (`tt` takes one segment).
+- **Open:** the owner's visual review and photo choices (spec 11 OQ-1, OQ-2); the Bangla for "recorded disagreements" (OQ-3). Home JavaScript is about 200 KB gzipped in the webpack build, against the ~150 KB budget in 13.1, but the page's own code is 3 KB: About loads 197 KB, and 39 KB of it is the polyfills chunk that only old browsers load. Measure with Lighthouse in 13.1.
 
 **Acceptance criteria**
 - Every photo on the page has a visible credit.

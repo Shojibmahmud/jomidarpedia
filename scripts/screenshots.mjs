@@ -12,6 +12,7 @@
 // Phase 10 (spec 10 OQ-1): Dhaka division at 1440 px, Manikganj district at 390 px, /sources/ at 1440 px, the core
 // book's source page at 390 px, About and credits at 1440 px, the 404 page at 1440 px and at 390 px in dark, the
 // loading skeleton at 390 px (the index held back) and the offline toast with the slow-network note at 390 px.
+// Home (spec 11 OQ-1): 1440 and 390 px in English and in Bangla, as on the four Home boards.
 // Serves out/ with the pinned `serve` on the Playwright port, so run `npm run build:local` first.
 // Output: screenshots/ (gitignored).
 
@@ -57,6 +58,7 @@ const trips = [
 
 // [name, path, width, theme]
 const pages = [
+  ['home', '/', 1440, 'light'], ['home', '/', 390, 'light'],
   ['division-dhaka', '/division/dhaka/', 1440, 'light'], ['district-manikganj', '/district/manikganj/', 390, 'light'],
   ['sources', '/sources/', 1440, 'light'], ['source-book', '/sources/SRC-0001/', 390, 'light'],
   ['about', '/about/', 1440, 'light'], ['credits', '/credits/', 1440, 'light'],
@@ -163,6 +165,15 @@ try {
     const page = await browser.newPage({ viewport: { width, height: width < 1024 ? 844 : 900 }, colorScheme: theme });
     await page.goto(`http://localhost:${PORT}${path}`, { waitUntil: 'networkidle' });
     const file = `${OUT}/${name}-${width}-${theme}.png`;
+    await page.screenshot({ path: file, fullPage: true });
+    console.log(file);
+    await page.close();
+  }
+  for (const width of [1440, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: width < 1024 ? 844 : 900 } });
+    await page.addInitScript(() => localStorage.setItem('jp-lang', 'bn'));
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' });
+    const file = `${OUT}/home-bn-${width}-light.png`;
     await page.screenshot({ path: file, fullPage: true });
     console.log(file);
     await page.close();

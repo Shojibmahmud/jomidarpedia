@@ -2,6 +2,8 @@
 // About, search (a link to /search/ that opens the search overlay once the page runs, spec 08 FR-18), and
 // the language, theme and Lite mode (task 7.9) toggles. On narrow screens the links
 // and toggles move into a Menu disclosure. Server component; only the disclosures and toggles run in the browser.
+// On the home page it lies over the hero photo (app/tokens.css, spec 11 FR-19): `header-item` and `header-panel` are
+// the hooks that rule uses, so the panels keep their normal look.
 
 import Link from 'next/link';
 import { Lockup } from '@/components/brand/Logo';
@@ -12,8 +14,8 @@ import { divisionHref, HEADER_LINKS } from '@/lib/nav';
 import { Disclosure } from './Disclosure';
 import { LanguageToggle, LiteToggle, ThemeToggle } from './Toggles';
 
-const navItem = 'inline-flex min-h-tap items-center rounded-md px-3 text-[15px] font-semibold hover:bg-surface-2';
-const iconButton = 'inline-flex min-h-tap min-w-tap items-center justify-center rounded-full hover:bg-surface-2';
+const navItem = 'header-item inline-flex min-h-tap items-center rounded-md px-3 text-[15px] font-semibold hover:bg-surface-2';
+const iconButton = 'header-item inline-flex min-h-tap min-w-tap items-center justify-center rounded-full hover:bg-surface-2';
 
 function Chevron() {
   return <svg viewBox="0 0 24 24" width={16} height={16} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth={2}><path d="M6 9l6 6 6-6" /></svg>;
@@ -49,7 +51,7 @@ export function SiteHeader() {
           <Link prefetch={false} href={explore.href} className={navItem}><T k={explore.k} /></Link>
           <Link prefetch={false} href={rest[0].href} className={navItem}><T k={rest[0].k} /></Link>
           <Disclosure button={<><T k="nav.divisions" /><Chevron /></>} buttonClassName={`${navItem} gap-1`}
-            panelClassName="absolute left-0 top-full z-dropdown mt-1 w-64 rounded-lg border border-line bg-surface p-1 shadow-2">
+            panelClassName="header-panel absolute left-0 top-full z-dropdown mt-1 w-64 rounded-lg border border-line bg-surface p-1 shadow-2">
             <DivisionList />
           </Disclosure>
           {rest.slice(1).map(l => <Link key={l.href} href={l.href} className={navItem}><T k={l.k} /></Link>)}
@@ -65,7 +67,7 @@ export function SiteHeader() {
           </div>
           <Disclosure className="lg:hidden" buttonClassName={iconButton}
             button={<><svg viewBox="0 0 24 24" width={22} height={22} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg><SrT k="nav.menu" /></>}
-            panelClassName="fixed inset-x-0 top-[61px] z-dropdown max-h-[calc(100vh-61px)] overflow-y-auto border-b border-line bg-surface px-4 pb-6 pt-2 shadow-3">
+            panelClassName="header-panel fixed inset-x-0 top-[61px] z-dropdown max-h-[calc(100vh-61px)] overflow-y-auto border-b border-line bg-surface px-4 pb-6 pt-2 shadow-3">
             <nav aria-labelledby="jp-nav-menu">
               <span id="jp-nav-menu" className="sr-only"><T k="nav.main" /></span>
               <ul className="grid gap-0.5">

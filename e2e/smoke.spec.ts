@@ -4,9 +4,9 @@
 import { expect, test } from '@playwright/test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { HOME_SAMPLE_IDS } from '../lib/home';
+import HOME_IMAGES from '../lib/home-images.json';
 import { BD_COORD_TEXT } from '../scripts/lib/rules.mjs';
-import type { IndexSite, SiteRecord } from '../lib/types';
+import type { Credit, IndexSite, SiteRecord } from '../lib/types';
 import { stubTiles } from './tiles';
 
 test.beforeEach(async ({ page }) => { await stubTiles(page); });
@@ -19,10 +19,16 @@ const elangi = site('JB-RAJ-002');
 // A build outside release includes the /dev/ test page (next.config.mjs); its pages must be noindex.
 const nonRelease = existsSync('out/dev/i18n/index.html');
 
-test('home shows the title and links to the five sample sites', async ({ page }) => {
+test('home shows the title, the hero credit and a link from each section (spec 11 AC-2, FR-25)', async ({ page }) => {
+  const credits: Credit[] = JSON.parse(readFileSync('data/build/credits.json', 'utf8'));
   await page.goto('/');
-  await expect(page.locator('h1')).toHaveText('Jomidarpedia');
-  for (const id of HOME_SAMPLE_IDS) await expect(page.locator(`main a[href="${href(site(id))}"]`)).toBeVisible();
+  await expect(page.locator('h1 > :visible')).toHaveText('The zamindar palaces of Bangladesh');
+  await expect(page.locator('[data-home-hero] [data-credit]')).toHaveText(credits.find(c => c.imageId === HOME_IMAGES.hero)!.credit);
+  await expect(page.getByText('Five sites to start with')).toHaveCount(0);
+  const main = page.locator('main');
+  for (const href of ['/explore/?day=1', '/explore/?cond=in_ruins', '/sources/', '/explore/?view=map', '/division/dhaka/', '/trips/', '/about/'])
+    await expect(main.locator(`a[href="${href}"]`).first(), href).toBeAttached();
+  await expect(main.locator('[data-home-trips] [data-trip]')).toHaveCount(3);
 });
 
 test("Baliati's page shows both names from the data", async ({ page }) => {

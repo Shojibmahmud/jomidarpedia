@@ -19,7 +19,7 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 
 | Route | Page | Status | Task |
 |---|---|---|---|
-| `/` | Home | built (minimal: counts and five sample sites) | 4.3, 11.x |
+| `/` | Home | built (spec 11) | 4.3, 11.x |
 | `/explore/` | Explore list and map | built (list and map) | 6.5, 7.x |
 | `/search/` | Search results | built | 8.x |
 | `/site/<id>/<slug>/` | Site page | built (with mini map for mappable sites, 7.10) | 4.1, 5.x, 7.10 |

@@ -4,13 +4,15 @@
 // option across the groups, Enter opens the active one (or /search/ when none is active), Esc clears the
 // text, and Esc on an empty box asks the owner to close (the header overlay). Suggestions follow the text
 // 150 ms after typing stops (A-4); the counts are announced politely. Fuse.js loads when the box mounts.
+// Home's hero (spec 11 FR-6) mounts it on first focus with the text typed so far, its own placeholder and a
+// Search button, which does what Enter does with no option active.
 
 import { useEffect, useId, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Both, T } from '@/components/T';
 import { fold } from '@/lib/fold';
 import { both, formatCount } from '@/lib/format';
-import { text, type StringKey } from '@/lib/i18n';
+import { text, type Dual, type StringKey } from '@/lib/i18n';
 import { MIN_QUERY, searchAll, type SearchDistrict } from '@/lib/search';
 import { useMatcher } from '@/lib/search-client';
 import { searchHref } from '@/lib/searchUrl';
@@ -25,19 +27,22 @@ const DEBOUNCE = 150;
 
 type Option = { key: string; group: 'sites' | 'families' | 'districts' | 'all'; href: string; body: React.ReactNode };
 
-export function SearchBox({ districts, onEscapeEmpty, onNavigate, autoFocus = false }: {
+export function SearchBox({ districts, onEscapeEmpty, onNavigate, autoFocus = false, initialValue = '', placeholder, submit = false }: {
   districts: readonly SearchDistrict[];
   onEscapeEmpty?: () => void;
   onNavigate?: () => void;
   autoFocus?: boolean;
+  initialValue?: string;
+  placeholder?: Dual;
+  submit?: boolean;
 }) {
   const lang = useUiLang();
   const router = useRouter();
   const id = useId();
   const listId = `${id}-list`;
   const optionId = (k: number) => `${id}-opt-${k}`;
-  const [value, setValue] = useState('');
-  const [query, setQuery] = useState('');
+  const [value, setValue] = useState(initialValue);
+  const [query, setQuery] = useState(initialValue);
   const [active, setActive] = useState(-1);
   const { state, retry } = useMatcher(true);
 
@@ -145,7 +150,7 @@ export function SearchBox({ districts, onEscapeEmpty, onNavigate, autoFocus = fa
         <SearchIcon />
         <input id={`${id}-input`} type="text" role="combobox" aria-expanded={expanded} aria-controls={listId} aria-autocomplete="list"
           aria-activedescendant={expanded && current >= 0 ? optionId(current) : undefined}
-          aria-label={text('search.inputLabel', lang)} placeholder={text('search.placeholder', lang)}
+          aria-label={text('search.inputLabel', lang)} placeholder={placeholder ? placeholder[lang] : text('search.placeholder', lang)}
           autoFocus={autoFocus} autoComplete="off" autoCapitalize="off" spellCheck={false} enterKeyHint="search" maxLength={100}
           value={value} onChange={e => { setValue(e.target.value); setActive(-1); }} onKeyDown={onKey}
           className="min-h-[52px] min-w-0 flex-1 bg-transparent text-lg outline-none placeholder:text-muted" />
@@ -153,6 +158,12 @@ export function SearchBox({ districts, onEscapeEmpty, onNavigate, autoFocus = fa
           <button type="button" onClick={() => { setValue(''); setQuery(''); setActive(-1); document.getElementById(`${id}-input`)?.focus(); }}
             aria-label={text('search.clear', lang)} className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-surface-2">
             <svg viewBox="0 0 24 24" width={18} height={18} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+          </button>
+        ) : null}
+        {submit ? (
+          <button type="button" onClick={() => { if (current >= 0) go(options[current].href); else if (expanded) go(searchHref({ q: value.trim() })); }}
+            className="min-h-tap rounded-md bg-primary px-4 font-semibold text-on-primary hover:bg-primary-hover" data-search-submit>
+            <T k="nav.search" />
           </button>
         ) : null}
       </div>

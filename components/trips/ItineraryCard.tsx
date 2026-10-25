@@ -34,14 +34,15 @@ export function ItineraryCard({ trip, headingLevel = 2 }: { trip: TripCard; head
   const Heading = `h${headingLevel}` as const;
   const photos = trip.photos ?? [];
   return (
-    <article className="relative flex flex-col overflow-hidden rounded-lg border border-line bg-surface hover:bg-surface-2" data-trip={trip.id}>
+    <article className="relative flex w-full flex-col overflow-hidden rounded-lg border border-line bg-surface hover:bg-surface-2" data-trip={trip.id}>
       <div className="relative">
+        {/* Each photo fills its cell absolutely, so the strip is 2:1 however many photos it has (one 4:3 photo used to stretch it). */}
         {photos.length ? (
           <div className="grid aspect-[2/1] grid-flow-col auto-cols-fr gap-px bg-line" data-photos={photos.length}>
             {photos.map(p => (
               <div key={p.n} className="relative min-w-0">
                 {/* eslint-disable-next-line @next/next/no-img-element -- static export: committed, pre-sized thumbnails */}
-                <img src={p.thumb} alt="" width={480} height={360} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                <img src={p.thumb} alt="" width={480} height={360} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
                 <span aria-hidden="true" className="absolute bottom-2 left-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full border-2 border-white bg-primary px-1 text-xs font-bold text-white">
                   <Both value={n(p.n)} />
                 </span>
