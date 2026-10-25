@@ -2,24 +2,23 @@
 // destinations (FR-8, FR-9, FR-10, FR-34). No hooks.
 
 import { T } from '@/components/T';
-import { EMPTY } from '@/lib/filters';
+import { districtHref as areaHref } from '@/lib/areas';
 import { both, formatCount } from '@/lib/format';
 import { text, type Lang, type StringKey } from '@/lib/i18n';
-import { exploreHref } from '@/lib/urlState';
 import { searchHref } from '@/lib/searchUrl';
 import type { SearchDistrict, SearchResult, SiteHit } from '@/lib/search';
 import { Marked } from './Marked';
 
-/** A district result leads to Explore filtered to it, until district pages exist (A-1). */
-export const districtHref = (d: SearchDistrict) =>
-  exploreHref({ state: { ...EMPTY, div: [d.divisionSlug], dist: [d.slug] }, sort: 'time', extras: {} });
+/** A district result leads to its district page (spec 10 FR-63; until Phase 10 it led to Explore). */
+export const districtHref = (d: SearchDistrict) => areaHref(d.slug);
 
 /** A family result lists the sites whose founder or family field names it (FR-10, FR-11). */
 export const familyHref = (phrase: string) => searchHref({ q: phrase, field: 'family' });
 
-/** "matched in name", "matched in other name: …", "matched in district", "matched in founder or family: …" (FR-8). */
+/** "matched in name", "matched in other name: …", "matched in district", "matched in founder or family: …" (FR-8), "matched by site ID". */
 export function MatchNote({ hit }: { hit: SiteHit }) {
   switch (hit.field) {
+    case 'id': return <T k="search.in.id" />;
     case 'e': case 'b': return <T k="search.in.name" />;
     case 'd': return <T k="search.in.district" />;
     case 'a': return <><T k="search.in.alt" /> <span lang="en" className="font-semibold text-ink"><Marked text={hit.detail ?? ''} terms={hit.terms} /></span></>;

@@ -1,6 +1,7 @@
 // "Sources and open questions" (roadmap task 5.15, spec 05 FR-36 to FR-38): the numbered sources that the
 // footnotes link to, the list of disagreements, the open questions and "Still to confirm".
 
+import Link from 'next/link';
 import { Latin, T } from '@/components/T';
 import type { SiteRecord, Conflict } from '@/lib/types';
 import { OpenQuestion } from './Conflicts';
@@ -18,7 +19,7 @@ export function SourceList({ site }: { site: SiteRecord }) {
             {s.url ? <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-primary underline">“{s.title}”</a> : <>“{s.title}”</>}
             {s.publisher ? <>, <em>{s.publisher}</em></> : null}
             {s.date ? <>, {s.date}</> : null}
-            <span className="ml-1 font-mono text-xs text-muted">{s.id}</span>
+            {' '}<Link prefetch={false} href={`/sources/${s.id}/`} className="font-mono text-xs text-muted underline" data-source-id>{s.id}</Link>
           </span>
         </li>
       ))}

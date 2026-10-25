@@ -7,12 +7,15 @@
 import dynamic from 'next/dynamic';
 import { Component, useState } from 'react';
 import { T } from '@/components/T';
+import { Skeleton } from '@/components/shell/Skeleton';
 import type { MapViewProps } from './MapView';
 
+/** While Leaflet loads, Explore's map pane says the list is already there (spec 10 FR-56). */
 export function MapPlaceholder({ children }: { children?: React.ReactNode }) {
+  if (!children) return <div className="h-full w-full" data-map-placeholder><Skeleton variant="map" label="map.loadingList" /></div>;
   return (
     <div className="flex h-full w-full items-center justify-center bg-map-land p-4 text-center" data-map-placeholder>
-      {children ?? <p role="status" className="text-sm text-muted"><T k="map.loading" /></p>}
+      {children}
     </div>
   );
 }

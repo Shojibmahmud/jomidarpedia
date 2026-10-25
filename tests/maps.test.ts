@@ -33,6 +33,16 @@ describe('static maps on the fixture (task 3.8)', () => {
     }
   });
 
+  it('numbers district pins by the district list order; other maps have no numbers (spec 10 FR-16)', () => {
+    const f = fixtureMaps();
+    f.run();
+    const order: string[] = readJson(join(f.out, 'build', 'districts.json'))[0].siteIds;
+    expect(order).toEqual(['JB-DHK-001', 'JB-DHK-002']); // 1-2 h before unknown; the hidden site keeps number 2
+    const numbered = (svg: string) => [...svg.matchAll(/data-site-id="([^"]+)"[^>]*data-n="(\d+)"/g)].map(m => [m[1], Number(m[2])]);
+    expect(numbered(readFileSync(join(f.maps, 'district/manikganj.svg'), 'utf8'))).toEqual([['JB-DHK-001', 1]]);
+    expect(readFileSync(join(f.maps, 'division/dhaka.svg'), 'utf8')).not.toContain('data-n=');
+  });
+
   it('is byte-identical between runs', () => {
     const f = fixtureMaps();
     f.run();

@@ -1,6 +1,6 @@
 'use client';
 // The results list (roadmap task 6.5, spec 06 FR-2, FR-3): row cards paged by 24, "Showing N of M" and
-// "Load more", plus the loading skeleton and the fetch error with Retry. With a map (spec 07 FR-20), the
+// "Load more", plus the fetch error with Retry (the loading rows are components/shell/Skeleton.tsx). With a map (spec 07 FR-20), the
 // selected site's row is highlighted, hovering or focusing a row highlights its pin, and a mappable row
 // has "Show on map".
 
@@ -50,24 +50,6 @@ export function ResultsList({ sites, pages, onMore, map, terms }: {
           ? <button type="button" onClick={onMore} className="min-h-tap rounded-md border border-line-strong bg-surface px-4 font-semibold"><T k="results.more" /></button>
           : null}
       </div>
-    </div>
-  );
-}
-
-export function ListSkeleton() {
-  return (
-    <div aria-busy="true" className="space-y-2">
-      <p role="status" className="text-sm text-muted"><T k="results.loading" /></p>
-      {Array.from({ length: 6 }, (_, k) => (
-        <div key={k} aria-hidden="true" className="flex gap-3 rounded-lg bg-surface p-3">
-          <span className="aspect-[4/3] w-20 shrink-0 rounded-md bg-surface-2" />
-          <span className="flex flex-1 flex-col gap-2 pt-1">
-            <span className="h-4 w-2/3 rounded bg-surface-2" />
-            <span className="h-3 w-1/2 rounded bg-surface-2" />
-            <span className="h-5 w-1/3 rounded-full bg-surface-2" />
-          </span>
-        </div>
-      ))}
     </div>
   );
 }

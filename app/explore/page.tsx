@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { T } from '@/components/T';
 import { ExploreApp } from '@/components/explore/ExploreApp';
-import { ListSkeleton } from '@/components/explore/ResultsList';
+import { Skeleton } from '@/components/shell/Skeleton';
 import { getDistricts, getDivisions } from '@/lib/data';
 import type { PlaceList } from '@/lib/filters';
 
@@ -28,7 +28,7 @@ export default function ExplorePage() {
           <T k="explore.noscript" /> <Link prefetch={false} href="/" className="underline"><T k="explore.home" /></Link>
         </p>
       </noscript>
-      <Suspense fallback={<ListSkeleton />}>
+      <Suspense fallback={<Skeleton variant="row" label="results.loading" />}>
         <ExploreApp places={places} />
       </Suspense>
     </main>

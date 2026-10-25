@@ -11,7 +11,7 @@ import { useSearchParams } from 'next/navigation';
 import { Both, T } from '@/components/T';
 import { NoResultsArt } from '@/components/art/EmptyStates';
 import { SiteCard } from '@/components/cards/SiteCard';
-import { ListSkeleton } from '@/components/explore/ResultsList';
+import { Skeleton } from '@/components/shell/Skeleton';
 import { fold, variantsUsed } from '@/lib/fold';
 import { both, formatCount } from '@/lib/format';
 import { text, type StringKey } from '@/lib/i18n';
@@ -310,7 +310,7 @@ export function SearchApp({ districts, examples, total }: { districts: SearchDis
       </div>
     );
   } else if (!result) {
-    body = <ListSkeleton />;
+    body = <Skeleton variant="row" label="results.loading" />;
   } else if (empty) {
     body = <EmptySearch q={q} total={total} examples={examples} />;
   } else if (view.field) {

@@ -53,6 +53,25 @@ Index fields only: `e`, `b`, `u`, `d`, `db`, `c`, `ac`, `fe`, `sm`, `h`, `tb`, `
 - `photos` (spec 09 D4): the first Ready photo of up to 4 site stops, one per site, in stop order: `{ n, thumb, credit }`, where `n` is the stop number and `credit` is `required_credit` as written. Absent when no site stop has a Ready photo: placeholder. `thumb` (the anchor's first photo) is kept for Home and division tiles.
 - No `hours`: "Travel time unknown"; the card never names a start place or a clock time (spec 09 D15).
 
+### Division and district pages (`/division/<slug>/`, `/district/<slug>/`)
+`divisions.json` and `districts.json` (build time) are the one source of every count on these pages (spec 10 FR-1, NFR-2): `count`, `onMap`, `conditions`, `locations`, `dayTrip`, `noPin`, `tripCount`. A division's counts equal the sums over its districts; `locations` sums to `count`.
+- `locations`: `{ verified, singleSource, approximate, unverified, noPin }`. The first four count pinned sites by `coordinates_status` (any other status on a pinned site counts as `unverified`); `noPin` counts hidden sites and equals `noPin.length`.
+- `dayTrip`: sites with `day_trip_from_dhaka = TRUE`. 0: the intro leaves the day-trip sentence out.
+- District `siteIds` are in list order: travel time as in Explore's default sort, unknown last, then English name and ID. The district page numbers its cards 1…N in this order and `scripts/build-maps.mjs` writes the same numbers into the district map's pins (`data-n`); a site without a pin keeps its number in the list.
+- District `tripCount`: trips whose anchor site is in the district. "All N trip plans" links to `/trips/?div=` with the division's `tripCount`, because Trips has no district key.
+- The no-pin list names sites (index `e`, `b`, `d`, `db`) and never carries coordinates (R5).
+
+### Sources pages (`/sources/`, `/sources/<id>/`)
+`sources.json` (props for the list: `id`, `title`, `publisher`, `type` as a chip token, `date`, the count of `sites`). Every `type` must belong to a chip in `TYPE_GROUPS` (`lib/sources.ts`); a new type fails a unit test. `date` is `YYYY`, `YYYY-MM`, `YYYY-MM-DD` or a range `<date> to <date>`; none: "Not dated". A project working file (`projectFile`, or a type in the `project` chip) is labelled as such and gets no outbound link (spec 10 D6).
+
+### About (`/about/`)
+`content/about.en.md`: English prose (O6) with `{{counts.<path>}}` tokens for any number in `meta.json` `counts`, plus `{{book.sites}}` (sites citing SRC-0001) and the link tokens `{{url.corrections}}` and `{{url.photoOffer}}` (`scripts/lib/about.mjs`). An unknown token is a structural error in every mode; front matter `reviewed: false` is an editorial cell, so a release build fails until the owner has reviewed the text (spec 10 D10).
+
+### Credits (`/credits/`)
+`credits.json`: Ready images only. `credit` is `required_credit`, printed exactly; `view` is `view_category`; `sourcePage` absent for an owner's photo (no "File page" link). Licence counts come from `license`. The page says photos are shown resized and converted to WebP, once, rather than on each credit (spec 10 D11).
+
+Page budgets (spec 10 NFR-3; `e2e/areas-sources-about.spec.ts` warns above them): `/credits/` 150 KB gzipped (126 KB on 25 Oct 2026, 2.1 MB raw), `/sources/` 70 KB gzipped (55 KB).
+
 ### Home tiles and numbers strip
 `meta.json` (props): `counts.*`, `lastVerified` ("Last verified …"), `compiledAt` (when the build ran). `divisions.json` for division tiles; `trips.json` for trip tiles.
 
@@ -111,6 +130,10 @@ Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 202
 
 ### Meta (`data/build/meta.json`)
 `lastVerified`: the newest `last_verified` in the data. `compiledAt`: when the data was compiled (`SOURCE_DATE_EPOCH`, else `lastVerified`). `counts.hoursKnown`.
+For About (spec 10 §6): `counts.locations` (the same shape as an area's `locations`); `counts.disagreements` (conflicts with two or more versions) and `counts.openQuestions` (one version; never counted as a disagreement, spec 05 FR-34, FR-35); `counts.stillToConfirm` (all `stillToConfirm` items); `counts.imagesNeedReview` and `counts.imagesPermissionRequired` (`publication_readiness`; counted, never published); `counts.possibleDuplicates` (`site_relationships.relation_type = possible_duplicate`).
+
+### Credits (`data/build/credits.json`)
+`imageId`, `thumb`, `siteId`, `siteSlug`, `siteEn`, `siteBn`, `creator`, `license` (without the "Open license:" prefix), `credit` (`required_credit`), `view` (`view_category`), `sourcePage` (`source_page_url`, absent when blank).
 
 ## 4. Reviewed columns and optional tables
 

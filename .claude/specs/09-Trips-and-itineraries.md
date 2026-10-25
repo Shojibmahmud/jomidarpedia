@@ -226,7 +226,7 @@ None outstanding. The seven defaults proposed in the interview (A-1 to A-7) were
 - **D9 Print verified by Chromium PDF tests** plus the owner's manual check in Firefox and Safari; no extra Playwright browsers.
 - **D10 (A-1)** The listing renders the first 12 cards statically; a client component handles filters, sort and "Load 12 more" from the URL.
 - **D11 (A-2)** `tt` stays one travel-time band, as in `docs/URLS.md` and Explore, rather than the board's "Within 2 h".
-- **D12 (A-3)** Breadcrumb division and district links go to Explore (`div`, `dist`) until Phase 10, as Search does.
+- **D12 (A-3)** Breadcrumb division and district links go to Explore (`div`, `dist`) until Phase 10, as Search does. *(Phase 10: they now go to `/division/<slug>/` and `/district/<slug>/`, spec 10 FR-62.)*
 - **D13 (A-4)** "Open all stops on the map" uses `ids` (stop order), `view=map`, and `sel` = the first stop with a pin; hidden-pin sites are listed but not mapped.
 - **D14 (A-5)** No summary sentence on the trip page; `notes[]` appear as "Notes and add-ons".
 - **D15 (A-6)** Card footers show the anchor's travel time from Dhaka or "Travel time not known", never a start place or clock time.

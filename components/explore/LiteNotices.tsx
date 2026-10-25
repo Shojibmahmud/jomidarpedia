@@ -1,5 +1,6 @@
 'use client';
-// Lite mode on Explore (roadmap task 7.9, O7, spec 07 FR-36, FR-38). Save-Data switched it on: say so.
+// Lite mode notes (roadmap task 7.9, O7, spec 07 FR-36, FR-38) on every page that loads a map: Explore, trip
+// pages and site pages with a mini map (spec 10 FR-61). Save-Data switched it on: say so.
 // A slow connection with Lite off: suggest it, once per browser session (A-6). With Lite on, the map pane
 // says the map is off and offers to turn Lite mode off; nothing from Leaflet loads meanwhile.
 

@@ -31,6 +31,8 @@ export function measures(csvDir: string, indexPath: string, buildDir: string) {
   const stopsByTrip = new Map<string, Row[]>();
   for (const st of stops) stopsByTrip.set(st.itinerary_id, [...(stopsByTrip.get(st.itinerary_id) ?? []), st]);
   const dhaka = sites.filter(s => s.division === 'Dhaka');
+  const divisions: { slug: string; locations: Record<string, number> }[] = JSON.parse(readFileSync(join(buildDir, 'divisions.json'), 'utf8'));
+  const meta = JSON.parse(readFileSync(join(buildDir, 'meta.json'), 'utf8'));
   return {
     sites: sites.length,
     onMap: mapped.length,
@@ -51,7 +53,10 @@ export function measures(csvDir: string, indexPath: string, buildDir: string) {
     claims: count(read('claims'), c => c.claim_type),
     claimSourceLinks: count(read('claim_source_links'), l => l.relation),
     unclassifiedSites: sites.filter(s => s.site_type === 'unclassified').length,
-    dhakaDivision: { sites: dhaka.length, noPin: dhaka.filter(s => !isMappable(s)).length },
+    dhakaDivision: { sites: dhaka.length, noPin: dhaka.filter(s => !isMappable(s)).length, locations: divisions.find(d => d.slug === 'dhaka')?.locations },
+    // Phase 10: the About page's counts (spec 10 §6).
+    about: (({ locations, disagreements, openQuestions, stillToConfirm, imagesNeedReview, imagesPermissionRequired, possibleDuplicates }) =>
+      ({ locations, disagreements, openQuestions, stillToConfirm, imagesNeedReview, imagesPermissionRequired, possibleDuplicates }))(meta.counts),
     indexRowsOnMap: index.filter(r => r.ll).length,
     // Phase 2 contract.
     hoursKnown: index.filter(r => r.hv).length,

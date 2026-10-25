@@ -6,13 +6,14 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import { T } from '@/components/T';
+import { Skeleton } from '@/components/shell/Skeleton';
 import { text } from '@/lib/i18n';
 import { useLite, useUiLang } from '@/lib/use-ui-lang';
 import type { MiniMapSite } from './MiniMapView';
 
 const MiniMapView = dynamic(() => import('./MiniMapView'), {
   ssr: false,
-  loading: () => <div className="h-full w-full bg-map-land" />,
+  loading: () => <Skeleton variant="map" />,
 });
 
 export function MiniMap({ site }: { site: MiniMapSite }) {

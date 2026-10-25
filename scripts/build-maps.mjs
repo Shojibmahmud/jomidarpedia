@@ -58,13 +58,18 @@ function path(rings, px) {
 
 // Pins as on the "Design system · components" board: confirmed = filled, one source = outlined,
 // approximate = hatched, all in the condition colour; a gold "?" badge marks flagged and unverified (O9).
-function pin(site, px, r, key) {
+// On a district map, n is the site's number on the district page (spec 10 FR-16), drawn in the pin.
+function pin(site, px, r, key, n) {
   const [x, y] = px([site.lon, site.lat]);
   const c = CONDITION_COLOUR[site.condition] ?? 'unknown';
   const colour = tok(c);
   const fill = site.status === 'verified' ? colour : site.status === 'approximate' ? `url(#${key}-hatch-${c})` : tok('surface');
-  const parts = [`<g data-site-id="${esc(site.id)}" data-location="${esc(site.status)}"><title>${esc(site.name)}</title>`,
+  const parts = [`<g data-site-id="${esc(site.id)}" data-location="${esc(site.status)}"${n ? ` data-n="${n}"` : ''}><title>${esc(n ? `${n}. ${site.name}` : site.name)}</title>`,
     `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${site.status === 'verified' ? tok('surface') : colour}" stroke-width="${site.status === 'verified' ? 1 : 1.75}"/>`];
+  if (n) {
+    // A halo in the surface colour keeps the number readable on a filled or hatched pin.
+    parts.push(`<text x="${x}" y="${+(y + r * 0.38).toFixed(1)}" font-size="${+(r * 1.05).toFixed(1)}" font-weight="700" text-anchor="middle" fill="${tok('ink')}" stroke="${tok('surface')}" stroke-width="2.5" paint-order="stroke">${n}</text>`);
+  }
   if (site.status === 'unverified' || site.flagged) {
     const b = +(r * 0.7).toFixed(1), bx = +(x + r * 0.8).toFixed(1), by = +(y - r * 0.8).toFixed(1);
     parts.push(`<circle cx="${bx}" cy="${by}" r="${b}" fill="${tok('gold-tint')}" stroke="${tok('gold')}" stroke-width="0.75"/>`,
@@ -79,7 +84,7 @@ const hatches = (key, sites) => [...new Set(sites.filter(s => s.status === 'appr
   .map(c => `<pattern id="${key}-hatch-${c}" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="3" fill="${tok('surface')}"/><rect width="1.4" height="3" fill="${tok(c)}"/></pattern>`).join('');
 
 // One SVG. context: rings drawn faintly; area: the rings of the place the map is about; inner: borders inside it.
-function svg({ key, title, box, context = [], area, inner = [], sites, r }) {
+function svg({ key, title, box, context = [], area, inner = [], sites, r, numbers }) {
   const { px, height } = projection(box);
   const id = `jp-${key.replace(/[^a-z0-9-]/g, '-')}`;
   const out = [
@@ -91,7 +96,7 @@ function svg({ key, title, box, context = [], area, inner = [], sites, r }) {
   if (context.length) out.push(`<path d="${context.map(c => path(c, px)).join('')}" fill="${tok('map-land')}" fill-opacity="0.55" stroke="${tok('line')}" stroke-width="0.75" fill-rule="evenodd"/>`);
   out.push(`<path d="${path(area, px)}" fill="${tok('map-land')}" stroke="${tok('line-strong')}" stroke-width="1.5" fill-rule="evenodd"/>`);
   if (inner.length) out.push(`<path d="${inner.map(c => path(c, px)).join('')}" fill="none" stroke="${tok('line')}" stroke-width="0.75"/>`);
-  for (const s of sites) out.push(pin(s, px, r, id));
+  for (const s of sites) out.push(pin(s, px, r, id, numbers?.get(s.id)));
   out.push(`<text x="${WIDTH - PAD}" y="${height - 6}" font-size="10" text-anchor="end" fill="${tok('muted')}">${esc(MAP_CREDIT)}</text>`, '</svg>');
   return out.join('\n') + '\n';
 }
@@ -148,9 +153,11 @@ export function buildMaps({ csvDir = 'data/csv', buildDir = 'data/build', geoDir
   for (const d of districts) {
     const box = bbox([distRings.get(d.slug)], 0.12);
     const context = [...distRings.entries()].filter(([s, r]) => s !== d.slug && overlaps(bbox([r], 0), box)).map(([, r]) => r);
-    const sites = pins.filter(p => p.district === d.slug);
+    // Numbers follow the district page's list order (siteIds, spec 10 FR-15); a site without a pin keeps its number.
+    const numbers = new Map(d.siteIds.map((id, k) => [id, k + 1]));
+    const sites = pins.filter(p => p.district === d.slug).sort((a, b) => numbers.get(b.id) - numbers.get(a.id)); // 1 drawn last, on top
     files.push([`district/${d.slug}.svg`, `district-${d.slug}`, svg({ key: `district-${d.slug}`, title: `Map of ${d.en} District: ${sites.length} sites with a map location`,
-      box, context, area: distRings.get(d.slug), sites, r: 6 })]);
+      box, context, area: distRings.get(d.slug), sites, r: 9, numbers })]);
   }
 
   rmSync(outDir, { recursive: true, force: true });

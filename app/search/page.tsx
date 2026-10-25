@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { T } from '@/components/T';
-import { ListSkeleton } from '@/components/explore/ResultsList';
+import { Skeleton } from '@/components/shell/Skeleton';
 import { SearchApp } from '@/components/search/SearchApp';
 import { getDistricts, getIndex } from '@/lib/data';
 import { exampleSearches } from '@/lib/search';
@@ -25,7 +25,7 @@ export default function SearchPage() {
           <T k="search.noscript" /> <Link prefetch={false} href="/explore/" className="underline"><T k="search.noscriptLink" /></Link>
         </p>
       </noscript>
-      <Suspense fallback={<ListSkeleton />}>
+      <Suspense fallback={<Skeleton variant="row" label="results.loading" />}>
         <SearchApp districts={districts} examples={exampleSearches(index)} total={index.length} />
       </Suspense>
     </main>

@@ -24,15 +24,15 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 | `/search/` | Search results | built | 8.x |
 | `/site/<id>/<slug>/` | Site page | built (with mini map for mappable sites, 7.10) | 4.1, 5.x, 7.10 |
 | `/site/<id>/` | ID redirect to the canonical site URL (noindex) | built | 4.2 |
-| `/division/<slug>/` | Division page (8) | planned | 10.1 |
-| `/district/<slug>/` | District page (64) | planned | 10.2 |
+| `/division/<slug>/` | Division page (8) | built | 10.1 |
+| `/district/<slug>/` | District page (64), sites numbered as on its map | built | 10.2 |
 | `/trips/` | Day trips listing (first 12 cards static; filters in the browser) | built | 9.1, 9.2 |
 | `/trips/<id>/` | Itinerary page, with print layout | built | 9.3–9.12 |
-| `/sources/` | Sources list | planned | 10.3 |
-| `/sources/<id>/` | Source page | planned | 10.4 |
-| `/about/` | About and methodology | planned | 10.x |
-| `/credits/` | Image credits and licences | planned | 10.x |
-| `/404.html` | Not found (served for any unknown path) | built (Next default) | 10.x |
+| `/sources/` | Sources list (first 25 rows static; search, chips, sort and paging in the browser) | built | 10.3 |
+| `/sources/<id>/` | Source page (1,136) | built | 10.4 |
+| `/about/` | About and methodology (text: `content/about.en.md`) | built | 10.5–10.9 |
+| `/credits/` | Image credits and licences | built | 10.7 |
+| `/404.html` | Not found (served for any unknown path, status 404) | built | 10.10 |
 | `/dev/i18n/` | Language test page: local and preview builds only, never in release | built | 3.1 |
 
 Slugs come from the data: site `dataset_slug`; division and district `slug` in `data/build/divisions.json` and `districts.json`. A district and a division may share a slug (Dhaka), because they live under different prefixes.
@@ -64,7 +64,7 @@ Slugs come from the data: site `dataset_slug`; division and district `slug` in `
 
 | Key | Values | Multi | Default | Meaning | Task |
 |---|---|---|---|---|---|
-| `q` | free text | no | none | The query; English and Bangla, spelling variants folded | 8.x |
+| `q` | free text | no | none | The query; English and Bangla, spelling variants folded. A query that is exactly a site ID (`JB-DHK-064`, any case) finds that site alone, with no "Did you mean" (spec 10 FR-53) | 8.x, 10.10 |
 | `field` | `family` | no | all fields | Limit the match to founder or family (`fm`): the whole phrase, Sites only (spec 08 FR-11). Dropped silently without `q` | 8.x |
 | `in` | `sites`, `families`, `districts` | no | all groups | Which result group is shown (spec 08 D7). With `field=family` only `sites` is allowed; another value is dropped with the notice | 8.x |
 | `exact` | `1` | no | off | Match the words as typed: no close spellings and no "Did you mean" (spec 08 D5, FR-12). Dropped silently without `q` | 8.x |
@@ -79,11 +79,20 @@ Slugs come from the data: site `dataset_slug`; division and district `slug` in `
 | `plan` | `timed` | no | off | Has a timed plan (`plan_status = timed`, O11) | 9.2 |
 | `sort` | `time`, `name` | no | `time` | Travel time (unknown last), or name | 9.2 |
 
+### Sources (`/sources/`)
+
+| Key | Values (canonical order) | Multi | Default | Meaning | Task |
+|---|---|---|---|---|---|
+| `q` | free text | no | none | Matches the title, publisher or SRC ID, folded as in Search; capped at 100 characters | 10.3 |
+| `type` | `news`, `wiki`, `government`, `travel`, `encyclopedia`, `blog`, `map`, `academic`, `book`, `project`, `other` | no | all | Type chip; each groups `sources.csv` types (`TYPE_GROUPS` in `lib/sources.ts`; spec 10 FR-21) | 10.3 |
+| `sort` | `cited`, `title`, `date` | no | `cited` | Most cited (sites citing it, then ID), title A to Z, or newest first (undated last) | 10.3 |
+| `page` | a whole number from 2 | no | 1 | Page of 25 rows; a page past the last is dropped with the notice | 10.3 |
+
 ### Credits (`/credits/`)
 
 | Key | Values | Multi | Default | Meaning | Task |
 |---|---|---|---|---|---|
-| `site` | one site ID | no | none | Show only that site's image credits | 10.x |
+| `site` | one site ID | no | none | Show only that site's image credits, with "Show all sites". An ID with no Ready photos, or that names no site, is dropped with the notice. The search box on the page is not kept in the URL (spec 10 FR-48, FR-49) | 10.7 |
 
 ## Anchors
 
@@ -93,6 +102,7 @@ Slugs come from the data: site `dataset_slug`; division and district `slug` in `
 | `#getting-there` | `/site/<id>/<slug>/` | Routes from Dhaka |
 | `#sources` | `/site/<id>/<slug>/` | Sources and citations |
 | `#sites` | `/sources/<id>/` | Every site citing the source |
+| `#core-book`, `#grading`, `#locations`, `#disagreements`, `#costs`, `#photos`, `#not-done`, `#contribute` | `/about/` | The About sections (spec 10 FR-35); area pages link their location tiles to `#locations` |
 | `#licences` | `/about/` | Text, data and photo licences |
 | `#main` | every page | Skip-link target |
 
