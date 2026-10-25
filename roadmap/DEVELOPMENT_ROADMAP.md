@@ -966,8 +966,8 @@ Required dependencies between phases 5 and 11:
 
 **Prerequisites:** task 1.10 (the per-cell report). O3 uses its default unless changed.
 
-- [ ] **12.1** Generate `data/reports/release-problems.md`, grouped by CSV cell (1.10). Record the starting number of **cells to edit**.
-- [ ] **12.2** Rewrite the formulaic `site_sources.citation_publisher` and `citation_title` values. A script may be used, but it runs once and its diff is reviewed by hand.
+- [x] **12.1** Generate `data/reports/release-problems.md`, grouped by CSV cell (1.10). Record the starting number of **cells to edit**.
+- [x] **12.2** Rewrite the formulaic `site_sources.citation_publisher` and `citation_title` values. A script may be used, but it runs once and its diff is reviewed by hand.
   - **Verify:** the matching report groups reach zero.
 - [ ] **12.3** Rewrite `sites.coordinates_note` (298 cells). The new wording keeps the uncertainty: for example, "Pin from a map service; not yet matched by a published source".
 - [ ] **12.4** Rewrite `sites.short_description`, `claims.claim_text` and `history_events.description`, about 25 cells per session. Keep each source limitation in public words.
@@ -980,6 +980,10 @@ Required dependencies between phases 5 and 11:
   - Utholi → Gabtoli bus: Tk 200.
 - [ ] **12.9** Fill in `plan_status` (O11) and `closed_days` (2.11) wherever the research supports them. Everything else stays `incomplete` or `unknown`.
 - [ ] **12.10** Spot-check 40 randomly chosen sites against their sources. Log the findings in `data/reports/spot-check-<date>.md`.
+
+**In progress**, specified in `.claude/specs/12-Content-readiness.md` (approved 25 Oct 2026).
+- **Starting count (12.1):** 2,254 editorial cells on 25 Oct 2026 (local mode): 1,357 internal-note cells plus 4 generated texts, 385 `plan_status`, 413 `closed_days`, 79 `unclassified`, 15 credit lines, 1 owner's review.
+- **12.2:** 872 citation and source cells rewritten by a reviewed one-off mapping. The public publisher follows the kind of source cited (book cited second-hand, project research list, AI-generated summary or audit, project editor, Google Maps), not the old wording. Internal-note cells: 1,357 → 489; the `site_sources` and `sources` groups are at zero.
 
 **Acceptance criteria**
 - `npm run build` (release) passes.
