@@ -44,13 +44,13 @@ jobs:
             test-results/
           if-no-files-found: ignore
 
-  # Release-mode build on main. Not blocking until Phase 12 clears the editorial problems
-  # (roadmap/DEVELOPMENT_ROADMAP.md task 1.13); its report is kept as an artifact either way.
+  # Release-mode build on main and on pull requests. Blocking since Phase 12 cleared the editorial
+  # problems (roadmap task 1.13, spec 12 FR-26): a new internal note, unreviewed cell or
+  # non-standard credit fails it. Its report is kept as an artifact either way.
   release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    continue-on-error: true
     env:
       NEXT_TELEMETRY_DISABLED: 1
     steps:

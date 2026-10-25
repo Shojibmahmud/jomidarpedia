@@ -330,7 +330,7 @@ Required dependencies between phases 5 and 11:
   - `dev` (`JP_DATA_MODE=local npm run data && next dev`)
   - `build:local`
   - `build` (`npm run data && next build`, release by default)
-- [x] **1.13** Update CI so it runs `npm run build:local` on branches and `npm run build` (release) on `main`. Until Phase 12 is complete, the `main` job is allowed to fail and is marked as non-blocking.
+- [x] **1.13** Update CI so it runs `npm run build:local` on branches and `npm run build` (release) on `main`. Until Phase 12 is complete, the `main` job is allowed to fail and is marked as non-blocking. Since Phase 12 (26 Oct 2026) it blocks, and also runs on pull requests.
   - **Done 22 Oct 2026:** every push and PR runs lint, typecheck, tests and `build:local` as a blocking job. Pushes to `main` also run a separate `release` job with `continue-on-error`, which uploads the report as an artifact; this keeps a blocking build on `main`. Verified by CI run 39821513865 on `main`: `check` passed; `release` failed as expected (1,510 cells to edit) and uploaded `release-problems`; the run succeeded.
 
 **Done 22 Oct 2026 (1.1–1.13)**, specified in `.claude/specs/01-Data-pipeline-gates.md`. Verified with 109 passing tests, `npm run build:local` (exit 0), `npm run build` (release, exit 1 with 1,510 cells to edit) and two byte-identical data builds. Changes from the task text:
@@ -969,21 +969,29 @@ Required dependencies between phases 5 and 11:
 - [x] **12.1** Generate `data/reports/release-problems.md`, grouped by CSV cell (1.10). Record the starting number of **cells to edit**.
 - [x] **12.2** Rewrite the formulaic `site_sources.citation_publisher` and `citation_title` values. A script may be used, but it runs once and its diff is reviewed by hand.
   - **Verify:** the matching report groups reach zero.
-- [ ] **12.3** Rewrite `sites.coordinates_note` (298 cells). The new wording keeps the uncertainty: for example, "Pin from a map service; not yet matched by a published source".
-- [ ] **12.4** Rewrite `sites.short_description`, `claims.claim_text` and `history_events.description`, about 25 cells per session. Keep each source limitation in public words.
-- [ ] **12.5** Clear the remaining small groups: cost basis, founder, notes, sources and itinerary notes.
-- [ ] **12.6** Classify the 79 `unclassified` sites (O15), with a source for each classification.
-- [ ] **12.7** Fix the 15 credit lines that don't follow the standard format. **Keep each licence's required wording.**
-- [ ] **12.8** Add the Manikganj fares from the editor (20 October 2026) as `costs.csv` and `itinerary_legs.csv` rows, with their units, the shared or reserved basis and the date:
+- [x] **12.3** Rewrite `sites.coordinates_note` (298 cells). The new wording keeps the uncertainty: for example, "Pin from a map service; not yet matched by a published source".
+- [x] **12.4** Rewrite `sites.short_description`, `claims.claim_text` and `history_events.description`, about 25 cells per session. Keep each source limitation in public words.
+- [x] **12.5** Clear the remaining small groups: cost basis, founder, notes, sources and itinerary notes.
+- [x] **12.6** Classify the 79 `unclassified` sites (O15), with a source for each classification.
+- [x] **12.7** Fix the 15 credit lines that don't follow the standard format. **Keep each licence's required wording.**
+- [x] **12.8** Add the Manikganj fares from the editor (20 October 2026) as `costs.csv` and `itinerary_legs.csv` rows, with their units, the shared or reserved basis and the date:
   - Teota → Aricha rickshaw: Tk 15 shared / Tk 30 reserved;
   - Aricha → Utholi shared auto: Tk 10;
   - Utholi → Gabtoli bus: Tk 200.
-- [ ] **12.9** Fill in `plan_status` (O11) and `closed_days` (2.11) wherever the research supports them. Everything else stays `incomplete` or `unknown`.
-- [ ] **12.10** Spot-check 40 randomly chosen sites against their sources. Log the findings in `data/reports/spot-check-<date>.md`.
+- [x] **12.9** Fill in `plan_status` (O11) and `closed_days` (2.11) wherever the research supports them. Everything else stays `incomplete` or `unknown`.
+- [x] **12.10** Spot-check 40 randomly chosen sites against their sources. Log the findings in `data/reports/spot-check-<date>.md`.
 
-**In progress**, specified in `.claude/specs/12-Content-readiness.md` (approved 25 Oct 2026).
+**Done 26 Oct 2026 (12.1–12.10)**, specified in `.claude/specs/12-Content-readiness.md` (approved 25 Oct 2026). `npm run build` (release) passes with 0 editorial cells, 0 structural errors and 0 safety failures; every batch was reviewed by the owner before it was committed. Verified with 421 passing unit tests, typecheck, lint and a release static build; no internal term appears anywhere in `out/`.
 - **Starting count (12.1):** 2,254 editorial cells on 25 Oct 2026 (local mode): 1,357 internal-note cells plus 4 generated texts, 385 `plan_status`, 413 `closed_days`, 79 `unclassified`, 15 credit lines, 1 owner's review.
 - **12.2:** 872 citation and source cells rewritten by a reviewed one-off mapping. The public publisher follows the kind of source cited (book cited second-hand, project research list, AI-generated summary or audit, project editor, Google Maps), not the old wording. Internal-note cells: 1,357 → 489; the `site_sources` and `sources` groups are at zero.
+- **12.3–12.5:** 244 coordinates notes, 78 claims, 71 short descriptions and 105 cells in the small groups, in the same vocabulary ("the project", "the project editor", "the project's master list", "an AI-generated audit or guide"). Working-file references name the site page; district notes files are dropped. A check of all 1,375 rewritten cells found no lost qualifier (unverified, second-hand, not opened, leads only, not yet matched).
+- **12.6:** 71 `zamindar_house`, 5 `historic_residence`, 2 `garden_house`, 1 `estate_cluster`, each from a linked source; five borderline cases decided by the owner. Log: `data/reports/classification-2026-10-25.md`.
+- **12.7:** the 15 Nahid Sultan credit lines (CC BY-SA 4.0) follow the standard form; the pasted Commons description is gone from `creator` too.
+- **12.8:** `rickshaw` and `auto_rickshaw` leg modes, a leg legend under the trip map, and `leg_fare_<mode>` cost rows in the budget. `IT-DHK-064-1` has two legs and four fares (SRC-1137); known per person is Tk 405, the figure the 2.7 Manikganj check was waiting for. The reserved rickshaw fare is per vehicle.
+- **12.9:** `closed_days` 411 `unknown`, 2 `sun` (only reported hours with a confirming source); `plan_status` 37 timed (all hand-checked), 266 circuit, 82 incomplete (sample of 20 checked).
+- **12.10:** 40 sites, seed 20261025: 23 consistent, 4 consistent with a disagreement already recorded, 2 corrected (JB-CTG-004 condition; JB-DHK-037 disagreement), 11 not checkable automatically. Log: `data/reports/spot-check-2026-10-26.md`.
+- **Also done:** 399 inverted history years cleared (none was a real range); Bangla names for JB-RAJ-059 and JB-RAJ-071 (the owner's transliterations, still to confirm); the About page reviewed by the owner (one line updated for the Manikganj fares); the CI release job now blocks, on pull requests as well as `main` (1.13).
+- **Open:** broken source links SRC-0321, SRC-0121 and SRC-0968; 11 spot-check sites whose sources refuse automated reading (check in a browser); the 10 named closing days that stay `unknown` until their hours are verified.
 
 **Acceptance criteria**
 - `npm run build` (release) passes.
