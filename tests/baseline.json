@@ -68,7 +68,7 @@
     },
     "disagreements": 201,
     "openQuestions": 781,
-    "stillToConfirm": 1869,
+    "stillToConfirm": 1871,
     "imagesNeedReview": 24,
     "imagesPermissionRequired": 1322,
     "possibleDuplicates": 1
@@ -97,5 +97,5 @@
     "incomplete": 82,
     "timed": 37
   },
-  "bnMissing": 2
+  "bnMissing": 0
 }

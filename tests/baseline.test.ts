@@ -196,12 +196,15 @@ describe('data contract on the real data', () => {
     }
   });
 
-  it('missing Bangla names are flagged and reported (AC-12)', () => {
+  it('every site has a Bangla name; the two transliterations are still to confirm (AC-12, spec 12 AC-17)', () => {
     for (const id of ['JB-RAJ-059', 'JB-RAJ-071']) {
-      expect(readJson(build('sites', `${id}.json`)).bnMissing, id).toBe(true);
-      expect(index.find(r => r.i === id)).not.toHaveProperty('b');
+      const s = readJson(build('sites', `${id}.json`));
+      expect(s.bnMissing, id).toBeUndefined();
+      expect(index.find(r => r.i === id)).toHaveProperty('b');
+      expect(s.stillToConfirm.some((f: string) => /transliteration/.test(f)), id).toBe(true);
     }
-    expect(reportText(results, 'local')).toContain('- JB-RAJ-059, JB-RAJ-071');
+    expect(siteFiles.filter(s => s.bnMissing)).toEqual([]);
+    expect(reportText(results, 'local')).toMatch(/### Sites without a Bangla name\n\n- none/);
   });
 
   it('SRC-0001 alone carries structured fields; citations by division add up (AC-14)', () => {
