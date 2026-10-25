@@ -1,13 +1,17 @@
 // Related sites (spec 05 FR-12, FR-32, FR-44): identity notes under the summary ("Not the same place as …"),
-// "Combine with" for combine_on_trip only, and the itineraries a site is part of (unlinked until Phase 9).
+// "Combine with" for combine_on_trip only, and the itineraries a site is part of: each links to its trip page,
+// and a reviewed timed plan also shows its stops with clock times (spec 09 FR-51, FR-52, D7).
 
 import Link from 'next/link';
 import { Both, Latin, T } from '@/components/T';
 import { PlaceholderArt } from '@/components/art/PlaceholderArt';
 import { both, formatHours } from '@/lib/format';
+import { getTrip } from '@/lib/data';
 import { combineWith, identityNotes } from '@/lib/site-page';
+import { showTimes } from '@/lib/trips';
 import { siteHref } from '@/lib/site-url';
 import type { Itinerary, SiteRecord } from '@/lib/types';
+import { PlanBadge, tripHref } from '@/components/trips/ItineraryCard';
 import { ConditionBadge } from './Badges';
 
 export function IdentityNotes({ site }: { site: SiteRecord }) {
@@ -57,12 +61,38 @@ export function Itineraries({ site }: { site: SiteRecord }) {
   if (!site.itineraries.length) return <p className="italic text-muted"><T k="trip.none" /></p>;
   return (
     <ul className="divide-y divide-line rounded-lg border border-line bg-surface" data-itineraries>
-      {site.itineraries.map(it => (
-        <li key={it.id} className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3">
-          <span lang="en" className="font-semibold">{it.title}</span>
-          <span className="badge bg-indigo-tint text-indigo"><T k={`trip.${it.duration as Itinerary['duration']}`} /></span>
-        </li>
-      ))}
+      {site.itineraries.map(it => {
+        const trip = getTrip(it.id);
+        return (
+          <li key={it.id} className="space-y-3 px-4 py-3" data-itinerary={it.id}>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <Link prefetch={false} href={tripHref(it.id)} lang="en" className="font-semibold text-primary underline">{it.title}</Link>
+              <span className="flex flex-wrap gap-1.5">
+                <span className="badge bg-indigo-tint text-indigo"><T k={`trip.${it.duration as Itinerary['duration']}`} /></span>
+                <PlanBadge status={trip.planStatus} />
+              </span>
+            </div>
+            {showTimes(trip) ? <TimedPreview trip={trip} /> : null}
+          </li>
+        );
+      })}
     </ul>
+  );
+}
+
+/** The stop-by-stop preview with clock times, for a reviewed timed plan only (FR-52). */
+function TimedPreview({ trip }: { trip: Itinerary }) {
+  return (
+    <div data-timed-preview>
+      <p className="text-sm font-semibold text-muted"><T k="trip.preview" /></p>
+      <ol className="mt-1 space-y-1 text-sm">
+        {trip.stops.map(s => (
+          <li key={s.order} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2">
+            <span lang="en" className="font-mono">{s.time ?? ''}</span>
+            <span lang="en">{s.name}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }

@@ -7,6 +7,8 @@
 // tiles from the development provider (O4).
 // Search (spec 08 AC-17): /search/ results at 1440 px, "Did you mean" and no results at 390 px, and the header
 // overlay with suggestions at 1440 and 390 px.
+// Trips (spec 09 OQ-1): /trips/ at 1440 and 390 px, the Manikganj and Mymensingh itineraries at 1440 px, an
+// itinerary at 390 px in dark, and A4 PDFs of the Manikganj plan and the shortest and longest plans.
 // Serves out/ with the pinned `serve` on the Playwright port, so run `npm run build:local` first.
 // Output: screenshots/ (gitignored).
 
@@ -39,6 +41,15 @@ const maps = [
 const searches = [
   ['search-results', 'q=jamidar%20badi%20choudhury', 1440, 'light'],
   ['search-did-you-mean', 'q=baliyati', 390, 'light'], ['search-no-results', 'q=lalbagh%20kella', 390, 'light'],
+];
+
+// [name, path, width, theme]; the itineraries the boards show, by anchor site.
+const tripOf = anchor => JSON.parse(readFileSync('data/build/trips.json', 'utf8')).find(t => t.anchor === anchor).id;
+const tripFiles = () => JSON.parse(readFileSync('data/build/trips.json', 'utf8'));
+const trips = [
+  ['trips', '/trips/', 1440, 'light'], ['trips', '/trips/', 390, 'light'],
+  ['trip-manikganj', `/trips/${tripOf('JB-DHK-064')}/`, 1440, 'light'], ['trip-muktagacha', `/trips/${tripOf('JB-MYM-010')}/`, 1440, 'light'],
+  ['trip-manikganj', `/trips/${tripOf('JB-DHK-064')}/`, 390, 'dark'],
 ];
 
 const server = spawn('npx', ['serve', 'out', '--listen', String(PORT), '--no-clipboard', '--no-port-switching'], { stdio: 'ignore' });
@@ -113,6 +124,27 @@ try {
     await page.waitForSelector('[data-search-overlay] [role="option"]');
     const file = `${OUT}/search-overlay-${width}-light.png`;
     await page.screenshot({ path: file });
+    console.log(file);
+    await page.close();
+  }
+  for (const [name, path, width, theme] of trips) {
+    const page = await browser.newPage({ viewport: { width, height: width < 1024 ? 844 : 900 }, colorScheme: theme });
+    await page.goto(`http://localhost:${PORT}${path}`, { waitUntil: 'networkidle' });
+    await page.locator('[data-route-map-box], [data-trip-list]').first().scrollIntoViewIfNeeded().catch(() => {});
+    await page.waitForTimeout(1200);
+    const file = `${OUT}/${name}-${width}-${theme}.png`;
+    await page.screenshot({ path: file, fullPage: true });
+    console.log(file);
+    await page.close();
+  }
+  const bySize = [...tripFiles()].sort((a, b) => a.stopCount - b.stopCount);
+  for (const [name, id] of [['print-manikganj', tripOf('JB-DHK-064')], ['print-shortest', bySize[0].id], ['print-longest', bySize.at(-1).id]]) {
+    const page = await browser.newPage({ colorScheme: 'dark' });
+    await page.goto(`http://localhost:${PORT}/trips/${id}/`, { waitUntil: 'networkidle' });
+    await page.locator('[data-trip-footer]').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1200);
+    const file = `${OUT}/${name}.pdf`;
+    await page.pdf({ path: file, format: 'A4' });
     console.log(file);
     await page.close();
   }

@@ -155,6 +155,8 @@ export interface TripSummary {
   anchor: string; anchorSlug: string; anchorEn: string; anchorBn?: string;
   division: string; district: string; siteIds: string[]; stopCount: number;
   hours?: number; bucket: TravelBucket; dayTrip?: boolean; thumb?: string;
+  /** The card's photo strip (spec 09 D4): up to 4 site stops with a Ready photo, in stop order; n is the stop number. */
+  photos?: { n: number; thumb: string; credit: string }[];
 }
 
 type ConditionCounts = Record<Condition, number>;

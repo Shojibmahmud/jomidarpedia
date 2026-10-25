@@ -473,6 +473,17 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     if (num(anchor.travel_time_hours_from_dhaka) !== undefined) summary.hours = num(anchor.travel_time_hours_from_dhaka);
     if (it.day_trip_from_dhaka in BOOL) summary.dayTrip = BOOL[it.day_trip_from_dhaka];
     if (firstThumb(anchor.site_id)) summary.thumb = firstThumb(anchor.site_id);
+    // The card's photo strip (spec 09 D4): the first Ready photo of up to 4 site stops, in stop order, one per site.
+    const photos = [];
+    const seen = new Set();
+    for (const st of stops) {
+      if (photos.length === 4) break;
+      if (st.kind !== 'site' || seen.has(st.siteId)) continue;
+      seen.add(st.siteId);
+      const im = imagesBySite.get(st.siteId)?.[0];
+      if (im) photos.push({ n: st.order, thumb: `/thumbs/${im.image_id}.webp`, credit: im.required_credit });
+    }
+    if (photos.length) summary.photos = photos;
     tripSummaries.push(summary);
   }
 

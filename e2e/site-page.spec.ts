@@ -82,10 +82,11 @@ test('Baliati: the fee is a price and every cost has a date', async ({ page }) =
   for (const cell of await page.locator('[data-cost-date]').all()) await expect(cell).not.toBeEmpty();
 });
 
-test('Baliati: the itineraries are listed without links until Phase 9', async ({ page }) => {
+test('Baliati: each itinerary links to its trip page (spec 09 FR-51, replacing spec 05 FR-44)', async ({ page }) => {
   await page.goto(href(baliati));
-  await expect(page.locator('[data-itineraries] li')).toHaveCount(baliati.itineraries.length);
-  await expect(page.locator('main a[href*="/trips/"]')).toHaveCount(0);
+  await expect(page.locator('[data-itinerary]')).toHaveCount(baliati.itineraries.length);
+  const links = await page.locator('[data-itineraries] a').evaluateAll(els => els.map(e => e.getAttribute('href')));
+  expect(links).toEqual(baliati.itineraries.map(it => `/trips/${it.id}/`));
 });
 
 test('Baliati: every gallery image has its credit and source, and full files load only in the lightbox', async ({ page }) => {

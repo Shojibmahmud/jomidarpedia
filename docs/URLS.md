@@ -26,8 +26,8 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 | `/site/<id>/` | ID redirect to the canonical site URL (noindex) | built | 4.2 |
 | `/division/<slug>/` | Division page (8) | planned | 10.1 |
 | `/district/<slug>/` | District page (64) | planned | 10.2 |
-| `/trips/` | Day trips listing | planned | 9.2 |
-| `/trips/<id>/` | Itinerary page, with print layout | planned | 9.3 |
+| `/trips/` | Day trips listing (first 12 cards static; filters in the browser) | built | 9.1, 9.2 |
+| `/trips/<id>/` | Itinerary page, with print layout | built | 9.3–9.12 |
 | `/sources/` | Sources list | planned | 10.3 |
 | `/sources/<id>/` | Source page | planned | 10.4 |
 | `/about/` | About and methodology | planned | 10.x |
@@ -58,7 +58,7 @@ Slugs come from the data: site `dataset_slug`; division and district `slug` in `
 | `q` | free text | no | none | Search within the results: keeps the sites `/search/` finds for it, combined with the filters; no "Did you mean" (spec 08 D3, FR-29) | 8.x |
 | `view` | `list`, `map` | no | `list` below 1280 px; ignored at 1280 px and above, where map and list both show (kept in the URL) | Which pane is shown below 1280 px (spec 07 D6, D7) | 6.5, 7.5 |
 | `sel` | one site ID | no | none | Selected site (summary sheet or popover). Must have a pin and match the filters: a link whose `sel` names a hidden pin or a filtered-out site loses it with the notice; a filter change that excludes it drops it without one (spec 07 D12) | 7.5, 7.6 |
-| `ids` | site IDs | yes | none | Show only these sites ("Open all stops on the map") | 9.8 |
+| `ids` | site IDs | yes | none | Show only these sites, in stop order ("Open all stops on the map"), ANDed with the filters and `q`. A chip "N trip stops" removes it; Clear all removes it too. An ID that names no site is dropped with the notice. A hidden-pin site is listed but not mapped (R5) (spec 09 FR-43, D13) | 9.8 |
 
 ### Search (`/search/`)
 
