@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { fontVariables } from './fonts';
 import { T } from '@/components/T';
+import { OfflineNotice } from '@/components/shell/OfflineNotice';
 import { SiteFooter } from '@/components/shell/SiteFooter';
 import { SiteHeader } from '@/components/shell/SiteHeader';
 import { getMeta } from '@/lib/data';
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <div className="flex-1">{children}</div>
         <SiteFooter />
+        <OfflineNotice />
       </body>
     </html>
   );

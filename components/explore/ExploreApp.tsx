@@ -34,7 +34,8 @@ import { ExploreSearch } from './ExploreSearch';
 import { FilterDrawer } from './FilterDrawer';
 import { FilterRail } from './FilterRail';
 import { LiteNotices, LiteOffPanel } from './LiteNotices';
-import { ListSkeleton, LoadError, PAGE_SIZE, ResultsList } from './ResultsList';
+import { Skeleton } from '@/components/shell/Skeleton';
+import { LoadError, PAGE_SIZE, ResultsList } from './ResultsList';
 
 type Load = { status: 'loading' | 'error' } | { status: 'ready'; sites: IndexSite[] };
 /** Per-entry memory. selFrom: this entry was pushed by selecting a site from the same view without one (D9). */
@@ -352,7 +353,7 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   ) : null;
 
   const listBody = load.status === 'error' ? <LoadError onRetry={retry} />
-    : !ready ? <ListSkeleton />
+    : !ready ? <Skeleton variant="row" label="results.loading" />
       : results.length ? <ResultsList sites={results} pages={pages} onMore={more} map={mapLink} terms={hits} />
         : <EmptyResults sites={pool} state={state} places={places} onChange={apply} onClear={clear} q={extras.q} onRemoveQ={() => setQuery('', true)} />;
 

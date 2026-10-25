@@ -9,6 +9,9 @@
 // overlay with suggestions at 1440 and 390 px.
 // Trips (spec 09 OQ-1): /trips/ at 1440 and 390 px, the Manikganj and Mymensingh itineraries at 1440 px, an
 // itinerary at 390 px in dark, and A4 PDFs of the Manikganj plan and the shortest and longest plans.
+// Phase 10 (spec 10 OQ-1): Dhaka division at 1440 px, Manikganj district at 390 px, /sources/ at 1440 px, the core
+// book's source page at 390 px, About and credits at 1440 px, the 404 page at 1440 px and at 390 px in dark, the
+// loading skeleton at 390 px (the index held back) and the offline toast with the slow-network note at 390 px.
 // Serves out/ with the pinned `serve` on the Playwright port, so run `npm run build:local` first.
 // Output: screenshots/ (gitignored).
 
@@ -50,6 +53,14 @@ const trips = [
   ['trips', '/trips/', 1440, 'light'], ['trips', '/trips/', 390, 'light'],
   ['trip-manikganj', `/trips/${tripOf('JB-DHK-064')}/`, 1440, 'light'], ['trip-muktagacha', `/trips/${tripOf('JB-MYM-010')}/`, 1440, 'light'],
   ['trip-manikganj', `/trips/${tripOf('JB-DHK-064')}/`, 390, 'dark'],
+];
+
+// [name, path, width, theme]
+const pages = [
+  ['division-dhaka', '/division/dhaka/', 1440, 'light'], ['district-manikganj', '/district/manikganj/', 390, 'light'],
+  ['sources', '/sources/', 1440, 'light'], ['source-book', '/sources/SRC-0001/', 390, 'light'],
+  ['about', '/about/', 1440, 'light'], ['credits', '/credits/', 1440, 'light'],
+  ['404', '/no-such-page/', 1440, 'light'], ['404', '/no-such-page/', 390, 'dark'],
 ];
 
 const server = spawn('npx', ['serve', 'out', '--listen', String(PORT), '--no-clipboard', '--no-port-switching'], { stdio: 'ignore' });
@@ -147,6 +158,34 @@ try {
     await page.pdf({ path: file, format: 'A4' });
     console.log(file);
     await page.close();
+  }
+  for (const [name, path, width, theme] of pages) {
+    const page = await browser.newPage({ viewport: { width, height: width < 1024 ? 844 : 900 }, colorScheme: theme });
+    await page.goto(`http://localhost:${PORT}${path}`, { waitUntil: 'networkidle' });
+    const file = `${OUT}/${name}-${width}-${theme}.png`;
+    await page.screenshot({ path: file, fullPage: true });
+    console.log(file);
+    await page.close();
+  }
+  {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.route('**/data/index.json', () => {}); // never answered: the list and map stay loading
+    await page.goto(`http://localhost:${PORT}/explore/?view=map`);
+    await page.waitForSelector('[data-skeleton]');
+    await page.screenshot({ path: `${OUT}/skeleton-390-light.png` });
+    console.log(`${OUT}/skeleton-390-light.png`);
+    await page.close();
+  }
+  {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const page = await context.newPage();
+    await page.addInitScript(() => Object.defineProperty(navigator, 'connection', { value: { saveData: false, effectiveType: '2g' }, configurable: true }));
+    await page.goto(`http://localhost:${PORT}/explore/?day=1`, { waitUntil: 'networkidle' });
+    await context.setOffline(true);
+    await page.waitForSelector('[data-offline]');
+    await page.screenshot({ path: `${OUT}/offline-390-light.png` });
+    console.log(`${OUT}/offline-390-light.png`);
+    await context.close();
   }
   await browser.close();
 } finally {

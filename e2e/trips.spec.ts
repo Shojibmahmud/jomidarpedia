@@ -170,7 +170,7 @@ test.describe('itinerary page', () => {
 
   test('breadcrumb, notes, footer and the correction link (FR-18, FR-20, FR-22)', async ({ page }) => {
     await page.goto(href(withMap));
-    expect(await page.locator('[data-crumb="division"]').getAttribute('href')).toMatch(/^\/explore\/\?div=[a-z-]+$/);
+    expect(await page.locator('[data-crumb="division"]').getAttribute('href')).toMatch(/^\/division\/[a-z-]+\/$/); // spec 10 FR-62
     await expect(page.locator('[data-notes]')).toBeVisible();
     const footer = page.locator('[data-trip-footer]');
     if (withMap.costsEstimated) await expect(footer).toContainText('Costs estimated');

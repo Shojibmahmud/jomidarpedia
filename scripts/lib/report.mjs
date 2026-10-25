@@ -13,7 +13,8 @@ const EDITORIAL = {
   credits: 'Credit lines not in the standard form',
   unclassified: 'Sites with type "unclassified"',
   planStatus: 'Itineraries without a reviewed plan_status',
-  closedDays: 'Sites without reviewed closed_days'
+  closedDays: 'Sites without reviewed closed_days',
+  about: 'Text awaiting the owner\'s review'
 };
 
 const cellId = c => `${c.table} / ${c.key}${c.column ? ` / ${c.column}` : ''}`;

@@ -49,7 +49,29 @@
   "unclassifiedSites": 79,
   "dhakaDivision": {
     "sites": 111,
-    "noPin": 42
+    "noPin": 42,
+    "locations": {
+      "verified": 11,
+      "singleSource": 44,
+      "approximate": 13,
+      "unverified": 1,
+      "noPin": 42
+    }
+  },
+  "about": {
+    "locations": {
+      "verified": 38,
+      "singleSource": 217,
+      "approximate": 43,
+      "unverified": 1,
+      "noPin": 114
+    },
+    "disagreements": 201,
+    "openQuestions": 781,
+    "stillToConfirm": 1869,
+    "imagesNeedReview": 24,
+    "imagesPermissionRequired": 1322,
+    "possibleDuplicates": 1
   },
   "indexRowsOnMap": 299,
   "hoursKnown": 12,

@@ -76,6 +76,14 @@ export function correctionUrl(siteId: string, pageUrl: string, field: Correction
   return url.href;
 }
 
+/** The correction form for a page about no single site (area pages, the 404): page_url, and the field when known. */
+export function pageCorrectionUrl(pageUrl: string, field?: CorrectionField): string {
+  const url = new URL(CORRECTIONS_URL);
+  if (field) url.searchParams.set('field', field);
+  url.searchParams.set('page_url', pageUrl);
+  return url.href;
+}
+
 // ---------------------------------------------------------------- outbound map links (FR-19, 5.18)
 /** Directions to a mappable site. Never call this for a hidden pin (R5). */
 export const directionsUrl = ([lat, lon]: [number, number]) =>

@@ -1,8 +1,11 @@
 // The top of the site page (roadmap task 5.4, spec 05 FR-3 to FR-7): breadcrumb, both names, the badge row
 // and, for sparse records, the "Little is documented" banner.
 
+import Link from 'next/link';
 import { Both, Latin, T } from '@/components/T';
+import { districtHref } from '@/lib/areas';
 import { dual } from '@/lib/i18n';
+import { divisionHref } from '@/lib/nav';
 import { both, formatCount } from '@/lib/format';
 import type { SiteRecord } from '@/lib/types';
 import { AccessBadge, Badge, ConditionBadge, DayTripBadge, LocationBadge } from './Badges';
@@ -20,15 +23,27 @@ export function BilingualName({ site }: { site: SiteRecord }) {
   );
 }
 
-/** Division, district and upazila as text: their pages arrive in Phase 10. */
-export function Breadcrumb({ site }: { site: SiteRecord }) {
+/**
+ * Division and district link to their pages (spec 10 FR-34, replacing spec 05 FR-3's text crumbs); the upazila
+ * stays text. `slugs` comes from divisions.json and districts.json, read by the page.
+ */
+export function Breadcrumb({ site, slugs }: { site: SiteRecord; slugs: { division: string; district?: string } }) {
   const p = site.place;
-  const crumbs = [{ en: `${p.division} Division`, bn: `${p.divisionBn} বিভাগ` }, { en: p.district, bn: p.districtBn }, { en: p.upazila, bn: p.upazilaBn }]
-    .filter(c => c.en.trim());
+  const crumbs = [
+    { en: `${p.division} Division`, bn: `${p.divisionBn} বিভাগ`, href: divisionHref(slugs.division), crumb: 'division' },
+    { en: p.district, bn: p.districtBn, href: slugs.district ? districtHref(slugs.district) : undefined, crumb: 'district' },
+    { en: p.upazila, bn: p.upazilaBn },
+  ].filter(c => c.en.trim());
   return (
     <nav aria-label={dual('site.breadcrumb').en} className="text-sm text-muted">
       <ol className="flex flex-wrap items-center gap-x-2">
-        {crumbs.map((c, k) => <li key={k} className="after:ml-2 after:content-['/']"><Both value={{ en: c.en, bn: c.bn || c.en }} /></li>)}
+        {crumbs.map((c, k) => (
+          <li key={k} className="after:ml-2 after:content-['/']">
+            {c.href
+              ? <Link prefetch={false} href={c.href} className="text-primary underline" data-crumb={c.crumb}><Both value={{ en: c.en, bn: c.bn || c.en }} /></Link>
+              : <Both value={{ en: c.en, bn: c.bn || c.en }} />}
+          </li>
+        ))}
         <li aria-current="page" className="text-ink"><Latin>{site.name.en}</Latin></li>
       </ol>
     </nav>

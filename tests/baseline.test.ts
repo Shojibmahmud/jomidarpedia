@@ -64,6 +64,57 @@ describe('invariants', () => {
     expect(inCredits).toEqual(ready);
   });
 
+  // Spec 10 NFR-2: the area pages, About and Home share one source of counts, so they must agree.
+  it('area counts agree: districts sum to their division, divisions to meta, locations to the count', () => {
+    type Counts = Record<string, number>;
+    type Area = { slug: string; count: number; conditions: Counts; locations: Counts; noPin: string[]; dayTrip: number; tripCount: number; divisionSlug?: string; siteIds?: string[] };
+    const divisions: Area[] = readJson(build('divisions.json'));
+    const districts: Area[] = readJson(build('districts.json'));
+    const sum = (areas: Area[], f: (a: Area) => Counts) => areas.reduce<Counts>((acc, a) => {
+      for (const [k, v] of Object.entries(f(a))) acc[k] = (acc[k] ?? 0) + v;
+      return acc;
+    }, {});
+    const total = (c: Counts) => Object.values(c).reduce((a, b) => a + b, 0);
+    for (const a of [...divisions, ...districts]) {
+      expect(total(a.locations), a.slug).toBe(a.count);
+      expect(a.locations.noPin, a.slug).toBe(a.noPin.length);
+      expect(total(a.conditions), a.slug).toBe(a.count);
+    }
+    for (const d of divisions) {
+      const own = districts.filter(x => x.divisionSlug === d.slug);
+      expect(own.reduce((n, x) => n + x.count, 0), d.slug).toBe(d.count);
+      expect(sum(own, x => x.conditions), d.slug).toEqual(d.conditions);
+      expect(sum(own, x => x.locations), d.slug).toEqual(d.locations);
+      expect(own.reduce((n, x) => n + x.dayTrip, 0), d.slug).toBe(d.dayTrip);
+      expect(own.reduce((n, x) => n + x.tripCount, 0), d.slug).toBe(d.tripCount);
+    }
+    expect(divisions.reduce((n, d) => n + d.count, 0)).toBe(meta.counts.sites);
+    expect(sum(divisions, d => d.conditions)).toEqual(meta.counts.conditions);
+    expect(sum(divisions, d => d.locations)).toEqual(meta.counts.locations);
+    expect(readJson(build('trips.json')).length).toBe(divisions.reduce((n, d) => n + d.tripCount, 0));
+  });
+
+  it('district siteIds follow the travel-time order, and the map pins carry the same numbers (spec 10 FR-15, FR-16)', () => {
+    const order = ['0-1', '1-2', '2-3', '3-4', '4+', 'unknown'];
+    const rows = new Map(readJson(join(out, 'public', 'index.json')).map((r: { i: string }) => [r.i, r]));
+    for (const d of readJson(build('districts.json')) as { slug: string; siteIds: string[] }[]) {
+      const list = d.siteIds.map(id => rows.get(id) as { tb: string; h?: number });
+      for (let k = 1; k < list.length; k++) {
+        const [a, b] = [list[k - 1], list[k]];
+        const hours = (a.h ?? Infinity) === (b.h ?? Infinity) ? 0 : (a.h ?? Infinity) < (b.h ?? Infinity) ? -1 : 1;
+        const cmp = order.indexOf(a.tb) - order.indexOf(b.tb) || hours;
+        expect(cmp, `${d.slug}: ${d.siteIds[k - 1]} before ${d.siteIds[k]}`).toBeLessThanOrEqual(0);
+      }
+    }
+  });
+
+  it('meta counts for About: disagreements and open questions are counted apart (spec 10 D9)', () => {
+    const conflicts = readdirSync(build('sites')).flatMap(f => readJson(build('sites', f)).conflicts as { versions: unknown[] }[]);
+    expect(meta.counts.disagreements).toBe(conflicts.filter(c => c.versions.length > 1).length);
+    expect(meta.counts.openQuestions).toBe(conflicts.filter(c => c.versions.length === 1).length);
+    expect(meta.counts.disagreements + meta.counts.openQuestions).toBe(conflicts.length);
+  });
+
   it('every index row has a site file, and every site file an index row', () => {
     const files = readdirSync(build('sites')).map(f => f.replace(/\.json$/, '')).sort();
     expect(index.map(r => r.i).sort()).toEqual(files);

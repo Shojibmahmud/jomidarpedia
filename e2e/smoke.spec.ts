@@ -82,3 +82,31 @@ test.describe('static export', () => {
     }
   });
 });
+
+// Heading fonts (spec 10, site-wide fix): a <span lang> inside a serif heading keeps the heading's face in both
+// languages; body text stays in the sans of its language; Latin inside a monospace ID stays monospace.
+test.describe('fonts by language and role', () => {
+  const family = (page: import('@playwright/test').Page, selector: string) =>
+    page.locator(selector).first().evaluate(el => getComputedStyle(el).fontFamily);
+
+  test('English: heading spans are Fraunces, body text Source Sans, IDs monospace', async ({ page }) => {
+    await page.goto('/about/');
+    expect(await family(page, 'h1 [data-l="en"]')).toMatch(/Fraunces/);
+    expect(await family(page, 'h2 [data-l="en"], h2[lang="en"]')).toMatch(/Fraunces/);
+    expect(await family(page, '#grading li')).toMatch(/Source Sans/);
+    await page.goto(`/site/${baliati.id}/${baliati.slug}/`);
+    expect(await family(page, 'h1 [lang="en"]')).toMatch(/Fraunces/);
+    await page.goto('/sources/');
+    expect(await family(page, '[data-source-row] .font-mono [lang="en"]')).toMatch(/monospace/);
+  });
+
+  test('Bangla: heading spans are Tiro Bangla, body text Hind Siliguri, Latin stays Latin', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('jp-lang', 'bn'));
+    await page.goto('/about/');
+    expect(await family(page, 'h1 [data-l="bn"]')).toMatch(/Tiro Bangla/);
+    expect(await family(page, 'footer p [data-l="bn"]')).toMatch(/Hind Siliguri/);
+    await page.goto(`/site/${baliati.id}/${baliati.slug}/`);
+    expect(await family(page, 'h1 [lang="bn"]')).toMatch(/Tiro Bangla/);
+    expect(await family(page, 'h1 [lang="en"]')).toMatch(/Fraunces/);
+  });
+});

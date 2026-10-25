@@ -83,9 +83,24 @@
 @layer base {
   html { scroll-padding-top: 88px; }              /* WCAG 2.4.11: sticky header never hides focus */
   body { @apply bg-bg text-ink font-sans antialiased; }
-  :lang(bn) { @apply font-bn; line-height: 1.65; } /* Bangla never below 1.6 */
-  :lang(bn) :is(h1, h2, h3) { @apply font-bn-serif; line-height: 1.4; font-weight: 400; }
-  :lang(en) { font-family: var(--font-source-sans), system-ui, sans-serif; } /* Latin never falls into the Bangla font */
+  /* Fonts by language and role. Every element with a language (each <span lang> from components/T.tsx too)
+     takes its face from two inherited variables, so Latin never falls into the Bangla font and Bangla never
+     into a Latin one, while a span inside a serif heading stays serif. The font-* classes below set the variables
+     for everything inside them; a class on the element itself still wins (utilities come later). */
+  :root {
+    --face-en: var(--font-source-sans), system-ui, sans-serif;
+    --face-bn: var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif;
+  }
+  .font-sans { --face-en: var(--font-source-sans), system-ui, sans-serif; }
+  .font-serif { --face-en: var(--font-fraunces), Georgia, serif; --face-bn: var(--font-tiro-bangla), 'Noto Serif Bengali', serif; }
+  .font-wordmark { --face-en: var(--font-cinzel), Georgia, serif; }
+  .font-mono { --face-en: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .font-bn { --face-bn: var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif; }
+  .font-bn-serif { --face-bn: var(--font-tiro-bangla), 'Noto Serif Bengali', serif; }
+  :lang(en) { font-family: var(--face-en); }
+  :lang(bn) { font-family: var(--face-bn); line-height: 1.65; } /* Bangla never below 1.6 */
+  /* A Bangla heading is in the Bangla serif whatever its classes (it outranks font-serif, which has no Bangla). */
+  :is(h1, h2, h3):lang(bn) { --face-bn: var(--font-tiro-bangla), 'Noto Serif Bengali', serif; font-family: var(--face-bn); line-height: 1.4; font-weight: 400; }
   :focus-visible { outline: 3px solid rgb(var(--focus)); outline-offset: 2px; }
   ::placeholder { color: rgb(var(--muted)); opacity: 1; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
@@ -95,6 +110,13 @@
   .chip { @apply inline-flex min-h-tap items-center gap-2 whitespace-nowrap rounded-full border border-line-strong bg-surface px-4 text-[15px] font-semibold; }
   .chip[aria-pressed="true"] { @apply border-ink bg-ink text-bg; }
   .badge { @apply inline-flex min-h-[26px] items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-[13px] font-semibold; }
+  /* /credits/ repeats one row 938 times (spec 10 NFR-3): short class names keep the page small. */
+  .credit-row { @apply flex gap-4 border-b border-line py-3; }
+  .credit-row > img { @apply aspect-[4/3] w-24 shrink-0 rounded-md bg-surface-2 object-cover; }
+  .credit-row > div { @apply min-w-0 flex-1 space-y-1; }
+  .credit-row > div > p:first-child { @apply text-sm [overflow-wrap:anywhere]; }
+  .credit-row > div > p + p { @apply text-xs text-muted; }
+  .credit-row > a { @apply shrink-0 self-center text-sm font-semibold text-primary underline; }
 }
 
 /* Dual-language text (lib/i18n.ts, components/T.tsx): every interface string is in the HTML in both

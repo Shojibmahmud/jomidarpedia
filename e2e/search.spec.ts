@@ -211,14 +211,15 @@ test.describe('/search/ page (FR-20 to FR-27)', () => {
     await expect(page.locator('[data-search-sites] [data-site]')).toHaveCount(Math.min(20, naming.length));
   });
 
-  test('a district leads to Explore filtered to it (AC-3)', async ({ page }) => {
+  // Until Phase 10 a district led to Explore filtered to it (AC-3); it now leads to its district page (spec 10 FR-63).
+  test('a district leads to its district page, which lists its sites (AC-3, spec 10 FR-63)', async ({ page }) => {
     const manikganj = districts.find(d => d.slug === 'manikganj')!;
     await openSearch(page, 'q=manikganj');
     await page.locator('[data-district="manikganj"]').click();
-    await expect(page).toHaveURL(new RegExp(`/explore/\\?div=${manikganj.divisionSlug}&dist=manikganj$`));
+    await expect(page).toHaveURL(/\/district\/manikganj\/$/);
     const want = filter(index, { ...EMPTY, div: [manikganj.divisionSlug], dist: ['manikganj'] }, places).length;
     expect(want).toBe(manikganj.count);
-    await expect(page.locator('#jp-results-title')).toHaveAttribute('data-count', String(want));
+    await expect(page.locator('[data-district-sites] > li')).toHaveCount(want);
   });
 
   test('the empty state and the help page (AC-9)', async ({ page }) => {

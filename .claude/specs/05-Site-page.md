@@ -83,7 +83,7 @@ The interview also found data problems that a full page would expose:
 - **FR-2** Every section is always rendered, with its empty state when it has no data (R2). Each section heading shows the English title with the Bangla title beneath it, as on the boards.
 
 ### Header (5.1, 5.4)
-- **FR-3** `Breadcrumb`: the division, district and upazila as text, then the site's English name. Division and district pages arrive in Phase 10, so the crumbs are not links yet. The current page is marked `aria-current="page"`.
+- **FR-3** `Breadcrumb`: the division, district and upazila as text, then the site's English name. Division and district pages arrive in Phase 10, so the crumbs are not links yet. The current page is marked `aria-current="page"`. *(Phase 10: the division and district now link to their pages, spec 10 FR-34; each source's SRC ID links to its source page, spec 10 FR-33.)*
 - **FR-4** `BilingualName` replaces `components/site/SiteNames.tsx`.
   - The `<h1>` holds the English name (`lang="en"`) and the Bangla name (`lang="bn"`).
   - When `bnMissing` is set (O13), it shows the English name only, with "Bangla name not yet recorded" outside the `<h1>`.

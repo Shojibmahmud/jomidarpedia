@@ -169,6 +169,7 @@ describe('command line (tasks 1.2, 1.8)', () => {
     mkdirSync(join(dir, 'data'), { recursive: true });
     cpSync(join(FIXTURES, 'valid'), join(dir, 'data', 'csv'), { recursive: true });
     cpSync(join(FIXTURES, '..', 'geo'), join(dir, 'data', 'geo'), { recursive: true });
+    cpSync(join(ROOT, 'content'), join(dir, 'content'), { recursive: true }); // the About text check (spec 10 FR-36)
     mkdirSync(join(dir, 'public', 'thumbs'), { recursive: true });
     writeFileSync(join(dir, 'public', 'thumbs', 'IMG-DHK-001-001.webp'), '');
     return dir;

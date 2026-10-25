@@ -159,6 +159,21 @@ describe('photos, names, features, sources (2.12–2.15)', () => {
     const area = s.conflicts.find((c: { field: string }) => c.field === 'Area');
     expect(area.versions.map((v: { text: string; sources: { id: string }[] }) => [v.text, ids(v.sources)])).toEqual([['46 acres', ['SRC-0001']], ['50 acres', ['SRC-0002']]]);
   });
+  it('credits carry the view; meta and areas carry the About and location counts (spec 10 §6)', () => {
+    const [credit] = readJson(join(valid.out, 'build', 'credits.json'));
+    expect(credit).toMatchObject({ imageId: 'IMG-DHK-001-001', view: 'Facade' });
+    const meta = readJson(join(valid.out, 'build', 'meta.json'));
+    expect(meta.counts).toMatchObject({
+      locations: { verified: 1, singleSource: 0, approximate: 0, unverified: 0, noPin: 1 },
+      imagesNeedReview: 0, imagesPermissionRequired: 1, possibleDuplicates: 0,
+    });
+    expect(meta.counts.disagreements + meta.counts.openQuestions).toBe(3);
+    const [division] = readJson(join(valid.out, 'build', 'divisions.json'));
+    const [district] = readJson(join(valid.out, 'build', 'districts.json'));
+    expect(division).toMatchObject({ locations: meta.counts.locations, dayTrip: 1, tripCount: 1 });
+    expect(district).toMatchObject({ locations: meta.counts.locations, dayTrip: 1, tripCount: 1, siteIds: ['JB-DHK-001', 'JB-DHK-002'] });
+  });
+
   it('structured source fields and citations by division', () => {
     const [one, two] = readJson(join(valid.out, 'build', 'sources.json'));
     expect(one.bib).toEqual({ author: 'A. Author', publisher: 'House Press', edition: 'First edition', isbn: '978-0-00-000000-0', verificationMethod: 'Checked in print' });

@@ -5,6 +5,7 @@
 
 import type { Metadata } from 'next';
 import { Latin, T } from '@/components/T';
+import { LiteNotices } from '@/components/explore/LiteNotices';
 import { AtAGlance, FactValue, KnownChecklist } from '@/components/site/AtAGlance';
 import { ShareButton } from '@/components/site/CopyButton';
 import { ConflictNote } from '@/components/site/Conflicts';
@@ -20,7 +21,7 @@ import { SectionNav, type NavItem } from '@/components/site/SectionNav';
 import { DisagreementIndex, OpenQuestions, SourceList, StillToConfirm } from '@/components/site/Sources';
 import { SuggestCorrection } from '@/components/site/SuggestCorrection';
 import { VisitingInfo } from '@/components/site/VisitingInfo';
-import { getIndex, getSite } from '@/lib/data';
+import { getDistricts, getDivisions, getIndex, getSite } from '@/lib/data';
 import { dual, type StringKey } from '@/lib/i18n';
 import { conflictAnchor, conflictSection, disagreements, isSparse, openQuestions, SECTIONS, sectionHint, sectionId, type ConflictSection, type Section } from '@/lib/site-page';
 import { canonicalUrl, siteHref } from '@/lib/site-url';
@@ -66,6 +67,14 @@ function Block({ section, children }: { section: Section; children: React.ReactN
   );
 }
 
+/** The division and district page slugs for the breadcrumb (spec 10 FR-34). */
+function placeSlugs(site: SiteRecord) {
+  const division = getDivisions().find(d => d.en === site.place.division);
+  if (!division) throw new Error(`site ${site.id}: no division "${site.place.division}" in divisions.json`);
+  const district = getDistricts().find(d => d.divisionSlug === division.slug && d.en === site.place.district);
+  return { division: division.slug, ...(district && { district: district.slug }) };
+}
+
 export default async function SitePage({ params }: { params: Promise<Params> }) {
   const site: SiteRecord = await load(params);
   const path = siteHref(site.id, site.slug);
@@ -83,7 +92,7 @@ export default async function SitePage({ params }: { params: Promise<Params> }) 
     <main id="main" className="mx-auto max-w-page space-y-6 px-4 [overflow-wrap:break-word] py-6 lg:px-8 lg:py-10">
       <link rel="canonical" href={pageUrl} />
       <header className="space-y-3">
-        <Breadcrumb site={site} />
+        <Breadcrumb site={site} slugs={placeSlugs(site)} />
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 space-y-1">
             <BilingualName site={site} />
@@ -115,6 +124,7 @@ export default async function SitePage({ params }: { params: Promise<Params> }) 
             <IdentityNotes site={site} />
           </Block>
           <Block section="location">
+            {site.location.latlon ? <LiteNotices /> : null}
             <LocationPanel site={site} pageUrl={pageUrl} />
             {conflictsIn('location')}
           </Block>

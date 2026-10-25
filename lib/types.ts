@@ -161,10 +161,15 @@ export interface TripSummary {
 
 type ConditionCounts = Record<Condition, number>;
 
+/** How sure the pins are (spec 10 FR-4): pinned sites by coordinates_status, plus noPin (hidden). Sums to the count. */
+export interface LocationCounts { verified: number; singleSource: number; approximate: number; unverified: number; noPin: number }
+
 /** data/build/divisions.json */
 export interface Division {
   slug: string; en: string; bn: string; count: number; onMap: number;
-  conditions: ConditionCounts; noPin: string[];  // site IDs with map_display = hide
+  conditions: ConditionCounts; locations: LocationCounts;
+  dayTrip: number;            // sites marked as a day trip from Dhaka
+  noPin: string[];            // site IDs with map_display = hide
   districts: { slug: string; en: string; bn: string; count: number }[];
   tripCount: number;
 }
@@ -172,7 +177,9 @@ export interface Division {
 /** data/build/districts.json */
 export interface District {
   slug: string; en: string; bn: string; division: string; divisionSlug: string;
-  count: number; onMap: number; conditions: ConditionCounts; noPin: string[]; siteIds: string[];
+  count: number; onMap: number; conditions: ConditionCounts; locations: LocationCounts; dayTrip: number; noPin: string[];
+  siteIds: string[];          // in list order: travel time, unknown last, then name (spec 10 FR-15); pins are numbered in this order
+  tripCount: number;          // trips whose anchor site is in the district
 }
 
 /** data/build/sources.json — /sources and /sources/[id]. */
@@ -188,7 +195,7 @@ export interface SourceEntry {
 /** data/build/credits.json — Ready images only. */
 export interface Credit {
   imageId: string; thumb: string; siteId: string; siteSlug: string; siteEn: string; siteBn?: string;
-  creator: string; license: string; credit: string; sourcePage?: string;
+  creator: string; license: string; credit: string; view: string; sourcePage?: string;
 }
 
 /** data/build/meta.json */
@@ -199,5 +206,11 @@ export interface Meta {
     sites: number; onMap: number; noPin: number; flagged: number; withPhotos: number; images: number;
     trips: number; dayTrips: number; sources: number; divisions: number; districts: number;
     historyEvents: number; legends: number; hoursKnown: number; conditions: ConditionCounts; confidence: Record<RecordConfidence, number>;
+    locations: LocationCounts;
+    disagreements: number;    // conflicts with two or more versions
+    openQuestions: number;    // conflicts with one version
+    stillToConfirm: number;
+    imagesNeedReview: number; imagesPermissionRequired: number; // never published; counted for About
+    possibleDuplicates: number;
   };
 }

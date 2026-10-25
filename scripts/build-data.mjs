@@ -490,14 +490,34 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
   // ---------------------------------------------------------------- divisions, districts
   const conditionCounts = rows => Object.fromEntries(CONDITIONS.map(c => [c, rows.filter(s => s.condition_category === c).length]));
   const noPin = rows => rows.filter(hidden).map(s => s.site_id);
+  // How sure the pins are (spec 10 FR-4): pinned sites by coordinates_status, plus the hidden ones. The four
+  // pinned counts and noPin always add up to the area's count (NFR-2).
+  const locationCounts = rows => {
+    const pinned = rows.filter(s => !hidden(s));
+    const status = s => (['verified', 'single_source', 'approximate'].includes(s.coordinates_status) ? s.coordinates_status : 'unverified');
+    const n = st => pinned.filter(s => status(s) === st).length;
+    return { verified: n('verified'), singleSource: n('single_source'), approximate: n('approximate'), unverified: n('unverified'), noPin: rows.length - pinned.length };
+  };
+  const dayTripCount = rows => rows.filter(s => s.day_trip_from_dhaka === 'TRUE').length;
+  // A district's sites in list order (spec 10 FR-15, FR-16): travel time as in Explore's default sort
+  // (lib/sort.ts), unknown last, then English name and ID. The district page numbers its cards and
+  // scripts/build-maps.mjs its pins from this one order.
+  const bucketOrder = ['0-1', '1-2', '2-3', '3-4', '4+', 'unknown'];
+  const nameOrder = new Intl.Collator('en');
+  const byTravel = (a, b) => bucketOrder.indexOf(BUCKET[a.travel_time_bucket] ?? 'unknown') - bucketOrder.indexOf(BUCKET[b.travel_time_bucket] ?? 'unknown')
+    || (num(a.travel_time_hours_from_dhaka) ?? Infinity) - (num(b.travel_time_hours_from_dhaka) ?? Infinity)
+    || nameOrder.compare(a.name_en, b.name_en)
+    || (a.site_id < b.site_id ? -1 : a.site_id > b.site_id ? 1 : 0);
   const sitesByDistrict = groupBy(sites, 'district');
   const districts = [...sitesByDistrict].map(([name, rows]) => ({
     slug: slugify(name), en: name, bn: rows[0].district_bn, division: rows[0].division, divisionSlug: slugify(rows[0].division),
-    count: rows.length, onMap: rows.length - noPin(rows).length, conditions: conditionCounts(rows), noPin: noPin(rows), siteIds: rows.map(s => s.site_id)
+    count: rows.length, onMap: rows.length - noPin(rows).length, conditions: conditionCounts(rows), locations: locationCounts(rows),
+    dayTrip: dayTripCount(rows), noPin: noPin(rows), siteIds: [...rows].sort(byTravel).map(s => s.site_id),
+    tripCount: tripSummaries.filter(t => t.division === rows[0].division && t.district === name).length
   })).sort((a, b) => DIVISIONS.indexOf(a.division) - DIVISIONS.indexOf(b.division) || a.en.localeCompare(b.en));
   const divisions = [...groupBy(sites, 'division')].map(([name, rows]) => ({
     slug: slugify(name), en: name, bn: rows[0].division_bn, count: rows.length, onMap: rows.length - noPin(rows).length,
-    conditions: conditionCounts(rows), noPin: noPin(rows),
+    conditions: conditionCounts(rows), locations: locationCounts(rows), dayTrip: dayTripCount(rows), noPin: noPin(rows),
     districts: districts.filter(d => d.division === name).map(({ slug, en, bn, count }) => ({ slug, en, bn, count })),
     tripCount: tripSummaries.filter(t => t.division === name).length
   })).sort((a, b) => DIVISIONS.indexOf(a.en) - DIVISIONS.indexOf(b.en));
@@ -534,7 +554,8 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     const s = siteById.get(im.site_id);
     return {
       imageId: im.image_id, thumb: `/thumbs/${im.image_id}.webp`, siteId: im.site_id, siteSlug: s.dataset_slug, siteEn: s.name_en, ...(s.name_bn && { siteBn: s.name_bn }),
-      creator: im.creator, license: im.license_rights_status.replace(/^Open license:\s*/i, ''), credit: im.required_credit, sourcePage: im.source_page_url || undefined
+      creator: im.creator, license: im.license_rights_status.replace(/^Open license:\s*/i, ''), credit: im.required_credit, view: im.view_category,
+      sourcePage: im.source_page_url || undefined
     };
   });
 
@@ -551,7 +572,16 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       historyEvents: T.history_events.length, legends: T.legends.length,
       hoursKnown: records.filter(r => r.visiting.hoursKnown).length,
       conditions: conditionCounts(sites),
-      confidence: Object.fromEntries(CONFIDENCE.map(c => [c, sites.filter(s => s.record_confidence === c).length]))
+      confidence: Object.fromEntries(CONFIDENCE.map(c => [c, sites.filter(s => s.record_confidence === c).length])),
+      // The About page's counts (spec 10 §6). A conflict with one version is an open question, never a
+      // disagreement (spec 05 FR-34, FR-35); images that are not Ready are counted but never published.
+      locations: locationCounts(sites),
+      disagreements: records.reduce((n, r) => n + r.conflicts.filter(c => c.versions.length > 1).length, 0),
+      openQuestions: records.reduce((n, r) => n + r.conflicts.filter(c => c.versions.length === 1).length, 0),
+      stillToConfirm: records.reduce((n, r) => n + r.stillToConfirm.length, 0),
+      imagesNeedReview: T.images.filter(im => im.publication_readiness === 'Needs review').length,
+      imagesPermissionRequired: T.images.filter(im => im.publication_readiness === 'Permission required').length,
+      possibleDuplicates: T.site_relationships.filter(r => r.relation_type === 'possible_duplicate').length
     }
   };
   notices.forEach(n => result.info.push(`notice: ${n}`));

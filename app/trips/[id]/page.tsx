@@ -10,6 +10,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Both, Latin, T } from '@/components/T';
+import { LiteNotices } from '@/components/explore/LiteNotices';
 import { ShareButton } from '@/components/site/CopyButton';
 import { AccessBadge, Badge } from '@/components/site/Badges';
 import { SuggestCorrection } from '@/components/site/SuggestCorrection';
@@ -29,8 +30,8 @@ import { correctionUrl } from '@/lib/site-page';
 import { canonicalUrl, siteHref } from '@/lib/site-url';
 import { tripPage } from '@/lib/trip-data';
 import { cssString, dayPicker, exploreStopsHref, mapStops, timeRange, type DayStop } from '@/lib/trips';
-import { exploreHref } from '@/lib/urlState';
-import { EMPTY } from '@/lib/filters';
+import { districtHref } from '@/lib/areas';
+import { divisionHref } from '@/lib/nav';
 
 type Params = { id: string };
 
@@ -80,8 +81,9 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
   const points: RoutePoint[] = map.pinned.map(s => ({ order: s.order, kind: s.kind, latlon: s.latlon!, label: s.siteId ? stopSites[s.siteId]?.en ?? s.name : s.name }));
   const onMap = exploreStopsHref(trip);
   const range = timeRange(trip);
-  const divHref = exploreHref({ state: { ...EMPTY, div: [place.div.slug] }, sort: 'time', extras: {} });
-  const distHref = place.dist ? exploreHref({ state: { ...EMPTY, div: [place.div.slug], dist: [place.dist.slug] }, sort: 'time', extras: {} }) : undefined;
+  // The division and district pages (spec 10 FR-62, replacing spec 09 D12's Explore links).
+  const divHref = divisionHref(place.div.slug);
+  const distHref = place.dist ? districtHref(place.dist.slug) : undefined;
   const printCss = `@media print{@page{@top-left{content:${cssString(trip.title)};font-size:9pt;color:#5c5448}@bottom-right{content:counter(page) " / " counter(pages);font-size:9pt;color:#5c5448}}@page:first{@top-left{content:none}}}`;
 
   return (
@@ -137,6 +139,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
         <div className="contents lg:block lg:min-w-0 lg:space-y-10 print:contents">
           {map.show ? (
             <section className="order-1 space-y-2" data-map-section>
+              <div data-no-print><LiteNotices /></div>
               <RouteMap points={points} legs={trip.legs} />
               {trip.schematic ? <p className="text-sm text-muted" data-schematic><T k="trip.schematic" /></p> : null}
               {map.unpinned.length ? (

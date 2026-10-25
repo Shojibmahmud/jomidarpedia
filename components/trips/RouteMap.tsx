@@ -7,6 +7,7 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import { Both, T } from '@/components/T';
+import { Skeleton } from '@/components/shell/Skeleton';
 import { both, formatCount } from '@/lib/format';
 import { text } from '@/lib/i18n';
 import { useLite, useUiLang } from '@/lib/use-ui-lang';
@@ -15,7 +16,7 @@ import type { RoutePoint } from './RouteMapView';
 
 const RouteMapView = dynamic(() => import('./RouteMapView'), {
   ssr: false,
-  loading: () => <div className="h-full w-full bg-map-land" />,
+  loading: () => <Skeleton variant="map" />,
 });
 
 export function RouteMap({ points, legs }: { points: RoutePoint[]; legs: Itinerary['legs'] }) {

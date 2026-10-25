@@ -884,31 +884,41 @@ Required dependencies between phases 5 and 11:
 - `404 · desktop`, `404 · mobile (dark)`
 - `Loading skeletons · mobile`, `Offline slow network · mobile`
 
-- [ ] **10.1** Build `/division/[slug]` (8 pages):
+- [x] **10.1** Build `/division/[slug]` (8 pages):
   - counts, a condition bar, a location-confidence summary and a no-pin list;
   - related trips and a `MapTeaser`.
 
   All of these come from one source in `divisions.json`. This fixes the board's mismatch of 42 against 37.
-- [ ] **10.2** Build `/district/[slug]` (64 pages) the same way.
-- [ ] **10.3** Build `/sources`, with `SourcesTable` (filter, sort, paging). Remove any copy claiming every fact has a supporting link. Instead, link to the methodology section on attribution.
-- [ ] **10.4** Build `/sources/[id]`. It shows the structured fields from 2.15 when they are present, citation counts by division, example sites, and "View all N sites citing this source" (`/sources/[id]#sites`, a full list on the page). It keeps the verification-method wording.
-- [ ] **10.5** Build `/about`:
+- [x] **10.2** Build `/district/[slug]` (64 pages) the same way.
+- [x] **10.3** Build `/sources`, with `SourcesTable` (filter, sort, paging). Remove any copy claiming every fact has a supporting link. Instead, link to the methodology section on attribution.
+- [x] **10.4** Build `/sources/[id]`. It shows the structured fields from 2.15 when they are present, citation counts by division, example sites, and "View all N sites citing this source" (`/sources/[id]#sites`, a full list on the page). It keeps the verification-method wording.
+- [x] **10.5** Build `/about`:
   - grading definitions;
   - research limitations;
   - how disagreements are shown;
   - counts from `meta.json`, including **unpublished image counts** (needs review, permission required) and **possible duplicates**, from a new `meta.counts.possibleDuplicates`, derived from `site_relationships.relation_type = possible_duplicate` (1 row today);
   - the contribution channels (O1, O2).
-- [ ] **10.6** Write the methodology and limitations text in `content/about.en.md`, with a Bangla version only if O6 asks for one. The owner reviews it before it ships.
-- [ ] **10.7** Build `/credits`: Ready images with a filter by site (`?site=`). Each credit shows the exact credit line, the licence, a source link and any change notice. Nothing is reworded.
-- [ ] **10.8** Add a licences section on `/about#licences`: the text and data licence (O5) and the photo licences, linked from the footer.
-- [ ] **10.9** *(O1.)* Make the About page's public-data wording match what will actually ship: either "a cleaned CSV download" (14.6), or remove the promise.
-- [ ] **10.10** Build `app/not-found.tsx`, with the illustration, a search box and links.
-- [ ] **10.11** Build the `Skeleton` variants for Explore, search and the trips listing.
-- [ ] **10.12** Build `OfflineNotice` with the O8 copy, listening to the `online` and `offline` events, and the Save-Data and slow-network messages (O7).
-- [ ] **10.13** Add Playwright tests:
+- [x] **10.6** Write the methodology and limitations text in `content/about.en.md`, with a Bangla version only if O6 asks for one. The owner reviews it before it ships.
+- [x] **10.7** Build `/credits`: Ready images with a filter by site (`?site=`). Each credit shows the exact credit line, the licence, a source link and any change notice. Nothing is reworded.
+- [x] **10.8** Add a licences section on `/about#licences`: the text and data licence (O5) and the photo licences, linked from the footer.
+- [x] **10.9** *(O1.)* Make the About page's public-data wording match what will actually ship: either "a cleaned CSV download" (14.6), or remove the promise.
+- [x] **10.10** Build `app/not-found.tsx`, with the illustration, a search box and links.
+- [x] **10.11** Build the `Skeleton` variants for Explore, search and the trips listing.
+- [x] **10.12** Build `OfflineNotice` with the O8 copy, listening to the `online` and `offline` events, and the Save-Data and slow-network messages (O7).
+- [x] **10.13** Add Playwright tests:
   - each route type renders an `<h1>`;
   - an unknown URL returns the 404 page;
   - the offline notice appears when the browser is set offline.
+
+**Done 25 Oct 2026 (10.1–10.13), apart from the owner's reviews**, specified in `.claude/specs/10-Areas-sources-about-and-system-states.md` (approved 25 Oct 2026, amended during implementation: §10). Verified with 397 passing unit tests (28 new in `tests/areas-sources-about.test.tsx`, plus invariants in `tests/baseline.test.ts`, `tests/contract.test.ts` and `tests/maps.test.ts`), typecheck, lint, a static build of 2,429 pages, and 191 Playwright tests (36 new in `e2e/areas-sources-about.spec.ts`, 2 in `e2e/smoke.spec.ts`); 190 passed in the last full run, and the one failure (an Explore search test) passes when run alone.
+- **One source of counts:** `divisions.json` and `districts.json` gain `locations`, `dayTrip` and district `tripCount`; `meta.json` gains the About counts (`locations`, `disagreements` 201, `openQuestions` 781, `stillToConfirm`, images needing review or permission, `possibleDuplicates`); `credits.json` gains `view`. Tests prove that districts sum to their division and divisions to `meta.json`, so the board's 42-against-37 mismatch can't recur.
+- **Areas:** 8 division pages (intro from counts, static map, condition bar, location tiles, districts, up to 4 trip cards, the no-pin list) and 64 district pages, whose sites are numbered in travel-time order to match numbered pins on the district map.
+- **Sources:** `/sources/` with search, type chips, sort and pages of 25 in the URL (first page static); 1,136 source pages with the core book's structured fields, counts by division and every citing site; project working files labelled, with no outbound link. Site pages link each SRC ID.
+- **About and credits:** About from `content/about.en.md` with counts as tokens; a release build fails until the owner sets `reviewed: true` (10.6). Disagreements (201) and open questions (781) are shown apart, never as the board's 982. `#licences` states CC BY-SA 4.0 for text and data with no download promise (O1, O5, 10.9), the WebP change notice, OSM, the boundary licences, Leaflet and the fonts. `/credits/` prints all 938 credit lines exactly, with `?site=` and a search box.
+- **System states:** the 404 page (status 404, search box, report link with `page_url`), the shared `Skeleton` (row, card, map), `OfflineNotice` on every page (O8 copy), and Lite notes on trip and site pages with a map (O7). Search now finds a site by its ID.
+- **Links:** site and trip breadcrumbs and Search's district results lead to the area pages.
+- **Site-wide font fix:** headings rendered their `<span lang>` text in the body font in both languages; `app/tokens.css` now takes each language's face from inherited variables, so headings are Fraunces and Tiro Bangla again (a browser test checks it).
+- **Open:** the owner's review of `content/about.en.md` (including "costs nothing to run" and the "Not done yet" list) and the visual review against the 10 boards (OQ-1); O4, the tile provider (OQ-2); a "broken link" field on the corrections form (OQ-3). `/credits/` is 126 KB gzipped but 2.1 MB raw (budget recorded). Working-file titles that name internal tools head the "Most cited" sort until Phase 12 rewrites them (already in the release report).
 
 **Acceptance criteria**
 - Every route in the route table builds.

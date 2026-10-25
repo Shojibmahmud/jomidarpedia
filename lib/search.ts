@@ -38,8 +38,8 @@ export interface SiteHit {
   /** How many of the query's words hit this site. */
   words: number;
   score: number;
-  /** The highest-weight field that matched (FR-8). */
-  field: Field;
+  /** The highest-weight field that matched (FR-8), or 'id' for a site-ID query (spec 10 FR-53). */
+  field: Field | 'id';
   /** What matched outside the name: the other name, district or family phrase (FR-8). */
   detail?: string;
   /** Folded words to mark in this site's text (FR-17). */
@@ -82,6 +82,12 @@ export interface Matcher {
 
 /** Queries shorter than this after folding return nothing (FR-13, A-4). */
 export const MIN_QUERY = 2;
+
+/** A query that is exactly a site ID, in any case (spec 10 FR-53): the ID in canonical form. */
+export const siteIdQuery = (query: string): string | undefined => {
+  const q = query.trim().toUpperCase();
+  return /^JB-[A-Z]{3}-\d{3}$/.test(q) ? q : undefined;
+};
 
 const isCapitalised = (s: string) => /^[\p{Lu}\p{Script=Bengali}]/u.test(s);
 /** Words that can't begin or end a family phrase: generic words and titles ("Raja", "Zamindars"). */
@@ -317,8 +323,16 @@ export function createMatcher(sites: readonly IndexSite[], Fuse: FuseCtor): Matc
     return tokens(query).map(t => replace.get(t.word) ?? query.slice(t.start, t.end)).join(' ');
   }
 
+  /** A site ID finds that site alone, with no correction; an ID that names no site finds nothing (FR-53). */
+  function byId(id: string): SearchResult {
+    const entry = entries.find(e => e.site.i === id);
+    return { words: [], sites: entry ? [{ site: entry.site, words: 1, score: 1, field: 'id', terms: new Set() }] : [], families: [], districts: [] };
+  }
+
   function search(query: string, options: SearchOptions = {}): SearchResult {
     if (options.field === 'family') return family(query);
+    const id = siteIdQuery(query);
+    if (id) return byId(id);
     if (fold(query).length < MIN_QUERY) return NO_RESULT;
     const used = queryWords(query);
     const first = run(used, !!options.exact);
@@ -334,7 +348,7 @@ export function createMatcher(sites: readonly IndexSite[], Fuse: FuseCtor): Matc
   }
 
   function districts(list: readonly SearchDistrict[], query: string, options: SearchOptions = {}): DistrictHit[] {
-    if (options.field === 'family' || fold(query).length < MIN_QUERY) return [];
+    if (options.field === 'family' || fold(query).length < MIN_QUERY || siteIdQuery(query)) return [];
     // A generic word ("bari") never picks a district ("Barishal").
     const used = queryWords(query).filter(w => !GENERIC.has(w));
     const expanded = used.map(w => expand(w, !!options.exact).all);
@@ -348,7 +362,11 @@ export function createMatcher(sites: readonly IndexSite[], Fuse: FuseCtor): Matc
   return {
     search,
     districts,
-    match: query => new Map(fold(query).length < MIN_QUERY ? [] : run(queryWords(query), false).sites.map(h => [h.site.i, h.terms])),
+    match: query => {
+      const id = siteIdQuery(query);
+      if (id) return new Map(byId(id).sites.map(h => [h.site.i, h.terms]));
+      return new Map(fold(query).length < MIN_QUERY ? [] : run(queryWords(query), false).sites.map(h => [h.site.i, h.terms]));
+    },
   };
 }
 

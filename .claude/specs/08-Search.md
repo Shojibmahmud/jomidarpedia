@@ -206,6 +206,10 @@ Amended during implementation (2026-10-24), for the owner's review:
 - **FR-10 Family phrases** never start or end with a generic word or a title (Raja, Zamindars, Nawab…) and are never only a place name; of the windows around the hit, the longest shared by two or more sites wins.
 - **FR-28 On phones** the "Search within results" box sits above the list rather than in the filter drawer: the drawer edits a draft applied by "Show N", and a search there would need its own draft and matcher.
 
+### Phase 10 notes
+- A district result now leads to its district page, not to Explore (spec 10 FR-63).
+- A query that is exactly a site ID (`JB-DHK-064`, any case) finds that site alone, marked "matched by site ID", with no "Did you mean"; an ID that names no site finds nothing (spec 10 FR-53, D14).
+
 ## 11. Open questions
 - **OQ-1** Bangla wording for the new strings and the Bangla fold list (D6): drafts with `needsReview` until a native reviewer signs them off.
 - **OQ-2** The final generic-word list (FR-4), in both scripts.
