@@ -34,7 +34,8 @@ export function HeroSearch({ districts, placeholder }: { districts: readonly Sea
     if (el) el.setSelectionRange(el.value.length, el.value.length);
   }, [box]);
 
-  if (box) return <div ref={wrap}><box.Box districts={districts} autoFocus initialValue={box.value} placeholder={placeholder} submit /></div>;
+  // text-ink: the hero's text is white, and SearchBox's input inherits its colour.
+  if (box) return <div ref={wrap} className="text-ink"><box.Box districts={districts} autoFocus initialValue={box.value} placeholder={placeholder} submit /></div>;
   return (
     <form action={SEARCH_HREF} method="get" role="search" data-hero-search
       className="flex items-center gap-2 rounded-lg border-2 border-ink bg-surface px-3 py-1 text-ink">

@@ -61,8 +61,9 @@ export function Hero({ photo, sites, dayTrips, open, districts }: {
     { href: CHIP_HREF.open, k: 'home.chip.open', count: open, icon: null },
     { href: CHIP_HREF.map, k: 'home.chip.map', icon: <MapIcon /> },
   ];
+  // Not overflow-hidden: the search suggestions hang below the hero, so it stacks above the sections after it (z-10).
   return (
-    <section data-home-hero aria-labelledby="jp-home-title" className="relative isolate flex min-h-[600px] items-end overflow-hidden bg-ink text-white lg:min-h-[760px]">
+    <section data-home-hero aria-labelledby="jp-home-title" className="relative isolate z-10 flex min-h-[600px] items-end bg-ink text-white lg:min-h-[760px]">
       <Photo photo={photo} sizes="100vw" eager decorative={false} />
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/5" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />

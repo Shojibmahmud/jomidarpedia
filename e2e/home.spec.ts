@@ -45,6 +45,26 @@ test('loads no Leaflet or Fuse.js until the search box is used, then suggests (A
   await expect(page.locator('[data-home-hero] [role="option"]').first()).toContainText('Baliati');
 });
 
+test('at 390 px in light mode the live search box has dark text and its suggestions are not clipped by the hero', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await page.locator('[data-hero-search] input').click();
+  await page.keyboard.type('nat', { delay: 30 });
+  const box = page.locator('[data-home-hero] [role="combobox"]');
+  await expect(box).toHaveValue('nat');
+  expect(await box.evaluate(el => getComputedStyle(el).color)).toBe('rgb(33, 29, 24)'); // --ink, not the hero's white
+  const options = page.locator('[data-home-hero] [role="option"]');
+  await expect(options.first()).toBeVisible();
+  // The last suggestion is what the browser hits at its centre: nothing (the hero's edge, the next section) covers it.
+  const last = options.last();
+  await last.scrollIntoViewIfNeeded();
+  expect(await last.evaluate(el => {
+    const r = el.getBoundingClientRect();
+    return el.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2));
+  })).toBe(true);
+});
+
 test('the quick chips and category tiles open Explore with the same count (AC-6)', async ({ page }) => {
   const cases: [string, number][] = [
     ['[data-home-chip="home.chip.open"]', counts.openToVisitors],
