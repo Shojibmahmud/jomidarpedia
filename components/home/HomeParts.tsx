@@ -183,20 +183,23 @@ export function DivisionTiles({ tiles, count }: { tiles: { div: Division; photo:
       <h2 id="jp-home-divisions" className="font-serif text-h2"><T k="home.divisionsTitle" vars={{ count: n(count) }} /></h2>
       <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0">
         {tiles.map(({ div, photo }) => (
-          <li key={div.slug} data-home-division={div.slug}
-            className="relative isolate flex h-[200px] w-[72%] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-lg bg-ink p-3 text-white md:h-[150px] md:w-auto">
-            <Photo photo={photo} sizes="(min-width: 768px) 25vw, 72vw" />
-            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-            <PhotoCredit credit={photo.credit} className="self-end" />
-            <div className="relative flex items-end justify-between gap-3">
-              <h3 className="font-serif text-h3 leading-tight">
-                <Link prefetch={false} href={divisionHref(div.slug)} className={stretched}>
-                  <Both value={{ en: div.en, bn: div.bn }} />
-                </Link>
-                <span className="block font-sans text-sm font-normal text-white/90"><Other value={{ en: div.en, bn: div.bn }} /></span>
-              </h3>
-              <span className="font-serif text-[32px] font-semibold leading-none"><Both value={n(div.count)} /></span>
+          // As with the category tiles, below lg the credit sits under the tile rather than over half the photo.
+          <li key={div.slug} data-home-division={div.slug} className="relative flex w-[72%] shrink-0 snap-start flex-col gap-1 md:w-auto">
+            <div className="relative isolate flex h-[170px] flex-col justify-end overflow-hidden rounded-lg bg-ink p-3 text-white lg:h-[150px]">
+              <Photo photo={photo} sizes="(min-width: 768px) 25vw, 72vw" />
+              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+              <div className="relative flex items-end justify-between gap-3">
+                <h3 className="font-serif text-h3 leading-tight">
+                  <Link prefetch={false} href={divisionHref(div.slug)} className={stretched}>
+                    <Both value={{ en: div.en, bn: div.bn }} />
+                  </Link>
+                  <span className="block font-sans text-sm font-normal text-white/90"><Other value={{ en: div.en, bn: div.bn }} /></span>
+                </h3>
+                <span className="font-serif text-[32px] font-semibold leading-none"><Both value={n(div.count)} /></span>
+              </div>
             </div>
+            <PhotoCredit credit={photo.credit}
+              className="max-lg:!max-w-none max-lg:!bg-transparent max-lg:!p-0 max-lg:!text-muted lg:!absolute lg:right-2 lg:top-2" />
           </li>
         ))}
       </ul>
