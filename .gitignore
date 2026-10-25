@@ -3,7 +3,9 @@ node_modules/
 out/
 data/build/
 public/data/
-data/reports/
+data/reports/*
+!data/reports/classification-*.md
+!data/reports/spot-check-*.md
 .env*
 .vercel/
 .DS_Store
