@@ -831,29 +831,38 @@ Required dependencies between phases 5 and 11:
 - `Itinerary · mobile (dark)`
 - canvas boards `Itinerary-Print-1` and `-2`
 
-- [ ] **9.1** Build `ItineraryCard`: stop photos with credits behind a camera button that closes on an outside click or Esc. It shows the plan status (timed, suggested circuit, incomplete) and the duration, including "Not stated".
-- [ ] **9.2** Build `TripsFilters`: length, travel time, division, **"Has a timed plan"** (`plan_status = timed`) and sort. Copy that claims every plan is timed or starts in Dhaka is removed.
-- [ ] **9.3** Build the `/trips/[id]` page shell: title, status, anchor site, the section icons from the design, and `SuggestCorrection`.
-- [ ] **9.4** Build `ItineraryStops`. Timed plans show times. Circuits show the order only. Place stops are labelled.
-- [ ] **9.5** Build `RouteMap`:
+- [x] **9.1** Build `ItineraryCard`: stop photos with credits behind a camera button that closes on an outside click or Esc. It shows the plan status (timed, suggested circuit, incomplete) and the duration, including "Not stated".
+- [x] **9.2** Build `TripsFilters`: length, travel time, division, **"Has a timed plan"** (`plan_status = timed`) and sort. Copy that claims every plan is timed or starts in Dhaka is removed.
+- [x] **9.3** Build the `/trips/[id]` page shell: title, status, anchor site, the section icons from the design, and `SuggestCorrection`.
+- [x] **9.4** Build `ItineraryStops`. Timed plans show times. Circuits show the order only. Place stops are labelled.
+- [x] **9.5** Build `RouteMap`:
   - numbered markers for stops with coordinates;
   - legs drawn only from `itinerary_legs`;
   - otherwise the label "Schematic: order of stops, roads not drawn";
   - Lite mode shows the list only.
-- [ ] **9.6** Build `BudgetTable` from 2.6 and 2.7: the known subtotal, the named omissions, and the unit, basis and date of each row.
-- [ ] **9.7** Build `DayCheck`, which reads only `closed_days` and shows unknowns as text.
-- [ ] **9.8** Add an "Open all stops on the map" link: `/explore?sel=…&ids=<comma list>&view=map`. Add `ids` to `docs/URLS.md`.
-- [ ] **9.9** Add `ShareButton` (reused from 5.16).
-- [ ] **9.10** Build `PrintButton` and the print layout from `Itinerary-Print-1` and `-2`:
+- [x] **9.6** Build `BudgetTable` from 2.6 and 2.7: the known subtotal, the named omissions, and the unit, basis and date of each row.
+- [x] **9.7** Build `DayCheck`, which reads only `closed_days` and shows unknowns as text.
+- [x] **9.8** Add an "Open all stops on the map" link: `/explore?sel=…&ids=<comma list>&view=map`. Add `ids` to `docs/URLS.md`.
+- [x] **9.9** Add `ShareButton` (reused from 5.16).
+- [x] **9.10** Build `PrintButton` and the print layout from `Itinerary-Print-1` and `-2`:
   - the light palette is forced (9.11);
   - controls are hidden;
   - photos print with their credits;
   - the licence line and source links are printed;
   - if tiles fail, the map area becomes a stop list.
-- [ ] **9.11** Fix the print CSS in `tokens.css`. Override **all** colour tokens under `@media print` with a selector that outranks both `[data-theme="dark"]` and `:root:not([data-theme="light"])`, for example `@media print { :root:root, [data-theme] { … } }`.
+- [x] **9.11** Fix the print CSS in `tokens.css`. Override **all** colour tokens under `@media print` with a selector that outranks both `[data-theme="dark"]` and `:root:not([data-theme="light"])`, for example `@media print { :root:root, [data-theme] { … } }`.
   - **Verify:** print preview in dark mode, set both by the OS preference and by the toggle, comes out light.
-- [ ] **9.12** Define the overflow policy: two A4 pages where practical. Longer itineraries flow onto more pages with headers that repeat on each page. **Content is never clipped.**
+- [x] **9.12** Define the overflow policy: two A4 pages where practical. Longer itineraries flow onto more pages with headers that repeat on each page. **Content is never clipped.**
   - **Verify:** in Chromium, Firefox and Safari print preview, test the shortest itinerary (1 stop) and the longest (9 stops).
+
+**Done 25 Oct 2026 (9.1–9.12), apart from the owner's visual review**, specified in `.claude/specs/09-Trips-and-itineraries.md` (approved 25 Oct 2026, amended during implementation: §10). Verified with 364 passing unit tests (20 new in `tests/trips.test.tsx`, 1 in `tests/contract.test.ts`), typecheck, lint, a static build with 385 trip pages, and 153 passing Playwright tests (28 new in `e2e/trips.spec.ts`).
+- **Honest by data (D1–D3):** no trip has a reviewed `plan_status` yet, so no card or page shows a status badge or clock times, and "Has a timed plan" is not offered; closing days are unreviewed for every site, so DayCheck shows its one-line note; with no legs and no place coordinates, maps show numbered pins for stops with pins only, the schematic label and the stops not on the map, and no map below 2 pins. All of it switches on from the data, with no code change.
+- **Listing:** the first 12 cards by travel time are static HTML (works without JavaScript); filters `len`, `tt`, `div`, `plan` and `sort`, "Load 12 more", the empty state and the dropped-value notice, as in Explore. Cards carry a strip of up to 4 stop photos (`trips.json` `photos`, 230 trips) with credits behind a camera button.
+- **Itinerary page:** breadcrumb to Explore (`div`, `dist`) until Phase 10, stops with place labels, the route map (lazy, never in Lite mode, a stop list when tiles fail), a card per site, the budget ("Known so far" plus what it leaves out, never a total), notes, sources, Share, "Open all stops on the map" (Explore `ids`, now applied, with a chip) and Suggest a correction.
+- **Print:** light whatever the theme (every token reset under `@media print`), controls hidden, scaled to A4, "Check before you go" from known facts only, credits, licence line, sources and the page URL (no QR, D8); the title repeats and pages are numbered (Chromium page margin boxes). Shortest plan 1 page, Manikganj 2, longest (9 stops) 4.
+- **Site pages:** itineraries link to `/trips/<id>/`; a reviewed timed plan also shows its stops with times.
+- **Tools:** `npm run screenshots` adds `/trips/` (1440, 390), two itineraries at 1440, one at 390 in dark, and three A4 PDFs.
+- **Open:** the owner's visual review against the 7 boards, including Firefox and Safari print preview (OQ-1); an `itinerary_id` field on the corrections form (OQ-2); the editor's `plan_status` and `closed_days` review (OQ-3).
 
 **Acceptance criteria**
 - Timed, circuit and incomplete plans are visibly different.

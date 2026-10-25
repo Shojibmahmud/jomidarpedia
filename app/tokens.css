@@ -103,11 +103,29 @@
 html:not([data-lang="bn"]) [data-l="bn"] { display: none !important; }
 html[data-lang="bn"] [data-l="en"] { display: none !important; }
 
-/* Print: the itinerary "Print or save as PDF" button calls window.print(). */
+/* Print: the itinerary "Print or save as PDF" button calls window.print() (spec 09 FR-46 to FR-50).
+   Print is always light (9.11): every token is set again with a selector that outranks both dark blocks
+   above (:root:root and :root[data-theme] are 0,2,0 and come later), whichever way dark was chosen. */
 @media print {
   @page { size: A4; margin: 15mm; }
-  :root { --bg: 255 255 255; --surface: 255 255 255; --ink: 33 29 24; --muted: 92 84 72; }
-  header, nav, footer, [data-no-print] { display: none !important; }
+  :root:root, :root[data-theme] {
+    --bg: 255 255 255;  --surface: 255 255 255;  --surface-2: 239 231 216;
+    --ink: 33 29 24;  --muted: 92 84 72;  --line: 221 211 193;  --line-strong: 140 130 111;
+    --primary: 163 66 42;  --primary-hover: 134 51 31;  --on-primary: 255 255 255;
+    --primary-tint: 246 225 216;  --primary-tint-ink: 122 47 28;
+    --moss: 70 102 54;  --moss-tint: 225 235 214;  --moss-ink: 51 80 42;
+    --teal: 43 106 106;  --teal-tint: 220 235 233;  --teal-ink: 33 81 90;
+    --indigo: 46 61 120;  --indigo-tint: 227 230 243;  --on-indigo: 255 252 245;
+    --gold: 122 90 18;  --gold-tint: 243 231 200;
+    --lost: 74 68 60;  --lost-tint: 231 226 216;  --unknown: 110 103 91;
+    --focus: 46 61 120;  --map-land: 238 233 222;
+    --shadow-1: none;  --shadow-2: none;  --shadow-3: none;
+    color-scheme: light;
+  }
+  [data-trip-page] { zoom: .72; }      /* the type scale is in px: shrink the whole plan so it fits A4 (spec 09 FR-50) */
+  body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  body > header, body > footer, [data-no-print] { display: none !important; }
   [data-print-only] { display: block !important; }
+  a { color: inherit; }
 }
 [data-print-only] { display: none; }

@@ -49,3 +49,13 @@
 @media (prefers-reduced-motion: reduce) {
   .jp-map .leaflet-zoom-anim .leaflet-zoom-animated, .jp-map .leaflet-cluster-anim .leaflet-marker-icon { transition: none !important; }
 }
+
+/* Itinerary stops (spec 09 FR-28): a numbered disc; a place stop is outlined. Legs only from itinerary_legs. */
+.jp-stop-icon { display: flex; align-items: center; justify-content: center; }
+.jp-stop {
+  display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 9999px;
+  font-weight: 700; font-size: 14px; border: 2px solid rgb(var(--surface)); box-shadow: var(--shadow-2);
+  background: rgb(var(--primary)); color: rgb(var(--on-primary));
+}
+.jp-stop--place { background: rgb(var(--surface)); color: rgb(var(--ink)); border-color: rgb(var(--ink)); }
+.jp-map .jp-leg { stroke: rgb(var(--primary)); fill: none; }

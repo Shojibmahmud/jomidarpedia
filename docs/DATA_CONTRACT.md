@@ -47,10 +47,11 @@ Index fields only: `e`, `b`, `u`, `d`, `db`, `c`, `ac`, `fe`, `sm`, `h`, `tb`, `
 | Districts | `districts.json`: `slug`, `en`, `bn`, `count` | props |
 
 ### Trip card (`/trips`, Home, division pages)
-`trips.json` (props): `title`, `duration`, `planStatus`, `anchorEn`, `anchorBn`, `district`, `stopCount`, `hours`, `bucket`, `dayTrip`, `thumb`.
-- No `planStatus` (not yet reviewed): the card shows neither "Timed plan" nor "Suggested circuit".
+`trips.json` (props): `title`, `duration`, `planStatus`, `anchorEn`, `anchorBn`, `division`, `district`, `stopCount`, `hours`, `bucket`, `dayTrip`, `thumb`, `photos`.
+- No `planStatus` (not yet reviewed): the card shows no status badge, and the listing offers no "Has a timed plan" filter (spec 09 D1).
 - No `anchorBn`: English name with `lang="en"`.
-- No `thumb`: placeholder.
+- `photos` (spec 09 D4): the first Ready photo of up to 4 site stops, one per site, in stop order: `{ n, thumb, credit }`, where `n` is the stop number and `credit` is `required_credit` as written. Absent when no site stop has a Ready photo: placeholder. `thumb` (the anchor's first photo) is kept for Home and division tiles.
+- No `hours`: "Travel time unknown"; the card never names a start place or a clock time (spec 09 D15).
 
 ### Home tiles and numbers strip
 `meta.json` (props): `counts.*`, `lastVerified` ("Last verified …"), `compiledAt` (when the build ran). `divisions.json` for division tiles; `trips.json` for trip tiles.
@@ -102,6 +103,8 @@ Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 202
 - `budget.rows[]`: from `costs.csv` columns, never from `amount_text`. `amount` only when > 0; an entry fee of 0 is `noTicket` ("No ticket reported"). `unit` from the reviewed unit table; `basis` and `legs` from `fare_basis` and `legs`; `note` is `basis_and_assumptions`; `date`, `status`, `sources` (SRC- IDs). `range` is reserved and not emitted yet.
 - `budget.known`: the sum of per-person amounts; absent when there are none. `budget.omitted`: items with no amount (not `noTicket`, not `not_applicable`). The anchor transport row is "Dhaka → [anchor], one way"; there is no return fare or fare between stops unless a row exists.
 - `costsEstimated`: `{ from, to }` over the budget rows' dates ("Costs estimated …"). There is no single trip `lastChecked`.
+- On the page (spec 09): clock times only when `planStatus` is `timed` (D1); the map only with 2 or more stops with `latlon`, lines only from `legs[]` (D3); DayCheck reads the site stops' `closedDays` only (D2); the budget's closing line is "Known so far" with `known` and the `omitted` items, never a total (D16).
+- Site pages: `itineraries[]` entries link to `/trips/<id>/`; a trip whose `planStatus` is `timed` also shows its stops with times (spec 09 FR-51, FR-52).
 
 ### Sources (`data/build/sources.json`)
 `bib` (`author`, `publisher`, `edition`, `isbn`, `verificationMethod`) when the structured columns are filled (SRC-0001 only, Oct 2026). `citationsByDivision`: site citations per division.

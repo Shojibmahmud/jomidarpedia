@@ -202,7 +202,7 @@ The interview also found data problems that a full page would expose:
 - **FR-31** `CostTable` shows each cost with its unit, basis and date; no cost is shown without its date or the words "undated". With no routes, the section shows "No route documented yet" and "Suggest a route" (`field=getting-there`).
 
 ### Itineraries (board)
-- **FR-44** "Itineraries" lists each `itineraries[]` entry as its title and duration, as plain text with no link until Phase 9. With none, it shows "Not part of a suggested itinerary yet".
+- **FR-44** "Itineraries" lists each `itineraries[]` entry as its title and duration, as plain text with no link until Phase 9. With none, it shows "Not part of a suggested itinerary yet". *(Phase 9, 2026-10-25: each entry now links to `/trips/<id>/`, and a reviewed timed plan shows its stops with times; spec 09 FR-51, FR-52.)*
 
 ### Combine with (5.15)
 - **FR-32** `CombineWith` shows only the `related[]` entries whose relation is `combine_on_trip`. Each has its thumbnail or `PlaceholderArt`, both names, district, travel time when known, condition, and a link to its site page. With none, it shows "No nearby suggestions yet".

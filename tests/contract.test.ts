@@ -97,6 +97,10 @@ describe('trips (2.6–2.8, 2.10, 2.16)', () => {
     expect(t2.stops[2].latlon).toBeUndefined();
     expect([t2.legs, t2.schematic]).toEqual([[], true]);
   });
+  it('the card carries a photo strip: Ready photos of site stops only, numbered by stop (spec 09 D4)', () => {
+    const [summary] = readJson(join(valid.out, 'build', 'trips.json'));
+    expect(summary.photos).toEqual([{ n: 1, thumb: '/thumbs/IMG-DHK-001-001.webp', credit: expect.stringMatching(/^Photo: A\. Person/) }]);
+  });
   it('carries a shared fare basis and its legs from the cost columns', () => {
     const dir = fixtureDir();
     writeTable(dir, 'costs', readTable(dir, 'costs').map(c => (c.cost_id === 'CO-DHK-001-02' ? { ...c, fare_basis: 'shared', legs: '1-2;2-3' } : c)));

@@ -49,6 +49,7 @@ const remember = (patch: Memory) => window.history.replaceState({ jp: { ...memor
 const rawSearch = () => window.location.search.replace(/^\?/, '');
 const withoutSel = ({ sel: _sel, ...rest }: Extras): Extras => rest; // eslint-disable-line @typescript-eslint/no-unused-vars
 const withoutQ = ({ q: _q, ...rest }: Extras): Extras => rest; // eslint-disable-line @typescript-eslint/no-unused-vars
+const withoutIds = ({ ids: _ids, ...rest }: Extras): Extras => rest; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 function useIndex(): { load: Load; retry: () => void } {
   const { state, retry } = useIndexData();
@@ -81,7 +82,14 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   const { state: matcher, retry: retrySearch } = useMatcher(!!q || searchWanted);
   const searchFailed = !!q && matcher.status === 'error';
   const hits = useMemo(() => (q && matcher.status === 'ready' ? matcher.value.match(q) : undefined), [q, matcher]);
-  const pool = useMemo(() => (!q || searchFailed ? sites : hits ? sites.filter(s => hits.has(s.i)) : NO_SITES), [q, searchFailed, sites, hits]);
+  // ids ("Open all stops on the map", spec 09 FR-43): only those sites, ANDed with the search and the filters.
+  const idList = raw.extras.ids;
+  const pool = useMemo(() => {
+    const searched = !q || searchFailed ? sites : hits ? sites.filter(s => hits.has(s.i)) : NO_SITES;
+    if (!idList?.length) return searched;
+    const keep = new Set(idList);
+    return searched.filter(s => keep.has(s.i));
+  }, [q, searchFailed, sites, hits, idList]);
   const ready = indexReady && (!q || searchFailed || !!hits);
   const filtered = useMemo(() => filter(pool, raw.state, places), [pool, raw.state, places]);
 
@@ -129,8 +137,10 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
     if (ex.sel && !filter(pool, next, places).some(s => s.i === ex.sel && s.ll)) { ex = withoutSel(ex); suppressFocus.current = true; }
     go({ ...view, state: next, extras: ex });
   }, [go, view, pool, places]);
-  /** Clear all: the filters and the search (FR-30); a selected site stays, since nothing then excludes it. */
-  const clear = useCallback(() => go({ ...view, state: EMPTY, extras: withoutQ(view.extras) }), [go, view]);
+  /** Clear all: the filters, the search (FR-30) and a trip's stops (spec 09 FR-43); a selected site stays. */
+  const clear = useCallback(() => go({ ...view, state: EMPTY, extras: withoutIds(withoutQ(view.extras)) }), [go, view]);
+  /** The "N trip stops" chip: back to every site, keeping the filters and the selection. */
+  const removeIds = useCallback(() => go({ ...view, extras: withoutIds(view.extras) }), [go, view]);
 
   /**
    * A new search text (FR-28, FR-31): the first update of a run of typing pushes an entry, the rest replace
@@ -206,7 +216,7 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   const onMap = useMemo(() => filtered.filter(s => s.ll), [filtered]);
   const counts = useMemo(() => countAll(pool, state, places), [pool, state, places]);
   const unclassified = useMemo(() => sites.filter(s => s.t === 'unclassified').length, [sites]);
-  const fitKey = useMemo(() => serialize({ state, sort: 'time', extras: { q: extras.q } }), [state, extras.q]);
+  const fitKey = useMemo(() => serialize({ state, sort: 'time', extras: { q: extras.q, ids: extras.ids } }), [state, extras.q, extras.ids]);
 
   // The result count, announced once a run of changes settles (FR-32, A-5).
   const [announcement, setAnnouncement] = useState('');
@@ -374,7 +384,8 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
         <LiteToggle />
       </div>
       {noticeBox}
-      <ActiveFilters state={state} places={places} onChange={apply} onClear={clear} q={extras.q} onRemoveQ={() => setQuery('', true)} />
+      <ActiveFilters state={state} places={places} onChange={apply} onClear={clear} q={extras.q} onRemoveQ={() => setQuery('', true)}
+        ids={extras.ids?.length} onRemoveIds={removeIds} />
       {listBody}
     </section>
   );
