@@ -86,8 +86,13 @@ export function LocationSummary({ counts }: { counts: LocationCounts }) {
   );
 }
 
-/** The static SVG from 3.8, linking to Explore's map (FR-5). No Leaflet. No pins at all: one line instead. */
-export function MapTeaser({ svg, onMap, total, href, name }: { svg: string; onMap: number; total: number; href: string; name: Dual }) {
+/**
+ * The static SVG from 3.8, linking to Explore's map (FR-5). No Leaflet. No pins at all: one line instead.
+ * Home's national teaser (spec 11 FR-11) gives its own label, caption and button wording.
+ */
+export function MapTeaser({ svg, onMap, total, href, name, label, caption = 'area.mapCaption', button = 'area.openMap' }: {
+  svg: string; onMap: number; total: number; href: string; name: Dual; label?: React.ReactNode; caption?: StringKey; button?: StringKey;
+}) {
   if (!onMap) return <p className="rounded-lg border border-dashed border-line-strong bg-surface p-4 text-muted" data-no-map><T k="area.noMap" /></p>;
   return (
     <figure className="space-y-2" data-map-teaser>
@@ -95,11 +100,11 @@ export function MapTeaser({ svg, onMap, total, href, name }: { svg: string; onMa
         <span className="sr-only"><T k="area.mapOf" vars={{ name }} /></span>
         <span aria-hidden="true" className="block [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: svg }} />
         <span className="absolute left-3 top-3 rounded-full bg-surface px-3 py-1 text-sm font-semibold text-primary-tint-ink shadow-1" data-on-map>
-          <T k="area.onMap" vars={{ count: n(onMap), total: n(total) }} />
+          {label ?? <T k="area.onMap" vars={{ count: n(onMap), total: n(total) }} />}
         </span>
-        <span aria-hidden="true" className="absolute right-3 top-3 rounded-full border border-line-strong bg-surface px-3 py-1 text-sm font-semibold"><T k="area.openMap" /></span>
+        <span aria-hidden="true" className="absolute right-3 top-3 rounded-full border border-line-strong bg-surface px-3 py-1 text-sm font-semibold"><T k={button} /></span>
       </Link>
-      <figcaption className="text-sm text-muted"><T k="area.mapCaption" /></figcaption>
+      <figcaption className="text-sm text-muted"><T k={caption} /></figcaption>
     </figure>
   );
 }

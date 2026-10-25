@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { parseCsv } from '../scripts/csv.mjs';
 import { CONDITIONS } from '@/components/art/ConditionGlyph';
-import { HOME_SAMPLE_IDS } from '@/lib/home';
+import { HOME_SAMPLE_IDS } from './fixtures/sample-sites';
 import { STRINGS } from '@/lib/i18n';
 import { canonicalUrl, indexable, siteHref, siteIdHref } from '@/lib/site-url';
 

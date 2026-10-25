@@ -72,8 +72,9 @@ Index fields only: `e`, `b`, `u`, `d`, `db`, `c`, `ac`, `fe`, `sm`, `h`, `tb`, `
 
 Page budgets (spec 10 NFR-3; `e2e/areas-sources-about.spec.ts` warns above them): `/credits/` 150 KB gzipped (126 KB on 25 Oct 2026, 2.1 MB raw), `/sources/` 70 KB gzipped (55 KB).
 
-### Home tiles and numbers strip
-`meta.json` (props): `counts.*`, `lastVerified` ("Last verified …"), `compiledAt` (when the build ran). `divisions.json` for division tiles; `trips.json` for trip tiles.
+### Home (`/`, spec 11)
+`meta.json` (props) is the one source of every number on the page (spec 11 FR-1): `counts.sites`, `counts.dayTripSites` (Day trips chip, tile and stat), `counts.openToVisitors` (Open to visitors chip), `counts.conditions.*` (category tiles), `counts.images`, `counts.sources`, `counts.legends`, `counts.onMap`, `counts.divisions`, `counts.trips` and `counts.disagreements` (trust band; never `disagreements + openQuestions`). `divisions.json` for the division tiles (`count`, names), in count order; `trips.json` (as trip cards) for the three featured trips, chosen by `featuredTrips` in `lib/home.ts` (spec 11 D4).
+Photos: `lib/home-images.json` names the hero, the 4 category tiles and one tile per division slug. Each prints its `credits.json` `credit` exactly. Their larger WebP variants are `public/home/<image_id>-<width>.webp` (hero 960 and 1600 px, tiles 800 px; aspect kept, never enlarged), made by `npm run thumbs` and listed in `public/home/manifest.json`. `scripts/lib/home-check.mjs` fails the data run in every mode when a listed image is not Ready, lacks its thumbnail or a variant, shows a site outside its division or not matching its category tile, or when `public/home/` holds any other `.webp`.
 
 ## 2. Index row (`IndexSite`)
 
@@ -130,6 +131,7 @@ Budget: 150 KB gzipped fails the build; a test warns above 120 KB. On 22 Oct 202
 
 ### Meta (`data/build/meta.json`)
 `lastVerified`: the newest `last_verified` in the data. `compiledAt`: when the data was compiled (`SOURCE_DATE_EPOCH`, else `lastVerified`). `counts.hoursKnown`.
+`counts.dayTrips` counts one-day trip **plans**; `counts.dayTripSites` counts **sites** with `dt = 1` and equals the sum of `divisions.json` `dayTrip`. `counts.openToVisitors`: sites whose `visitor_access` is `ticketed` or `open_no_ticket_reported` (Home, spec 11).
 For About (spec 10 §6): `counts.locations` (the same shape as an area's `locations`); `counts.disagreements` (conflicts with two or more versions) and `counts.openQuestions` (one version; never counted as a disagreement, spec 05 FR-34, FR-35); `counts.stillToConfirm` (all `stillToConfirm` items); `counts.imagesNeedReview` and `counts.imagesPermissionRequired` (`publication_readiness`; counted, never published); `counts.possibleDuplicates` (`site_relationships.relation_type = possible_duplicate`).
 
 ### Credits (`data/build/credits.json`)

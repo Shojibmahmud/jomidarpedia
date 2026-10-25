@@ -204,7 +204,10 @@ export interface Meta {
   compiledAt: string;         // when the data was compiled: SOURCE_DATE_EPOCH, else lastVerified
   counts: {
     sites: number; onMap: number; noPin: number; flagged: number; withPhotos: number; images: number;
-    trips: number; dayTrips: number; sources: number; divisions: number; districts: number;
+    trips: number; dayTrips: number; sources: number;
+    dayTripSites: number;     // sites with dt = 1 (dayTrips counts one-day trip plans)
+    openToVisitors: number;   // sites with ac ticketed or open_no_ticket_reported
+    divisions: number; districts: number;
     historyEvents: number; legends: number; hoursKnown: number; conditions: ConditionCounts; confidence: Record<RecordConfidence, number>;
     locations: LocationCounts;
     disagreements: number;    // conflicts with two or more versions

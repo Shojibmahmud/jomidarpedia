@@ -1,0 +1,19 @@
+{
+  "params": {"format":"webp","quality":72,"effort":6,"background":"#FFFCF5"},
+  "images": {
+    "IMG-BSL-016-001-800": {"source":"9a1331daab3705d7ee217e76294bc36b079755c254c9903d080f593f917526d2","params":"a1c62a64b65e","output":"c7c734fd4c45c473c235b3636bef471d809e47b112ecb385dfb76b61530a7eea","bytes":68446,"width":800,"height":450},
+    "IMG-CTG-015-001-800": {"source":"a294c22d3b90e012a5b0d9288386832bc14cc0ae9ba27a11abf5233a0c608d72","params":"a1c62a64b65e","output":"9e9044f48305cb68050714f0f6646e9e6034ea8f3f9b96ee672adbab1c5b63ac","bytes":56538,"width":800,"height":600},
+    "IMG-DHK-002-008-800": {"source":"d7aa91d4b18f9bbb8debaf4e44a34530617afc6f7d0808c367b5d7ea49d9db5e","params":"a1c62a64b65e","output":"bffad994d9b23bdde908976e75e0f6632a878576ee0054114b66454c05d3c9ae","bytes":71760,"width":800,"height":533},
+    "IMG-DHK-064-001-800": {"source":"d605f4405df415c0d332a9ebd0744c220a1b5c485fefa5d2b3379cc3a7a3064c","params":"a1c62a64b65e","output":"b5c1d6c6d71aca969bd4971d01151796576168fbf7593f712311716d6e3c4095","bytes":84510,"width":800,"height":533},
+    "IMG-DHK-067-002-800": {"source":"f5ce83c53be099f0c0f54bf39c8a96ea83af5421e9ea99e6c0fe8d49c62008cf","params":"a1c62a64b65e","output":"bb09f2bc6aaa32706689d32235508276f686c507fb689f19abd288639efa028f","bytes":41336,"width":800,"height":552},
+    "IMG-DHK-080-002-800": {"source":"be73687cc61bc0017c8f366cb542a4c94cc2f5faa758ab5266856e2a7d0c07d0","params":"a1c62a64b65e","output":"98b2a79c30bfcfc945e831cc0bcc38785c8723baaea3f9651baa7448ef6c2db3","bytes":58098,"width":800,"height":600},
+    "IMG-DHK-101-001-1600": {"source":"a518fdf9bd30434641743e95eceff805522612b0b7e7fb5d90cd9eb8a58bec52","params":"a1c62a64b65e","output":"3acfe1aeaab4156f1abac95cf214a0fcb5b2e9c2d5de16102a0f4dfdd9d3b8df","bytes":238772,"width":1600,"height":1067},
+    "IMG-DHK-101-001-960": {"source":"a518fdf9bd30434641743e95eceff805522612b0b7e7fb5d90cd9eb8a58bec52","params":"a1c62a64b65e","output":"e276b06b48301655803cc2da1c67e7b34bf20d4cc087d2e5975e1433ef0eca25","bytes":90198,"width":960,"height":640},
+    "IMG-KHL-022-001-800": {"source":"0be76f693fc74db05d0662147f0e10345005ecb1f7d5b414248039effb426240","params":"a1c62a64b65e","output":"cee6e26b4f705ec38a3f018ba98a2591257b005dfb6fa9d6ff1420118ffc5d70","bytes":72620,"width":800,"height":505},
+    "IMG-MYM-010-002-800": {"source":"926ee4b237fabd397ff1f7998e9ace644aebc6d2d861a979230c781e3f676e61","params":"a1c62a64b65e","output":"a3d20ce65e5cb35c622f9b2f5855ad69605705b776bc57223756ec6a67a20a01","bytes":101634,"width":800,"height":533},
+    "IMG-RAJ-031-003-800": {"source":"7c55fd761acb29da2151a5676e045d047ce9ca8816b9553de5e45624464810f4","params":"a1c62a64b65e","output":"3bd061886b41c270777dc485b0bf65a3e6f87d8a266d081f6cc0fb42eda238bf","bytes":48156,"width":800,"height":533},
+    "IMG-RAJ-053-001-800": {"source":"f30f17b97c27448bbd0131bd84b839ef27c5c3a3f55679aa4515729f02a78b33","params":"a1c62a64b65e","output":"d681d3a120c7d016c565a7a1f9d25ccd5ddfa9553cb944e1303ac05ea09a1710","bytes":52538,"width":800,"height":600},
+    "IMG-RNG-040-001-800": {"source":"62731b229cd2d340faed45d4b48f0a403f1fac59d88bffcb09cf1b833e9fc820","params":"a1c62a64b65e","output":"1f6ef6670b200c3c1e6517d8bcb75bfb17458281a557840f23b65adfd55cc738","bytes":41114,"width":800,"height":533},
+    "IMG-SYL-016-001-800": {"source":"b7e78ff8e5ebee63664b78b37f5bdc71ceae59a163bfa703e835b6315f8cc568","params":"a1c62a64b65e","output":"9b0e5bdc0545a42fee74ba7602538d9a634f975485e94c6c13618b631728960e","bytes":112100,"width":800,"height":450}
+  }
+}

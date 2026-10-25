@@ -119,6 +119,18 @@
   .credit-row > a { @apply shrink-0 self-center text-sm font-semibold text-primary underline; }
 }
 
+/* Home (spec 11 FR-19, D7): the header lies over the hero photo with light text on a dark scrim, and scrolls away
+   with it. Every other page keeps the sticky header. The menus' panels (.header-panel) keep their normal colours. */
+body:has([data-home-hero]) > header {
+  position: absolute; inset-inline: 0; top: 0;
+  border-color: transparent; background: linear-gradient(rgb(0 0 0 / .65), rgb(0 0 0 / 0)); backdrop-filter: none;
+  color: #fff;
+}
+body:has([data-home-hero]) > header .header-panel { color: rgb(var(--ink)); }
+body:has([data-home-hero]) > header > div > a [lang="bn"] { color: rgb(255 255 255 / .85); }
+body:has([data-home-hero]) > header .header-item:not(.header-panel *):hover { background: rgb(255 255 255 / .16); }
+body:has([data-home-hero]) > header :focus-visible:not(.header-panel *) { outline-color: #fff; }
+
 /* Dual-language text (lib/i18n.ts, components/T.tsx): every interface string is in the HTML in both
    languages, and the boot script in app/layout.tsx sets <html data-lang> before first paint.
    English shows whenever data-lang is not "bn", including with JavaScript off. */
