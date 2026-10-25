@@ -15,6 +15,8 @@ const GLYPH: Record<Mode, React.ReactNode> = {
   car: <><path d="M4 16v-4l2-5h12l2 5v4zM4 16v3M20 16v3" /><circle cx={8} cy={13} r={1} /><circle cx={16} cy={13} r={1} /></>,
   air: <><path d="M3 13l18-6-6 13-3-6z" /></>,
   boat: <><path d="M3 15c3 4 15 4 18 0zM12 15V4l6 8h-6" /></>,
+  rickshaw: <><circle cx={6} cy={17} r={3} /><circle cx={18} cy={17} r={3} /><path d="M6 17l4-7h5l3 7M10 10V6h5v4M15 6l3-2" /></>,
+  auto_rickshaw: <><circle cx={6} cy={18} r={2} /><circle cx={18} cy={18} r={2} /><path d="M4 18V9c0-3 3-5 7-5h3l5 6v8M8 18h8M4 11h15" /></>,
   unknown: <><circle cx={12} cy={12} r={8} /><path d="M10 10a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2M12 16v.5" /></>,
   mixed: <><circle cx={7} cy={12} r={2.5} /><circle cx={17} cy={12} r={2.5} /><path d="M9.5 12h5" /></>,
 };

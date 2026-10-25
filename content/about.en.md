@@ -1,5 +1,5 @@
 ---
-reviewed: false
+reviewed: true
 ---
 A non-commercial project by one person: a careful list of {{counts.sites}} zamindar palaces, estate houses and rajbaris, what the sources say about each, and how to reach them from Dhaka. It has no accounts and keeps no tracking.
 
@@ -59,7 +59,7 @@ We only show photos with an open licence or in the public domain, each with its 
 
 - No site has been visited in person, and no owner, caretaker or Department of Archaeology office has been contacted.
 - No pin has been checked with a field GPS reading.
-- Bus fares have not been confirmed at the counter. Accommodation, food and guide costs are not researched.
+- Apart from the Manikganj loop, whose fares the project editor reported in October 2026, bus fares have not been confirmed at the counter. Accommodation, food and guide costs are not researched.
 - Most opening hours and closing days are not documented yet.
 
 ## How to contribute {#contribute}

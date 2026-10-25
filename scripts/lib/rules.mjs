@@ -77,7 +77,15 @@ export function parseClosedDays(v) {
 }
 
 // ---------------------------------------------------------------- transport modes (2.5)
-export const MODES = ['bus', 'train', 'launch', 'ferry', 'car', 'air', 'boat', 'unknown', 'mixed'];
+// rickshaw and auto_rickshaw are leg modes (itinerary_legs.csv, spec 12 FR-17); MODE_LABEL never yields them.
+export const MODES = ['bus', 'train', 'launch', 'ferry', 'car', 'air', 'boat', 'rickshaw', 'auto_rickshaw', 'unknown', 'mixed'];
+// English names for budget items built from a mode.
+export const MODE_NAME = {
+  bus: 'Bus', train: 'Train', launch: 'Launch', ferry: 'Ferry', car: 'Car', air: 'Air', boat: 'Boat',
+  rickshaw: 'Rickshaw', auto_rickshaw: 'Auto-rickshaw', unknown: 'Mode not stated', mixed: 'Mixed modes'
+};
+// A fare between stops: costs.category "leg_fare_<mode>", with the stops it covers in costs.legs.
+export const LEG_FARE = new RegExp(`^leg_fare_(${MODES.join('|')})$`);
 // Every transport_mode label in travel_routes.csv. A label naming two or more modes is "mixed".
 // INFER means: look for exactly one mode keyword in the route description.
 export const INFER = 'infer';

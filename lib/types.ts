@@ -102,7 +102,7 @@ export type ClosedDays = { known: true; days: Day[] } | { known: false }; // day
 export interface Feature { text: string; textBn?: string; measurement?: string; unit?: string; status: string; sources: SourceRef[] }
 
 /** unknown and mixed get neutral icons. inferred: the label was "Other / mixed" and the description named one mode. */
-export type Mode = 'bus' | 'train' | 'launch' | 'ferry' | 'car' | 'air' | 'boat' | 'unknown' | 'mixed';
+export type Mode = 'bus' | 'train' | 'launch' | 'ferry' | 'car' | 'air' | 'boat' | 'rickshaw' | 'auto_rickshaw' | 'unknown' | 'mixed';
 
 export interface Route {
   kind: 'primary' | 'alternative';

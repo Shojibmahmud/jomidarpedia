@@ -22,7 +22,7 @@ import { BUCKET, DIVISIONS, CONDITIONS, CONFIDENCE, COORD_PAIR, isMappable, latl
 import { loadTables, validateTables, TABLES, rowKey } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, strings, ZERO_OR_FREE } from './lib/checks.mjs';
 import { UNKNOWN, BARE_UNKNOWN, hoursKnown, suggestPlanStatus, PLAN_STATUS, parseClosedDays, routeMode, UNIT, parseLegs, matchVersions, tripTitle,
-  isPlaceholderEvent, eventYear, BD_COORD_TEXT, isReadyImage, leadFirst } from './lib/rules.mjs';
+  LEG_FARE, MODE_NAME, isPlaceholderEvent, eventYear, BD_COORD_TEXT, isReadyImage, leadFirst } from './lib/rules.mjs';
 import { LINE } from './csv.mjs';
 
 const OUTPUT_DIRS = ['sites', 'trips'];
@@ -444,6 +444,12 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     const anchorCosts = costsBySite.get(anchor.site_id) ?? [];
     const byCat = (rows, cat) => rows.find(c => c.category === cat);
     const rows = [budgetRow(byCat(anchorCosts, 'transport_dhaka_one_way'), `Dhaka → ${anchor.name_en}, one way`, 'transport_dhaka_one_way')];
+    // Fares between stops, in stop order, then cost_id: "Rickshaw, stops 4 → 5" (the note names the places).
+    const firstStop = c => parseLegs(c.legs)[0][0];
+    for (const c of anchorCosts.filter(c => LEG_FARE.test(c.category) && c.legs).sort((a, b) => firstStop(a) - firstStop(b) || a.cost_id.localeCompare(b.cost_id))) {
+      const stopsText = parseLegs(c.legs).map(([a, b]) => `${a} → ${b}`).join(', ');
+      rows.push(budgetRow(c, `${MODE_NAME[LEG_FARE.exec(c.category)[1]]}, stops ${stopsText}`, c.category));
+    }
     for (const sid of siteIds.length ? siteIds : [anchor.site_id])
       rows.push(budgetRow(byCat(costsBySite.get(sid) ?? [], 'entry_fee'), `Entry: ${siteById.get(sid).name_en}`, 'entry_fee'));
     for (const cat of ['food', 'local_guide', ...(it.duration === 'Overnight / multi-day' ? ['accommodation'] : [])])

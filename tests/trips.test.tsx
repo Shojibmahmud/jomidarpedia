@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { readdirSync, readFileSync } from 'node:fs';
 import { ItineraryCard } from '@/components/trips/ItineraryCard';
 import { Budget } from '@/components/trips/Budget';
+import { Legs } from '@/components/trips/Legs';
 import { Stops } from '@/components/trips/Stops';
 import { getTrips } from '@/lib/data';
 import { tripCards, tripPage } from '@/lib/trip-data';
@@ -109,6 +110,20 @@ describe('what an itinerary may claim', () => {
   });
   it('escapes the running header for CSS', () => {
     expect(cssString('A "quoted" </style> title\\')).toBe('"A \\"quoted\\" \\3C /style> title\\\\"');
+  });
+});
+
+describe('leg legend (FR-29; spec 12 FR-17)', () => {
+  it('lists each leg with its mode and the stops it joins, and nothing without legs', () => {
+    const legs: Itinerary['legs'] = [{ from: 3, to: 4, mode: 'rickshaw', sources: [] }, { from: 1, to: 2, mode: 'auto_rickshaw', sources: [] }];
+    const html = renderToStaticMarkup(<Legs trip={trip({ legs, schematic: false })} />);
+    expect(html).toContain('data-leg="rickshaw"');
+    expect(lang(html, 'en')).toContain('Rickshaw');
+    expect(lang(html, 'en')).toContain('Auto-rickshaw');
+    expect(lang(html, 'bn')).toContain('রিকশা');
+    expect(html).toContain('Second House');
+    expect(html).toContain('Return to Dhaka');
+    expect(renderToStaticMarkup(<Legs trip={trip({})} />)).toBe('');
   });
 });
 

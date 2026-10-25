@@ -17,6 +17,7 @@ import { SuggestCorrection } from '@/components/site/SuggestCorrection';
 import { Budget, DateSpan } from '@/components/trips/Budget';
 import { DayCheck, DayNote } from '@/components/trips/DayCheck';
 import { DurationBadge, PlanBadge, StopsBadge } from '@/components/trips/ItineraryCard';
+import { Legs } from '@/components/trips/Legs';
 import { PageUrl } from '@/components/trips/PageUrl';
 import { PrintButton } from '@/components/trips/PrintButton';
 import { RouteMap } from '@/components/trips/RouteMap';
@@ -141,7 +142,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
             <section className="order-1 space-y-2" data-map-section>
               <div data-no-print><LiteNotices /></div>
               <RouteMap points={points} legs={trip.legs} />
-              {trip.schematic ? <p className="text-sm text-muted" data-schematic><T k="trip.schematic" /></p> : null}
+              {trip.schematic ? <p className="text-sm text-muted" data-schematic><T k="trip.schematic" /></p> : <Legs trip={trip} />}
               {map.unpinned.length ? (
                 <p className="text-sm text-muted" data-not-on-map>
                   <T k="trip.notOnMap" />{' '}

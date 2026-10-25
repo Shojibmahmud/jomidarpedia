@@ -178,7 +178,7 @@ Each decision has a recommended default. Work continues on the default unless th
 Notes:
 - Vercel's environment is separate from GitHub Actions, so the mode is decided **inside the build script** from `VERCEL_ENV`. It is never assumed from CI variables.
 - A production deployment with editorial problems fails at build time.
-- **Before Phase 12 finishes, nothing is deployed to production.** Early deployments are previews with Vercel Deployment Protection turned on. Check what protection the Hobby plan offers when you do task 4.6. If previews can't be protected, deploy only a hand-picked set of records that pass release checks.
+- **Before Phase 12 finishes, nothing is deployed to production.** Early deployments are previews with Vercel Deployment Protection turned on. Check what protection the Hobby plan offers when you do task 4.6. If previews can't be protected, deploy only a hand-picked set of records that pass release checks. Phase 12 finished on 26 Oct 2026: the release build of the branch passes, so production is no longer blocked by content once it is merged.
 
 ### 2.5 Dataset baseline
 Observed on 22 October 2026 from `data/csv/`, updated after the Phase 1 data fixes and the Phase 2 contract. This is the only place in the plan where these numbers are written down. Tests compare against `tests/baseline.json` (task 1.9), and changes to that file are reviewed.
@@ -330,7 +330,7 @@ Required dependencies between phases 5 and 11:
   - `dev` (`JP_DATA_MODE=local npm run data && next dev`)
   - `build:local`
   - `build` (`npm run data && next build`, release by default)
-- [x] **1.13** Update CI so it runs `npm run build:local` on branches and `npm run build` (release) on `main`. Until Phase 12 is complete, the `main` job is allowed to fail and is marked as non-blocking.
+- [x] **1.13** Update CI so it runs `npm run build:local` on branches and `npm run build` (release) on `main`. Until Phase 12 is complete, the `main` job is allowed to fail and is marked as non-blocking. Since Phase 12 (26 Oct 2026) it blocks, and also runs on pull requests.
   - **Done 22 Oct 2026:** every push and PR runs lint, typecheck, tests and `build:local` as a blocking job. Pushes to `main` also run a separate `release` job with `continue-on-error`, which uploads the report as an artifact; this keeps a blocking build on `main`. Verified by CI run 39821513865 on `main`: `check` passed; `release` failed as expected (1,510 cells to edit) and uploaded `release-problems`; the run succeeded.
 
 **Done 22 Oct 2026 (1.1–1.13)**, specified in `.claude/specs/01-Data-pipeline-gates.md`. Verified with 109 passing tests, `npm run build:local` (exit 0), `npm run build` (release, exit 1 with 1,510 cells to edit) and two byte-identical data builds. Changes from the task text:
@@ -428,8 +428,8 @@ Required dependencies between phases 5 and 11:
 - **Hours known (2.9):** true only for a **clock time** in `opening_hours`. "Daylight hours" is access, not a schedule: **12 sites**, not the 286–289 first estimated.
 - **Route labels (2.5):** a reviewed table maps every `transport_mode` label; a label naming two or more modes is `mixed`; an unlisted label is a structural error. "Other / mixed" is inferred only on exactly one mode keyword (22 routes, all "Fly … then road" or easybike/rickshaw/trawler).
 - **Budgets (2.6, 2.7):** `costs.csv` gains `fare_basis` and `legs` (blank until researched), since the basis is prose. A cost with an amount needs a unit from the reviewed table (structural). An entry fee of 0 is `noTicket`, in neither the subtotal nor the omitted list. `basis_and_assumptions` is now published as each row's note, which added one internal-note cell (CO-RAJ-023-02).
-- **Manikganj check (2.7):** the CSV gives **Tk 180** known (transport 150 + Baliati entry 30), with food and local guide omitted. The Tk 405 figure needs the editor's 20 October fares, which move to Phase 12 (O15).
-- **Reviewed columns (2.10, 2.11):** `plan_status` and `closed_days` stay blank until Phase 12. A blank is published as unknown and counts as an editorial cell (fails release only): 385 and 413 cells. The report lists the O11 suggestions (37 timed, 266 circuit, 82 incomplete). An unverified "None reported" is `unknown`, not `none`.
+- **Manikganj check (2.7):** the CSV gives **Tk 180** known (transport 150 + Baliati entry 30), with food and local guide omitted. The Tk 405 figure needs the editor's 20 October fares, which move to Phase 12 (O15). Done in Phase 12 (12.8): with the fares the build gives Tk 405.
+- **Reviewed columns (2.10, 2.11):** `plan_status` and `closed_days` stay blank until Phase 12. A blank is published as unknown and counts as an editorial cell (fails release only): 385 and 413 cells. The report lists the O11 suggestions (37 timed, 266 circuit, 82 incomplete). An unverified "None reported" is `unknown`, not `none`. Filled in Phase 12 (12.9): 37 timed, 266 circuit, 82 incomplete; `closed_days` 411 `unknown`, 2 `sun`.
 - **Dates (2.8):** `meta.generatedAt` and `lastUpdated` are renamed `compiledAt` and `lastVerified`. A trip has `costsEstimated` and a per-stop `visitingChecked`.
 - **Titles (2.16):** only `prefix (X) (Anchor)` titles are shortened; 218 single-group titles keep their full wording, such as "Suggested day-trip circuit (Baishrashi Zamindar Bari)".
 - **Also done:** the I7 field whitelist, checked by a marker test; `claims.field` became a required column.
@@ -918,7 +918,7 @@ Required dependencies between phases 5 and 11:
 - **System states:** the 404 page (status 404, search box, report link with `page_url`), the shared `Skeleton` (row, card, map), `OfflineNotice` on every page (O8 copy), and Lite notes on trip and site pages with a map (O7). Search now finds a site by its ID.
 - **Links:** site and trip breadcrumbs and Search's district results lead to the area pages.
 - **Site-wide font fix:** headings rendered their `<span lang>` text in the body font in both languages; `app/tokens.css` now takes each language's face from inherited variables, so headings are Fraunces and Tiro Bangla again (a browser test checks it).
-- **Open:** the owner's review of `content/about.en.md` (including "costs nothing to run" and the "Not done yet" list) and the visual review against the 10 boards (OQ-1); O4, the tile provider (OQ-2); a "broken link" field on the corrections form (OQ-3). `/credits/` is 126 KB gzipped but 2.1 MB raw (budget recorded). Working-file titles that name internal tools head the "Most cited" sort until Phase 12 rewrites them (already in the release report).
+- **Open:** the owner's review of `content/about.en.md` (including "costs nothing to run" and the "Not done yet" list) and the visual review against the 10 boards (OQ-1); O4, the tile provider (OQ-2); a "broken link" field on the corrections form (OQ-3). `/credits/` is 126 KB gzipped but 2.1 MB raw (budget recorded). Working-file titles that name internal tools head the "Most cited" sort until Phase 12 rewrites them (already in the release report). The About review and the title rewrites were done in Phase 12 (26 Oct 2026).
 
 **Acceptance criteria**
 - Every route in the route table builds.
@@ -950,7 +950,7 @@ Required dependencies between phases 5 and 11:
 - **Photos:** a reviewed list in `lib/home-images.json` (hero, 4 category tiles, 8 divisions), checked by `scripts/lib/home-check.mjs` in every mode. `npm run thumbs` also makes 14 larger WebP variants in `public/home/` (1.1 MB; the 1600 px hero is 233 KB).
 - **Featured trips** by rule, one per district: today Old Dhaka palaces, Gazipur and Narayanganj river heritage. No "Within 2 hours" chip (`tt` takes one segment).
 - **Fixed after the owner's checks on the preview:** at phone width the division tiles' credits sit under the tile (they covered half the photo); `ItineraryCard` fills its column and keeps a 2:1 photo strip with any number of photos (cards in a row had different widths and heights, on Home, division pages and `/trips/`); the live search box has dark text in light mode (it inherited the hero's white) and its suggestions are no longer clipped by the hero.
-- **Production build:** Vercel's release build of `main` fails, as it already did after Phases 9 and 10. The cause is the editorial gates only (Phase 12 and the About review: 2,250 cells to edit), with 0 structural errors and 0 safety failures. Branch previews build in local mode.
+- **Production build:** Vercel's release build of `main` fails, as it already did after Phases 9 and 10. The cause is the editorial gates only (Phase 12 and the About review: 2,250 cells to edit), with 0 structural errors and 0 safety failures. Branch previews build in local mode. Phase 12 (26 Oct 2026) cleared those cells: the release build passes on `13-phase-12-content-readiness`.
 - **Open:** the owner's visual review and photo choices (spec 11 OQ-1, OQ-2); the Bangla for "recorded disagreements" (OQ-3). Home JavaScript is about 200 KB gzipped in the webpack build, against the ~150 KB budget in 13.1, but the page's own code is 3 KB: About loads 197 KB, and 39 KB of it is the polyfills chunk that only old browsers load. Measure with Lighthouse in 13.1.
 
 **Acceptance criteria**
@@ -966,20 +966,32 @@ Required dependencies between phases 5 and 11:
 
 **Prerequisites:** task 1.10 (the per-cell report). O3 uses its default unless changed.
 
-- [ ] **12.1** Generate `data/reports/release-problems.md`, grouped by CSV cell (1.10). Record the starting number of **cells to edit**.
-- [ ] **12.2** Rewrite the formulaic `site_sources.citation_publisher` and `citation_title` values. A script may be used, but it runs once and its diff is reviewed by hand.
+- [x] **12.1** Generate `data/reports/release-problems.md`, grouped by CSV cell (1.10). Record the starting number of **cells to edit**.
+- [x] **12.2** Rewrite the formulaic `site_sources.citation_publisher` and `citation_title` values. A script may be used, but it runs once and its diff is reviewed by hand.
   - **Verify:** the matching report groups reach zero.
-- [ ] **12.3** Rewrite `sites.coordinates_note` (298 cells). The new wording keeps the uncertainty: for example, "Pin from a map service; not yet matched by a published source".
-- [ ] **12.4** Rewrite `sites.short_description`, `claims.claim_text` and `history_events.description`, about 25 cells per session. Keep each source limitation in public words.
-- [ ] **12.5** Clear the remaining small groups: cost basis, founder, notes, sources and itinerary notes.
-- [ ] **12.6** Classify the 79 `unclassified` sites (O15), with a source for each classification.
-- [ ] **12.7** Fix the 15 credit lines that don't follow the standard format. **Keep each licence's required wording.**
-- [ ] **12.8** Add the Manikganj fares from the editor (20 October 2026) as `costs.csv` and `itinerary_legs.csv` rows, with their units, the shared or reserved basis and the date:
+- [x] **12.3** Rewrite `sites.coordinates_note` (298 cells). The new wording keeps the uncertainty: for example, "Pin from a map service; not yet matched by a published source".
+- [x] **12.4** Rewrite `sites.short_description`, `claims.claim_text` and `history_events.description`, about 25 cells per session. Keep each source limitation in public words.
+- [x] **12.5** Clear the remaining small groups: cost basis, founder, notes, sources and itinerary notes.
+- [x] **12.6** Classify the 79 `unclassified` sites (O15), with a source for each classification.
+- [x] **12.7** Fix the 15 credit lines that don't follow the standard format. **Keep each licence's required wording.**
+- [x] **12.8** Add the Manikganj fares from the editor (20 October 2026) as `costs.csv` and `itinerary_legs.csv` rows, with their units, the shared or reserved basis and the date:
   - Teota → Aricha rickshaw: Tk 15 shared / Tk 30 reserved;
   - Aricha → Utholi shared auto: Tk 10;
   - Utholi → Gabtoli bus: Tk 200.
-- [ ] **12.9** Fill in `plan_status` (O11) and `closed_days` (2.11) wherever the research supports them. Everything else stays `incomplete` or `unknown`.
-- [ ] **12.10** Spot-check 40 randomly chosen sites against their sources. Log the findings in `data/reports/spot-check-<date>.md`.
+- [x] **12.9** Fill in `plan_status` (O11) and `closed_days` (2.11) wherever the research supports them. Everything else stays `incomplete` or `unknown`.
+- [x] **12.10** Spot-check 40 randomly chosen sites against their sources. Log the findings in `data/reports/spot-check-<date>.md`.
+
+**Done 26 Oct 2026 (12.1–12.10)**, specified in `.claude/specs/12-Content-readiness.md` (approved 25 Oct 2026). `npm run build` (release) passes with 0 editorial cells, 0 structural errors and 0 safety failures; every batch was reviewed by the owner before it was committed. Verified with 421 passing unit tests, typecheck, lint and a release static build; no internal term appears anywhere in `out/`.
+- **Starting count (12.1):** 2,254 editorial cells on 25 Oct 2026 (local mode): 1,357 internal-note cells plus 4 generated texts, 385 `plan_status`, 413 `closed_days`, 79 `unclassified`, 15 credit lines, 1 owner's review.
+- **12.2:** 872 citation and source cells rewritten by a reviewed one-off mapping. The public publisher follows the kind of source cited (book cited second-hand, project research list, AI-generated summary or audit, project editor, Google Maps), not the old wording. Internal-note cells: 1,357 → 489; the `site_sources` and `sources` groups are at zero.
+- **12.3–12.5:** 244 coordinates notes, 78 claims, 71 short descriptions and 105 cells in the small groups, in the same vocabulary ("the project", "the project editor", "the project's master list", "an AI-generated audit or guide"). Working-file references name the site page; district notes files are dropped. A check of all 1,375 rewritten cells found no lost qualifier (unverified, second-hand, not opened, leads only, not yet matched).
+- **12.6:** 71 `zamindar_house`, 5 `historic_residence`, 2 `garden_house`, 1 `estate_cluster`, each from a linked source; five borderline cases decided by the owner. Log: `data/reports/classification-2026-10-25.md`.
+- **12.7:** the 15 Nahid Sultan credit lines (CC BY-SA 4.0) follow the standard form; the pasted Commons description is gone from `creator` too.
+- **12.8:** `rickshaw` and `auto_rickshaw` leg modes, a leg legend under the trip map, and `leg_fare_<mode>` cost rows in the budget. `IT-DHK-064-1` has two legs and four fares (SRC-1137); known per person is Tk 405, the figure the 2.7 Manikganj check was waiting for. The reserved rickshaw fare is per vehicle.
+- **12.9:** `closed_days` 411 `unknown`, 2 `sun` (only reported hours with a confirming source); `plan_status` 37 timed (all hand-checked), 266 circuit, 82 incomplete (sample of 20 checked).
+- **12.10:** 40 sites, seed 20261025: 23 consistent, 4 consistent with a disagreement already recorded, 2 corrected (JB-CTG-004 condition; JB-DHK-037 disagreement), 11 not checkable automatically. Log: `data/reports/spot-check-2026-10-26.md`.
+- **Also done:** 399 inverted history years cleared (none was a real range); Bangla names for JB-RAJ-059 and JB-RAJ-071 (the owner's transliterations, still to confirm); the About page reviewed by the owner (one line updated for the Manikganj fares); the CI release job now blocks, on pull requests as well as `main` (1.13).
+- **Open:** broken source links SRC-0321, SRC-0121 and SRC-0968; 11 spot-check sites whose sources refuse automated reading (check in a browser); the 10 named closing days that stay `unknown` until their hours are verified.
 
 **Acceptance criteria**
 - `npm run build` (release) passes.
