@@ -151,29 +151,40 @@ describe('data contract on the real data', () => {
     }
   });
 
-  it('Manikganj loop budget: Tk 180 known; food and guide omitted; Teota no ticket (AC-6)', () => {
+  it('Manikganj loop budget: Tk 405 known with the editor\'s fares; food and guide omitted; Teota no ticket (AC-6, spec 12 AC-10)', () => {
     const t = readJson(build('trips', 'IT-DHK-064-1.json'));
-    expect(t.budget.known).toBe(180);
+    expect(t.budget.known).toBe(150 + 30 + 15 + 10 + 200);
     expect(t.budget.omitted).toEqual(['Food', 'Local guide']);
     const teota = t.budget.rows.find((r: { item: string }) => r.item === 'Entry: Teota Zamindar Bari');
     expect(teota.noTicket).toBe(true);
     expect(t.budget.rows[0].item).toBe('Dhaka → Baliati Palace (Baliati Zamindar Bari), one way');
-    for (const r of t.budget.rows) expect(r.date, r.item).toBe('2026-10-13');
-    for (const r of t.budget.rows.filter((x: { amount?: number }) => x.amount)) expect(r.unit, r.item).toBe('per_person');
+    const fares = t.budget.rows.filter((r: { category: string }) => r.category.startsWith('leg_fare_'));
+    expect(fares.map((r: { item: string; amount: number; unit: string; basis?: string }) => [r.item, r.amount, r.unit, r.basis])).toEqual([
+      ['Rickshaw, stops 4 → 5', 15, 'per_person', 'shared'],
+      ['Rickshaw, stops 4 → 5', 30, 'per_vehicle', 'reserved'],
+      ['Auto-rickshaw, stops 5 → 6', 10, 'per_person', 'shared'],
+      ['Bus, stops 5 → 6', 200, 'per_person', undefined]
+    ]);
+    for (const r of fares) expect([r.date, r.sources], r.item).toEqual(['2026-10-20', ['SRC-1137']]);
+    for (const r of t.budget.rows.filter((x: { category: string }) => !x.category.startsWith('leg_fare_'))) expect(r.date, r.item).toBe('2026-10-13');
+    expect(t.legs.map((l: { from: number; to: number; mode: string }) => [l.from, l.to, l.mode])).toEqual([[4, 5, 'rickshaw'], [5, 6, 'mixed']]);
+    expect([t.schematic, t.planStatus]).toEqual([false, 'timed']);
   });
 
   it('hours known for 12 sites (AC-7)', () => expect(siteFiles.filter(s => s.visiting.hoursKnown).length).toBe(12));
 
-  it('trips have per-fact dates, no lastChecked, and are schematic with no place coordinates (AC-8, AC-9)', () => {
+  it('trips have per-fact dates, no lastChecked, reviewed plan status, and are schematic except the Manikganj loop (AC-8, AC-9, spec 12 AC-12)', () => {
     const meta = readJson(build('meta.json'));
     expect(meta.compiledAt).toBeDefined();
     expect(meta.lastVerified).toBeDefined();
+    const status: Record<string, number> = {};
     for (const t of trips) {
       expect(t.lastChecked, t.id).toBeUndefined();
-      expect([t.legs, t.schematic], t.id).toEqual([[], true]);
+      if (t.id !== 'IT-DHK-064-1') expect([t.legs, t.schematic], t.id).toEqual([[], true]);
       for (const st of t.stops) if (st.kind === 'place') expect(st.latlon, `${t.id} ${st.order}`).toBeUndefined();
-      expect(t.planStatus, t.id).toBeUndefined();
+      status[t.planStatus] = (status[t.planStatus] ?? 0) + 1;
     }
+    expect(status).toEqual({ timed: 37, circuit: 266, incomplete: 82 });
   });
 
   it('hidden pins without photos have a name-only link (AC-11)', () => {
@@ -205,12 +216,10 @@ describe('data contract on the real data', () => {
     }
   });
 
-  it('the release report lists unreviewed plan_status and closed_days cells (AC-16)', () => {
+  it('Phase 12 cleared the data groups of the release report (spec 12 AC-2); only the owner\'s About review may remain', () => {
     const r = report(results, 'release');
     const editorial = r.editorial as Record<string, unknown[]>;
-    expect(editorial.planStatus.length).toBe(385);
-    expect(editorial.closedDays.length).toBe(413);
-    expect(r.fatal).toBe(true);
+    for (const kind of ['notes', 'credits', 'unclassified', 'planStatus', 'closedDays']) expect(editorial[kind] ?? [], kind).toEqual([]);
     expect(report(results, 'local').fatal).toBe(false);
   });
 });

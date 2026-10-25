@@ -107,6 +107,30 @@ describe('trips (2.6–2.8, 2.10, 2.16)', () => {
     const row = built(dir).trip.budget.rows[0];
     expect(row).toMatchObject({ basis: 'shared', legs: [[1, 2], [2, 3]] });
   });
+  it('a leg fare follows the Dhaka fare, named by mode and stops; only per-person fares count (spec 12 FR-18)', () => {
+    const dir = fixtureDir();
+    const fare = (cost_id: string, amount: string, unit: string, fare_basis: string) => ({
+      cost_id, site_id: 'JB-DHK-001', category: 'leg_fare_rickshaw', amount_bdt: amount, amount_text: `Tk ${amount}`, currency: 'BDT', unit,
+      basis_and_assumptions: 'Rickshaw between the two houses.', estimate_date: '2026-10-20', status: 'reported', source_ids: 'SRC-0002', fare_basis, legs: '1-2'
+    });
+    writeTable(dir, 'costs', [...readTable(dir, 'costs'), fare('CO-DHK-001-05', '30', 'per vehicle', 'reserved'), fare('CO-DHK-001-04', '15', 'per person', 'shared')]);
+    writeTable(dir, 'itinerary_legs', readTable(dir, 'itinerary_legs').map(l => ({ ...l, mode: 'rickshaw' })));
+    const t2 = built(dir).trip;
+    expect(t2.budget.rows.slice(1, 3)).toMatchObject([
+      { item: 'Rickshaw, stops 1 → 2', category: 'leg_fare_rickshaw', amount: 15, unit: 'per_person', basis: 'shared', legs: [[1, 2]] },
+      { item: 'Rickshaw, stops 1 → 2', amount: 30, unit: 'per_vehicle', basis: 'reserved' }
+    ]);
+    expect(t2.budget.known).toBe(150 + 15 + 20);
+    expect(t2.legs[0].mode).toBe('rickshaw');
+  });
+  it('accepts the rickshaw and auto-rickshaw leg modes and still rejects an unknown one', () => {
+    for (const [mode, ok] of [['auto_rickshaw', true], ['tuktuk', false]] as const) {
+      const dir = fixtureDir();
+      writeTable(dir, 'itinerary_legs', readTable(dir, 'itinerary_legs').map(l => ({ ...l, mode })));
+      const structural = runBuilders(dir).results.flatMap(r => r.structural);
+      expect(structural.some(e => /itinerary_legs/.test(JSON.stringify(e)))).toBe(!ok);
+    }
+  });
 });
 
 describe('visiting (2.8, 2.9, 2.11)', () => {

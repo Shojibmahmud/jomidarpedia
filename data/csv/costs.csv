@@ -714,6 +714,10 @@ CO-DHK-064-02,JB-DHK-064,entry_fee,30,Tk 30,BDT,per person (local adult rate unl
 CO-DHK-064-03,JB-DHK-064,accommodation,,Unknown (not researched),BDT,,Not covered by the research so far,2026-10-13,unknown,,,
 CO-DHK-064-04,JB-DHK-064,food,,Unknown (not researched),BDT,,Not covered by the research so far,2026-10-13,unknown,,,
 CO-DHK-064-05,JB-DHK-064,local_guide,,Unknown (not researched),BDT,,Not covered by the research so far,2026-10-13,unknown,,,
+CO-DHK-064-06,JB-DHK-064,leg_fare_rickshaw,15,Tk 15 shared,BDT,per person,"Rickshaw from Teota Zamindar Bari to Aricha, shared. Fare reported by the project editor, 20 Oct 2026.",2026-10-20,reported,SRC-1137,shared,4-5
+CO-DHK-064-07,JB-DHK-064,leg_fare_rickshaw,30,Tk 30 reserved,BDT,per vehicle,"Rickshaw from Teota Zamindar Bari to Aricha, reserved for your group. Fare reported by the project editor, 20 Oct 2026.",2026-10-20,reported,SRC-1137,reserved,4-5
+CO-DHK-064-08,JB-DHK-064,leg_fare_auto_rickshaw,10,Tk 10 shared,BDT,per person,"Shared auto-rickshaw from Aricha to Utholi, the first part of the way back to Dhaka. Fare reported by the project editor, 20 Oct 2026.",2026-10-20,reported,SRC-1137,shared,5-6
+CO-DHK-064-09,JB-DHK-064,leg_fare_bus,200,Tk 200,BDT,per person,"Bus from Utholi to Gabtoli (Dhaka), the second part of the way back. Fare reported by the project editor, 20 Oct 2026.",2026-10-20,reported,SRC-1137,,5-6
 CO-DHK-065-01,JB-DHK-065,transport_dhaka_one_way,,Unknown,BDT,"per person, one way, public transport (assumed)","Bus to Manikganj Tk 120-150 (Vromon Guide, page updated 2024). The two local legs are unpriced. Travel time is an estimate.",2026-10-13,unknown,SRC-1003,,
 CO-DHK-065-02,JB-DHK-065,entry_fee,,Unknown,BDT,per person (local adult rate unless stated),No ticketing; government-held building.,2026-10-13,unknown,record-level,,
 CO-DHK-065-03,JB-DHK-065,accommodation,,Unknown (not researched),BDT,,Not covered by the research so far,2026-10-13,unknown,,,
