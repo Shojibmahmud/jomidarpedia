@@ -125,6 +125,7 @@ describe('build output (FR-8 to FR-14, AC-3 to AC-5)', () => {
     expect(site.travel.routes[0].steps.some((s: { labelBn?: string }) => s.labelBn)).toBe(false); // step count differs
     expect(site.visiting.feeNoteBn).toBe('প্রাপ্তবয়স্ক প্রতি।');
     expect(site.history[0].textBn).toBe('বাড়িটি তৈরি হয়।');
+    expect(site.history[0].yearBn).toBe('আনুমানিক 1850');        // computed year: only the "c." changes
   });
   it('splits a translated claim into the same versions', () => {
     const c = site.conflicts.find((x: { field: string }) => x.field === 'Style');

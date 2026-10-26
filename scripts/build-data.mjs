@@ -321,7 +321,9 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', translat
         ? eventYear(e, e.date_approximate === 'TRUE')
         : e.date_text.length <= 30 && !UNKNOWN.test(e.date_text) ? e.date_text : '';
       const textBn = bn('history_events', e, 'description');
-      const yearBn = !e.year_start && year ? bn('history_events', e, 'date_text') : undefined;
+      // Computed years only need the "c." prefix in Bangla; free-text dates are translated like prose.
+      const yearBn = e.year_start ? (year.startsWith('c. ') ? 'আনুমানিক ' + year.slice(3) : undefined)
+        : year ? bn('history_events', e, 'date_text') : undefined;
       return {
         year, ...(yearBn && { yearBn }), type: e.event_type, text: e.description, ...(textBn && { textBn }), status: e.verification_status,
         sources: srcIds(e.source_ids).map(x => refFor(x)).filter(Boolean)
