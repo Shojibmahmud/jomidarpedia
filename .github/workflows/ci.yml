@@ -31,8 +31,9 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm test
+      # The data build comes first: unit tests read data/build/ and public/data/index.json, which are not committed
       - run: npm run build:local
+      - run: npm test
       - run: test -f out/index.html
       # Link and leak checks and the size budgets over the export (roadmap 13.1, 13.9; spec 13 FR-2, FR-29 to FR-32)
       - run: npm run check:out
