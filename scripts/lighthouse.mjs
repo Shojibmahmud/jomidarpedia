@@ -42,11 +42,13 @@ export function assertRun(url, lhr) {
 }
 
 function startServer() {
-  const server = spawn('npx', ['serve', 'out', '--config', '../serve.json', '--listen', String(PORT), '--no-clipboard', '--no-port-switching'], { stdio: ['ignore', 'pipe', 'inherit'] });
+  // serve's own binary, not `npx serve`: killing npx would leave the server running and keep this process alive.
+  const server = spawn('node_modules/.bin/serve', ['out', '--config', '../serve.json', '--listen', String(PORT), '--no-clipboard', '--no-port-switching'], { stdio: ['ignore', 'pipe', 'inherit'] });
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('serve did not start within 30 s')), 30_000);
     server.stdout.on('data', d => { if (/Accepting connections|Local:/.test(String(d))) { clearTimeout(timer); resolve(server); } });
     server.on('exit', code => reject(new Error(`serve exited with ${code}`)));
+    server.on('error', reject);
   });
 }
 
@@ -80,7 +82,8 @@ async function main() {
   }
   writeFileSync(`${OUT}/summary.json`, `${JSON.stringify(summary, null, 2)}\n`);
   for (const p of problems) console.log(`FAIL ${p}`);
-  if (problems.length) process.exitCode = 1;
+  // Exit explicitly: a Chrome or server handle left open must not hang CI until the job's timeout.
+  process.exit(problems.length ? 1 : 0);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) await main();
