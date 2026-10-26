@@ -13,6 +13,7 @@ import { areaSvg, districtPage } from '@/lib/area-data';
 import { getDistricts } from '@/lib/data';
 import { both, formatCount } from '@/lib/format';
 import { pageCorrectionUrl } from '@/lib/site-page';
+import { pageMeta } from '@/lib/seo';
 import { canonicalUrl } from '@/lib/site-url';
 
 type Params = { slug: string };
@@ -26,7 +27,11 @@ export function generateStaticParams(): Params[] {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  return { title: `${districtPage(slug).dist.en} District` };
+  const { dist, div } = districtPage(slug);
+  return pageMeta({
+    title: `${dist.en} District`, path: districtHref(dist.slug), canonical: false,
+    description: `${dist.count} zamindar ${dist.count === 1 ? 'site' : 'sites'} in ${dist.en} District, ${div.en} Division, Bangladesh, in travel-time order with a map.`,
+  });
 }
 
 export default async function DistrictPage({ params }: { params: Promise<Params> }) {

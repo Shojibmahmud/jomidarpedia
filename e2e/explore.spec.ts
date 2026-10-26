@@ -2,7 +2,7 @@
 // public/data/index.json with lib/filters.ts and lib/sort.ts, never typed (I6). Run `npm run build:local` first.
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 import { readFileSync } from 'node:fs';
 import { bestRemoval, counts, EMPTY, filter, makePlaces, type FilterState } from '../lib/filters';
 import { sortSites } from '../lib/sort';

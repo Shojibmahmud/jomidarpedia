@@ -16,8 +16,12 @@ import { dual } from '@/lib/i18n';
 import { CORRECTIONS_URL } from '@/lib/nav';
 import { canonicalUrl, siteHref } from '@/lib/site-url';
 import type { Credit } from '@/lib/types';
+import { pageMeta } from '@/lib/seo';
 
-export const metadata: Metadata = { title: 'Image credits' };
+export function generateMetadata(): Metadata {
+  const n = getCredits().length;
+  return pageMeta({ title: 'Image credits', path: '/credits/', canonical: false, description: `Credits and licences for the ${n} photos of zamindar sites shown on Jomidarpedia.` });
+}
 
 const n = (v: number) => both(formatCount, v);
 const SHOWN = 8;

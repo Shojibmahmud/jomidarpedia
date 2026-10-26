@@ -2,7 +2,7 @@
 // with lib/search.ts and lib/filters.ts, never typed (I6). Run `npm run build:local` first.
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 import { readdirSync, readFileSync } from 'node:fs';
 import Fuse from 'fuse.js';
 import { EMPTY, filter, makePlaces } from '../lib/filters';

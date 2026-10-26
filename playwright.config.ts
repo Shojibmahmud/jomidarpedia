@@ -14,7 +14,8 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}`, trace: 'retain-on-failure' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `npx serve out --listen ${PORT} --no-clipboard --no-port-switching`,
+    // serve.json mirrors vercel.json's headers, so the CSP applies in every test (spec 13 FR-28)
+    command: `npx serve out --config ../serve.json --listen ${PORT} --no-clipboard --no-port-switching`,
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,

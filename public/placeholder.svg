@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice">
+<!-- Shown in place of a photo that fails to load (spec 13 FR-16): the "unknown" scene of components/art/PlaceholderArt.tsx
+     in fixed token colours, light and dark by the system setting (an <img> cannot read the page's theme). -->
+<style>
+.bg{fill:#EFE7D8}.sun{fill:#F6E1D8}.ground{fill:#E1EBD6}.water{fill:#DCEBE9}.wave{stroke:#FFFCF5}.dash{fill:none;stroke:#5C5448;stroke-dasharray:4 3;stroke-width:1.25}
+.mark{fill:#FFFCF5;stroke:#5C5448;stroke-width:1.5}.q{fill:#5C5448;font:700 16px sans-serif}.stem{stroke:#211D18;stroke-opacity:.75}.leaf{stroke:#466636}
+@media (prefers-color-scheme:dark){.bg{fill:#2E2A23}.sun{fill:#3A2620}.ground{fill:#22301C}.water{fill:#173231}.wave{stroke:#24211B}.dash{stroke:#B5AB98}.mark{fill:#24211B;stroke:#B5AB98}.q{fill:#B5AB98}.stem{stroke:#F1EADB}.leaf{stroke:#9DC184}}
+</style>
+<rect class="bg" width="320" height="240"/>
+<circle class="sun" cx="262" cy="56" r="14"/>
+<path class="ground" d="M0 160 Q50 136 100 150 T200 146 T320 150 V176 H0 Z"/>
+<path class="stem" d="M58 168 C60 140 62 118 70 96" stroke-width="3" fill="none"/>
+<g class="leaf" stroke-width="4" stroke-linecap="round" fill="none"><path d="M70 96 q-17 -4 -34 12"/><path d="M70 96 q-12 -22 -24 -6"/><path d="M70 96 q0 -28 0 -12"/><path d="M70 96 q11 -18 22 -2"/><path d="M70 96 q15 0 30 16"/></g>
+<path class="dash" d="M96 112 H236 V160 H96 Z M136 112 L166 94 L196 112 M86 164 H246"/>
+<path class="dash" d="M108 124 h14 v18 h-14 Z M210 124 h14 v18 h-14 Z"/>
+<circle class="mark" cx="166" cy="136" r="12"/>
+<text class="q" x="166" y="141.5" text-anchor="middle">?</text>
+<rect class="water" y="168" width="320" height="72"/>
+<path class="wave" d="M40 190 H110 M150 202 H230 M70 216 H130 M240 186 H290" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

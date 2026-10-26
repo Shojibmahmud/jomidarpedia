@@ -27,11 +27,16 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # Runtime dependencies only: high or critical findings fail (roadmap 13.10, spec 13 FR-33)
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm run build:local
       - run: test -f out/index.html
+      # Link and leak checks and the size budgets over the export (roadmap 13.1, 13.9; spec 13 FR-2, FR-29 to FR-32)
+      - run: npm run check:out
+      - run: npm run check:budgets
       # Smoke tests against the static export (roadmap tasks 4.4 and 4.5)
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
@@ -60,10 +65,25 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # SITE_URL is the Lighthouse server's origin, so canonical links are absolute as in production (spec 13 FR-35).
+      # This build is checked, never deployed.
       - run: npm run build
+        env:
+          SITE_URL: http://localhost:4174
       - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: release-problems
           path: data/reports/release-problems.md
           if-no-files-found: warn
+      - run: npm run check:out
+      - run: npm run check:budgets
+      # Lighthouse needs an indexable build for SEO, so it runs here, not on the local build (spec 13 FR-1, FR-5)
+      - run: npx playwright install --with-deps chromium
+      - run: npm run lighthouse
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: .lighthouse/
+          if-no-files-found: ignore

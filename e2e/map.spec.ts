@@ -3,7 +3,7 @@
 // contacts a tile server. Run `npm run build:local` first.
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page, type Response } from '@playwright/test';
+import { expect, test, type Page, type Response } from './fixtures';
 import { readFileSync } from 'node:fs';
 import { EMPTY, filter, makePlaces, type FilterState } from '../lib/filters';
 import { parse } from '../lib/urlState';

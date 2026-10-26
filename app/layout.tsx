@@ -6,17 +6,25 @@ import { SiteFooter } from '@/components/shell/SiteFooter';
 import { SiteHeader } from '@/components/shell/SiteHeader';
 import { getMeta } from '@/lib/data';
 import { BOOT_SCRIPT } from '@/lib/prefs';
+import { DEFAULT_OG_IMAGE, SITE_NAME } from '@/lib/seo';
 import { indexable } from '@/lib/site-url';
 import './tokens.css';
 
 // Titles and descriptions stay English (O6); the count comes from the data, never from copy.
 // Local and preview builds are noindex on every page (§2.4, spec 04 FR-9); release pages may be indexed.
+// metadataBase makes canonical and share URLs absolute once SITE_URL is set (spec 13 FR-35); pages set their own
+// title, description and share tags through pageMeta (lib/seo.ts), and these defaults cover the rest (404).
 export function generateMetadata(): Metadata {
+  const base = process.env.SITE_URL?.trim();
+  const description = `The zamindar palaces of Bangladesh: ${getMeta().counts.sites} sites with sources, conditions and day trips from Dhaka.`;
   return {
+    ...(base && { metadataBase: new URL(base) }),
     ...(indexable() ? {} : { robots: { index: false, follow: false } }),
     title: { default: 'Jomidarpedia · জমিদারপিডিয়া', template: '%s · Jomidarpedia' },
-    description: `The zamindar palaces of Bangladesh: ${getMeta().counts.sites} sites with sources, conditions and day trips from Dhaka.`,
+    description,
     icons: { icon: '/icon.svg', apple: '/apple-touch-icon.png' },
+    openGraph: { siteName: SITE_NAME, type: 'website', locale: 'en', title: SITE_NAME, description, images: [DEFAULT_OG_IMAGE] },
+    twitter: { card: 'summary_large_image', images: [DEFAULT_OG_IMAGE.url] },
   };
 }
 

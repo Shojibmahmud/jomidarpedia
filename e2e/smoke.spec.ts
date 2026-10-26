@@ -1,7 +1,7 @@
 // Smoke tests for the walking skeleton (roadmap task 4.5, spec 04 FR-12). Expected names and slugs
 // come from the built data, never from numbers or names typed here (I6).
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import HOME_IMAGES from '../lib/home-images.json';

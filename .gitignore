@@ -15,5 +15,6 @@ data/reports/*
 *.tsbuildinfo
 public/maps/
 playwright-report/
+.lighthouse/
 test-results/
 screenshots/

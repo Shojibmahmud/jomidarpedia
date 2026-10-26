@@ -2,7 +2,7 @@
 // from the built data, never typed here (I6).
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 import { readFileSync } from 'node:fs';
 import type { Meta } from '../lib/types';
 import { stubTiles } from './tiles';

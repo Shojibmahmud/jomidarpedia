@@ -2,8 +2,8 @@
 // numbers typed here (I6). Run `npm run build:local` first.
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
-import { readFileSync } from 'node:fs';
+import { expect, test, type Page } from './fixtures';
+import { readdirSync, readFileSync } from 'node:fs';
 import { BD_COORD_TEXT } from '../scripts/lib/rules.mjs';
 import { disagreements, openQuestions, isSparse } from '../lib/site-page';
 import type { SiteRecord } from '../lib/types';
@@ -19,7 +19,7 @@ const elangi = site('JB-RAJ-002');       // no photo, no pin, unknowns, sparse
 const conflicted = site('JB-MYM-019');   // most multi-version conflicts (A-5)
 const unknownFee = site('JB-BSL-004');   // access and fee unknown (A-5)
 const unverified = site('JB-DHK-008');   // O9
-const noBangla = site('JB-RAJ-059');     // O13
+const noBangla = site('JB-RAJ-059');     // O13 until Phase 12 recorded its Bangla name
 const SIX = [baliati, elangi, conflicted, unknownFee, unverified, noBangla];
 const SECTIONS = ['summary', 'location', 'history', 'architecture', 'stories', 'visiting', 'getting-there', 'itineraries', 'combine', 'sources'];
 
@@ -158,10 +158,14 @@ test('JB-DHK-008 is shown as unverified (O9)', async ({ page }) => {
   await expect(page.locator('header').getByText('Location confirmed')).toHaveCount(0);
 });
 
-test('JB-RAJ-059: English name only, with the note outside the heading (O13)', async ({ page }) => {
-  await page.goto(href(noBangla));
+// Chosen by rule: Phase 12 gave JB-RAJ-059 its Bangla name, so the test uses any site still without one.
+const bnMissing = readdirSync('data/build/sites').map(f => site(f.replace(/\.json$/, ''))).find(x => x.bnMissing);
+
+test('a site without a Bangla name: English name only, with the note outside the heading (O13)', async ({ page }) => {
+  test.skip(!bnMissing, 'every site has a Bangla name (Phase 12 FR-25)');
+  await page.goto(href(bnMissing!));
   const h1 = page.locator('h1');
-  await expect(h1).toHaveText(noBangla.name.en);
+  await expect(h1).toHaveText(bnMissing!.name.en);
   await expect(h1.locator('[lang="bn"]')).toHaveCount(0);
   await expect(page.locator('header').getByText('Bangla name not yet recorded')).toBeVisible();
 });

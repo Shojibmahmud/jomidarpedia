@@ -12,8 +12,12 @@ import { both, formatCount } from '@/lib/format';
 import { dual } from '@/lib/i18n';
 import { tripCards } from '@/lib/trip-data';
 import { hasTimed, PAGE, sortTrips } from '@/lib/trips';
+import { pageMeta } from '@/lib/seo';
 
-export const metadata: Metadata = { title: 'Day trips and itineraries' };
+export function generateMetadata(): Metadata {
+  const n = tripCards().length;
+  return pageMeta({ title: 'Day trips and itineraries', path: '/trips/', description: `${n} itineraries to the zamindar palaces of Bangladesh, with stops, travel times from Dhaka, known costs and sources.` });
+}
 
 export default function TripsPage() {
   const trips = tripCards();
