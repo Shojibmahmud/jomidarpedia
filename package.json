@@ -6,6 +6,7 @@
     "data:index": "node scripts/build-index.mjs",
     "data:build": "node scripts/build-data.mjs",
     "data": "node scripts/data.mjs",
+    "bn": "node scripts/bn.mjs",
     "thumbs": "node scripts/build-thumbs.mjs",
     "icons": "node scripts/build-icons.mjs",
     "dev": "JP_DATA_MODE=local npm run data && JP_DATA_MODE=local next dev",

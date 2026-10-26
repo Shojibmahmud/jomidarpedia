@@ -4,6 +4,7 @@
 //   data/build/trips/<id>.json   Itinerary      data/build/divisions.json  Division[]
 //   data/build/districts.json    District[]     data/build/sources.json    SourceEntry[]
 //   data/build/credits.json      Credit[]       data/build/meta.json       Meta
+//   data/build/translations.json TranslationCells (spec 14: the review page's rows)
 // Shapes are in lib/types.ts and docs/DATA_CONTRACT.md. Every output object is built from named
 // public fields only (roadmap I7); internal columns never reach it.
 //
@@ -22,11 +23,12 @@ import { BUCKET, DIVISIONS, CONDITIONS, CONFIDENCE, COORD_PAIR, isMappable, latl
 import { loadTables, validateTables, TABLES, rowKey } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, strings, ZERO_OR_FREE } from './lib/checks.mjs';
 import { UNKNOWN, BARE_UNKNOWN, hoursKnown, suggestPlanStatus, PLAN_STATUS, parseClosedDays, routeMode, UNIT, parseLegs, matchVersions, tripTitle,
-  LEG_FARE, MODE_NAME, isPlaceholderEvent, eventYear, BD_COORD_TEXT, isReadyImage, leadFirst } from './lib/rules.mjs';
+  LEG_FARE, MODE_NAME, isPlaceholderEvent, eventYear, BD_COORD_TEXT, isReadyImage, leadFirst, BOILERPLATE_ALT } from './lib/rules.mjs';
+import { loadTranslations, pageTracker, translationReport, TRANSLATIONS_DIR, ROUTE_STEPS, VERSUS } from './lib/translations.mjs';
 import { LINE } from './csv.mjs';
 
 const OUTPUT_DIRS = ['sites', 'trips'];
-const OUTPUT_FILES = ['trips.json', 'divisions.json', 'districts.json', 'sources.json', 'credits.json', 'meta.json'];
+const OUTPUT_FILES = ['trips.json', 'divisions.json', 'districts.json', 'sources.json', 'credits.json', 'meta.json', 'translations.json'];
 
 // compiledAt: SOURCE_DATE_EPOCH (seconds) when set and valid, otherwise the data's own last date.
 /** @param {Record<string, string | undefined>} env @param {string} lastVerified @param {string[]} [notices] */
@@ -72,13 +74,16 @@ export function safetyChecks({ sites, readyImageIds, records, trips, credits }) 
   return gates;
 }
 
-/** @param {{ csvDir?: string, outDir?: string, env?: Record<string, string | undefined> }} [options] */
-export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = process.env } = {}) {
+/** @param {{ csvDir?: string, outDir?: string, translationsDir?: string, env?: Record<string, string | undefined> }} [options] */
+export function buildData({ csvDir = 'data/csv', outDir = 'data/build', translationsDir = TRANSLATIONS_DIR, env = process.env } = {}) {
   const outputs = [...OUTPUT_DIRS, ...OUTPUT_FILES].map(p => join(outDir, p));
   const result = { name: 'build-data', structural: [], gates: [], editorial: {}, warnings: [], info: [], notes: [], outputs };
 
   const { T, errors } = loadTables(csvDir, TABLES);
   result.structural = errors.length ? errors : validateTables(T);
+  // Bangla translations (spec 14): a malformed file is structural; every other gap only falls back to English.
+  const tr = result.structural.length ? null : loadTranslations(T, translationsDir);
+  if (tr) result.structural = tr.errors;
   if (result.structural.length) {
     outputs.forEach(p => rmSync(p, { recursive: true, force: true }));
     return result;
@@ -108,6 +113,18 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     if (Number(v) === 0) return { known: false, text: 'No ticket reported' };
     return note ? { known: true, value: Number(v), note } : { known: true, value: Number(v) };
   }
+  // The Bangla of a Maybe shown as prose (spec 14 FR-9): a known value, or an unknown that keeps its own wording.
+  // The contract's own texts ("Not documented", "No ticket reported") are interface strings, never translated (FR-13).
+  const CONTRACT_TEXT = ['Not documented', 'No ticket reported'];
+  const withBnText = (b, key) => (b ? { [key]: b } : {});
+  // A trip's Bangla title is cut from the translated title cell the way tripTitle cuts the English one.
+  const tripTitleBn = t => (t ? tripTitle(t) : undefined);
+  function withBn(m, bn, table, row, column, shown = true) {
+    if (!m.known && CONTRACT_TEXT.includes(m.text)) return m;
+    const b = bn(table, row, column, shown);
+    if (b) { if (m.known) m.bn = b; else m.textBn = b; }
+    return m;
+  }
 
   // ---------------------------------------------------------------- lookups
   const sites = T.sites;
@@ -129,18 +146,18 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
   const featuresBySite = groupBy(T.features, 'site_id');
 
   // Images: only publication_readiness "Ready…" may leave the CSV.
-  const BOILERPLATE_ALT = /^This is a photo of a monument in Bangladesh identified by the ID/i;
   const readyImages = leadFirst(T.images.filter(isReadyImage)); // the lead photo first (scripts/lib/rules.mjs)
   const imagesBySite = groupBy(readyImages, 'site_id');
   let boilerplateAlt = 0;
-  function imageRecord(im) {
-    let alt = im.caption_alt_text;
+  function imageRecord(im, bn) {
+    let alt = im.caption_alt_text, altBn;
     if (!alt || BOILERPLATE_ALT.test(alt)) { boilerplateAlt++; alt = `${im.view_category.replace(/ \(.*\)$/, '')}: ${siteById.get(im.site_id)?.name_en ?? im.site_name}`; }
+    else altBn = bn('images', im, 'caption_alt_text', false); // alt text is not counted for the page note
     return {
       id: im.image_id,
       thumb: `/thumbs/${im.image_id}.webp`,
       full: (im.direct_image_url || '').replace(/[?&]utm_[^#]*$/, '') || `/thumbs/${im.image_id}.webp`, // an owner's photo has no hosted file
-      alt, altLang: /[ঀ-৿]/.test(alt) ? 'bn' : 'en',
+      alt, altLang: /[ঀ-৿]/.test(alt) ? 'bn' : 'en', ...(altBn && { altBn }),
       view: im.view_category,
       credit: im.required_credit,
       sourcePage: im.source_page_url || undefined
@@ -173,10 +190,35 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     'visiting_info.entry_fee_bdt': 'Entry fee', 'visiting_info.visiting_hours': 'Opening hours', visiting_info: 'Visiting details',
     'name.english': 'English name', 'name.bangla': 'Bangla name'
   };
+  // The same words in Bangla (spec 14 A-6): a bare field name needs no translation; one with more text uses
+  // the matching item of the translated unverified_fields cell. Drafts, like other interface wording.
+  const FIELD_WORDS_BN = {
+    'location.coordinates': 'মানচিত্রে অবস্থান', 'location.union': 'ইউনিয়ন', 'location.village': 'গ্রাম', 'location.village_bn': 'গ্রামের বাংলা নাম',
+    'location.upazila': 'উপজেলা', 'location.google_maps_url': 'গুগল ম্যাপস লিংক',
+    'history.established_era': 'কখন তৈরি', 'history.founder': 'কে তৈরি করেন', 'history.architectural_style': 'স্থাপত্যরীতি',
+    'history.preservation_status': 'বর্তমান অবস্থা', 'history.key_features': 'প্রধান বৈশিষ্ট্য', 'history.key_dates': 'গুরুত্বপূর্ণ তারিখ',
+    'filters.condition_category': 'অবস্থা', 'filters.site_type': 'স্থানের ধরন', 'filters.travel_time_bucket': 'ঢাকা থেকে যাত্রার সময়',
+    'travel_from_dhaka.estimated_one_way_cost_bdt': 'যাতায়াতের খরচ', 'travel_from_dhaka.approx_travel_time_hours': 'ঢাকা থেকে যাত্রার সময়',
+    'travel_from_dhaka.route': 'ঢাকা থেকে পথ', 'travel_from_dhaka.last_mile_transport': 'যাত্রার শেষ অংশ',
+    'travel_from_dhaka.alternatives': 'অন্য পথ', travel_from_dhaka: 'ঢাকা থেকে পথ',
+    'visiting_info.entry_fee_bdt': 'প্রবেশ ফি', 'visiting_info.visiting_hours': 'খোলার সময়', visiting_info: 'দর্শনের তথ্য',
+    'name.english': 'ইংরেজি নাম', 'name.bangla': 'বাংলা নাম'
+  };
   function plainField(f) {
     const m = f.match(/^([a-z_]+(?:\.[a-z_]+)*)\s*(.*)$/);
     if (m && FIELD_WORDS[m[1]]) return `${FIELD_WORDS[m[1]]}${m[2] ? ' ' + m[2] : ''}`;
     return f.charAt(0).toUpperCase() + f.slice(1);
+  }
+  // The Bangla of each "Still to confirm" item, or null where it stays English.
+  function plainFieldsBn(s, bn) {
+    const items = list(s.unverified_fields);
+    const needs = items.some(f => { const m = f.match(/^([a-z_]+(?:\.[a-z_]+)*)\s*(.*)$/); return !(m && FIELD_WORDS_BN[m[1]] && !m[2]); });
+    const translated = needs ? list(bn('sites', s, 'unverified_fields')) : [];
+    return items.map((f, k) => {
+      const m = f.match(/^([a-z_]+(?:\.[a-z_]+)*)\s*(.*)$/);
+      if (m && FIELD_WORDS_BN[m[1]] && !m[2]) return FIELD_WORDS_BN[m[1]];
+      return translated[k] ?? null;
+    });
   }
 
   // Each claim's links, one per source, in CSV order.
@@ -186,13 +228,19 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
   // A source goes on the one version whose text names its publisher; otherwise it is listed for the
   // disagreement as a whole. It is never copied onto several versions.
   const conflictStats = { versionsWithSources: 0, versionsWithoutSources: 0, unattributedLinks: 0 };
-  function conflict(c, refFor) {
-    const text = c.claim_text.replace(/\.$/, '');
+  const splitClaim = (text, fallback) => {
+    text = text.replace(/[.।]$/, '');
     const colon = text.indexOf(': ');
-    const field = colon > 0 && colon < 40 ? text.slice(0, colon) : 'Record';
-    const body = colon > 0 && colon < 40 ? text.slice(colon + 2) : text;
-    const parts = body.split(/\s+vs\.?\s+/);
+    const has = colon > 0 && colon < 40;
+    return { field: has ? text.slice(0, colon) : fallback, parts: (has ? text.slice(colon + 2) : text).split(VERSUS) };
+  };
+  function conflict(c, refFor, bn) {
+    const { field, parts } = splitClaim(c.claim_text, 'Record');
     const versions = parts.map(p => ({ text: p, sources: [] }));
+    // Bangla (spec 14): the translation keeps the "field: a vs b" shape (checked in scripts/lib/translations.mjs).
+    const textBn = bn('claims', c, 'claim_text');
+    const bnSplit = textBn ? splitClaim(textBn, 'তথ্য') : null;
+    if (bnSplit && bnSplit.parts.length === parts.length) bnSplit.parts.forEach((p, k) => { versions[k].textBn = p; });
     const unattributed = [];
     for (const l of claimLinks(c.claim_id)) {
       const ref = refFor(l.source_id, l.relation);
@@ -203,7 +251,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     }
     for (const v of versions) conflictStats[v.sources.length ? 'versionsWithSources' : 'versionsWithoutSources']++;
     conflictStats.unattributedLinks += unattributed.length;
-    return { field, versions, ...(unattributed.length && { unattributedSources: unattributed }) };
+    return { field, ...(bnSplit && { fieldBn: bnSplit.field }), versions, ...(unattributed.length && { unattributedSources: unattributed }) };
   }
 
   // Fact fields and the claim field that sources each one (2.3).
@@ -221,6 +269,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     const id = s.site_id;
     const v = visitorBySite.get(id) ?? {};
     if (!visitorBySite.has(id)) warn(`${id}: no Visitor_Info row`);
+    const { bn, state: bnState } = pageTracker(tr.lookup);
 
     // Footnotes: Site_Sources order first, then any source cited only by an event, claim, legend or feature.
     const notes = [];
@@ -234,18 +283,32 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     siteSources.forEach(ss => refFor(ss.source_id));
 
     const routes = (routesBySite.get(id) ?? []).map(r => {
-      const steps = r.route_description.split(/\s*->\s*/).filter(Boolean).map(label => ({ label }));
+      const steps = r.route_description.split(ROUTE_STEPS).filter(Boolean).map(label => ({ label }));
       if (r.last_mile && steps.length) steps[steps.length - 1].note = r.last_mile;
+      // Bangla steps split the same way (FR-11); a translation with a different step count is never valid (A-3).
+      const descriptionBn = bn('travel_routes', r, 'route_description', false);
+      if (descriptionBn) descriptionBn.split(ROUTE_STEPS).filter(Boolean).forEach((label, k) => { steps[k].labelBn = label; });
+      const lastMileBn = bn('travel_routes', r, 'last_mile', false);
+      if (lastMileBn && steps.length) steps[steps.length - 1].noteBn = lastMileBn;
       const m = routeMode(r.transport_mode, r.route_description);
       modeCount[m.mode] = (modeCount[m.mode] ?? 0) + 1;
       if (m.inferred) modeInferred++;
-      const route = { kind: r.route_kind === 'primary' ? 'primary' : 'alternative', mode: m.mode, ...(m.inferred && { inferred: true }), steps, description: r.route_description };
+      const route = { kind: r.route_kind === 'primary' ? 'primary' : 'alternative', mode: m.mode, ...(m.inferred && { inferred: true }), steps, description: r.route_description, ...(descriptionBn && { descriptionBn }) };
       if (num(r.duration_hours_one_way) !== undefined) route.hours = num(r.duration_hours_one_way);
       if (num(r.cost_bdt_one_way)) route.cost = num(r.cost_bdt_one_way);
-      if (r.cost_basis && r.cost_basis !== 'Not estimated separately') route.costBasis = r.cost_basis;
+      if (r.cost_basis && r.cost_basis !== 'Not estimated separately') {
+        route.costBasis = r.cost_basis;
+        const costBasisBn = bn('travel_routes', r, 'cost_basis', !!route.cost); // shown only in the cost table
+        if (costBasisBn) route.costBasisBn = costBasisBn;
+      }
       if (r.estimate_date) route.estimateDate = r.estimate_date;
+      return { route, row: r };
+    }).sort((a, b) => (a.route.kind === b.route.kind ? 0 : a.route.kind === 'primary' ? -1 : 1)).map(({ route, row }, k) => {
+      // Shown: every route's description; the last mile only on the primary route's steps.
+      bn('travel_routes', row, 'route_description');
+      if (k === 0) bn('travel_routes', row, 'last_mile');
       return route;
-    }).sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'primary' ? -1 : 1));
+    });
 
     // Placeholder events are dropped and reversed year ranges shortened (spec 05 FR-51, FR-52); both are reported.
     const history = (historyBySite.get(id) ?? []).filter(e => {
@@ -257,7 +320,12 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       const year = e.year_start
         ? eventYear(e, e.date_approximate === 'TRUE')
         : e.date_text.length <= 30 && !UNKNOWN.test(e.date_text) ? e.date_text : '';
-      return { year, type: e.event_type, text: e.description, status: e.verification_status, sources: srcIds(e.source_ids).map(x => refFor(x)).filter(Boolean) };
+      const textBn = bn('history_events', e, 'description');
+      const yearBn = !e.year_start && year ? bn('history_events', e, 'date_text') : undefined;
+      return {
+        year, ...(yearBn && { yearBn }), type: e.event_type, text: e.description, ...(textBn && { textBn }), status: e.verification_status,
+        sources: srcIds(e.source_ids).map(x => refFor(x)).filter(Boolean)
+      };
     });
 
     // Fact sources: the fact claims for the field, joined to their source links.
@@ -268,7 +336,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
         for (const l of claimLinks(c.claim_id)) if (!refs.has(l.source_id)) { const ref = refFor(l.source_id, l.relation); if (ref) refs.set(l.source_id, ref); }
       return [...refs.values()];
     };
-    const fact = (value, key) => ({ ...maybe(value), sources: factSources(FACT_FIELD[key]) });
+    const fact = (column, key) => ({ ...withBn(maybe(s[column]), bn, 'sites', s, column), sources: factSources(FACT_FIELD[key]) });
 
     // Legend sources: the SRC- IDs in its attribution, then the reported_by links of its claim.
     const legends = (legendsBySite.get(id) ?? []).map(l => {
@@ -278,10 +346,11 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
         : 'Not attributed to a named source';
       const linked = l.claim_id ? claimLinks(l.claim_id).filter(x => x.relation === 'reported_by').map(x => x.source_id) : [];
       const sources = [...new Set([...ids, ...linked])].map(x => refFor(x, 'reported_by')).filter(Boolean);
-      return { text: l.narrative, evidence: l.evidence_type, attribution, note: l.verification_note, sources };
+      const textBn = bn('legends', l, 'narrative');
+      return { text: l.narrative, ...(textBn && { textBn }), evidence: l.evidence_type, attribution, note: l.verification_note, sources };
     });
 
-    const conflicts = claims.filter(c => c.claim_type === 'conflict').map(c => conflict(c, refFor));
+    const conflicts = claims.filter(c => c.claim_type === 'conflict').map(c => conflict(c, refFor, bn));
 
     // Features (2.14): only from features.csv. Competing measurements of one feature are also a conflict.
     const featureRows = featuresBySite.get(id) ?? [];
@@ -303,7 +372,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       if (!other) continue;
       const prev = byOther.get(other);
       if (prev) {
-        if (prev.relation === 'combine_on_trip' && r.relation_type !== 'combine_on_trip') Object.assign(prev, { relation: r.relation_type, note: r.note });
+        if (prev.relation === 'combine_on_trip' && r.relation_type !== 'combine_on_trip') Object.assign(prev, { relation: r.relation_type, note: r.note, row: r });
         continue;
       }
       const o = siteById.get(other);
@@ -312,12 +381,18 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       if (firstThumb(other)) item.thumb = firstThumb(other);
       item.relation = r.relation_type;
       item.note = r.note;
+      item.row = r;
       byOther.set(other, item);
       related.push(item);
     }
-    for (const item of related) if (!item.note) delete item.note;
+    for (const item of related) {
+      const noteBn = item.note ? bn('site_relationships', item.row, 'note') : undefined;
+      if (noteBn) item.noteBn = noteBn;
+      if (!item.note) delete item.note;
+      delete item.row;
+    }
 
-    const images = (imagesBySite.get(id) ?? []).map(imageRecord);
+    const images = (imagesBySite.get(id) ?? []).map(im => imageRecord(im, bn));
     // An outbound photo link when there is no open photo (O10). A hidden pin gets a name-only search.
     let externalPhotos;
     if (!images.length) {
@@ -346,19 +421,27 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
         status: s.coordinates_status, flagged: s.map_display === 'show_flagged',
         // A hidden pin's note often names nearby landmarks with their coordinates (spec 05 FR-53): left out.
         ...(!hidden(s) && { note: s.coordinates_note }),
+        ...(!hidden(s) && latlon(s) && withBnText(bn('sites', s, 'coordinates_note'), 'noteBn')),
         googleMapsUrl: hidden(s) && COORD_PAIR.test(s.google_maps_url) ? nameSearch(s) : s.google_maps_url
       },
       summary: s.short_description,
-      era: fact(s.established_era, 'era'), founder: fact(s.founder_or_family, 'founder'), style: fact(s.architectural_style, 'style'),
-      condition: s.condition_category, preservation: fact(s.preservation_status, 'preservation'),
+      ...withBnText(bn('sites', s, 'short_description'), 'summaryBn'),
+      era: fact('established_era', 'era'), founder: fact('founder_or_family', 'founder'), style: fact('architectural_style', 'style'),
+      condition: s.condition_category, preservation: fact('preservation_status', 'preservation'),
       access: s.visitor_access,
       visiting: {
-        hours: maybe(v.opening_hours), hoursKnown: hoursKnown(v.opening_hours), ...(v.hours_note && { hoursNote: v.hours_note }),
-        closed: maybe(v.weekly_closing_days),
+        hours: withBn(maybe(v.opening_hours), bn, 'visitor_info', v, 'opening_hours'), hoursKnown: hoursKnown(v.opening_hours),
+        ...(v.hours_note && { hoursNote: v.hours_note }), ...withBnText(bn('visitor_info', v, 'hours_note'), 'hoursNoteBn'),
+        closed: withBn(maybe(v.weekly_closing_days), bn, 'visitor_info', v, 'weekly_closing_days', maybe(v.weekly_closing_days).known), // shown only when known
         closedDays: closedDays.known ? { known: true, days: closedDays.days } : { known: false },
         fee: fee(v.entry_fee_bdt ?? s.entry_fee_bdt), ...(v.entry_fee_note && { feeNote: v.entry_fee_note }),
-        restrictions: maybe(v.restrictions_and_permissions), photography: maybe(v.photography_rules),
-        facilities: maybe(v.facilities), accessibility: maybe(v.accessibility), bestTime: maybe(v.best_time_to_visit),
+        // The fee note shows only beside a known fee (components/site/VisitingInfo.tsx).
+        ...withBnText(bn('visitor_info', v, 'entry_fee_note', Number(v.entry_fee_bdt ?? s.entry_fee_bdt) > 0), 'feeNoteBn'),
+        restrictions: withBn(maybe(v.restrictions_and_permissions), bn, 'visitor_info', v, 'restrictions_and_permissions'),
+        photography: withBn(maybe(v.photography_rules), bn, 'visitor_info', v, 'photography_rules'),
+        facilities: withBn(maybe(v.facilities), bn, 'visitor_info', v, 'facilities'),
+        accessibility: withBn(maybe(v.accessibility), bn, 'visitor_info', v, 'accessibility'),
+        bestTime: withBn(maybe(v.best_time_to_visit), bn, 'visitor_info', v, 'best_time_to_visit'),
         ...(v.last_verified && { date: v.last_verified })
       },
       travel: {
@@ -373,7 +456,7 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
       legends, conflicts, images,
       ...(externalPhotos && { externalPhotos }),
       related,
-      itineraries: (tripsBySite.get(id) ?? []).map(it => ({ id: it.itinerary_id, title: tripTitle(it.title), duration: it.duration })),
+      itineraries: (tripsBySite.get(id) ?? []).map(it => ({ id: it.itinerary_id, title: tripTitle(it.title), ...withBnText(tripTitleBn(bn('itineraries', it, 'title')), 'titleBn'), duration: it.duration })),
       sources: notes.map((sid, k) => {
         const src = sourceById.get(sid);
         const ss = siteSources.find(x => x.source_id === sid);
@@ -384,18 +467,28 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
         return out;
       }),
       stillToConfirm: list(s.unverified_fields).map(plainField),
+      ...(s.unverified_fields && { stillToConfirmBn: plainFieldsBn(s, bn) }),
       confidence: s.record_confidence,
       lastVerified: s.last_verified
     };
+    if (record.stillToConfirmBn?.includes(null)) bnState.english = true;
+    record.bnState = { ...bnState };
     records.push(record);
   }
 
   // ---------------------------------------------------------------- trips
   // Budget rows come from costs.csv columns only; amount_text is display prose and is never parsed.
   const COST_LABEL = { food: 'Food', local_guide: 'Local guide', accommodation: 'Accommodation' };
-  function budgetRow(c, item, category) {
-    if (!c) return { item, category, status: 'unknown', sources: [] };
-    const row = { item, category: c.category };
+  // The same items in Bangla (spec 14): generated wording, drafts like other interface strings.
+  const COST_LABEL_BN = { food: 'খাবার', local_guide: 'স্থানীয় গাইড', accommodation: 'থাকার খরচ' };
+  const MODE_NAME_BN = {
+    bus: 'বাস', train: 'ট্রেন', launch: 'লঞ্চ', ferry: 'ফেরি', car: 'গাড়ি', air: 'বিমান', boat: 'নৌকা',
+    rickshaw: 'রিকশা', auto_rickshaw: 'অটোরিকশা', unknown: 'যানবাহন উল্লেখ নেই', mixed: 'একাধিক যানবাহন'
+  };
+  const nameBn = s => s.name_bn || s.name_en;
+  function budgetRow(c, [item, itemBn], category, bn) {
+    if (!c) return { item, itemBn, category, status: 'unknown', sources: [] };
+    const row = { item, itemBn, category: c.category };
     const amount = num(c.amount_bdt);
     if (amount > 0) row.amount = amount;
     else if (c.category === 'entry_fee' && amount === 0) row.noTicket = true;
@@ -403,7 +496,11 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     if (UNIT[c.unit]) row.unit = UNIT[c.unit];
     if (c.fare_basis) row.basis = c.fare_basis;
     if (c.legs) row.legs = parseLegs(c.legs);
-    if (c.basis_and_assumptions) row.note = c.basis_and_assumptions;
+    if (c.basis_and_assumptions) {
+      row.note = c.basis_and_assumptions;
+      const noteBn = bn('costs', c, 'basis_and_assumptions');
+      if (noteBn) row.noteBn = noteBn;
+    }
     if (c.estimate_date) row.date = c.estimate_date;
     row.status = c.status || 'unknown';
     row.sources = srcIds(c.source_ids);
@@ -415,12 +512,18 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
   for (const it of T.itineraries) {
     const id = it.itinerary_id;
     const anchor = siteById.get(it.anchor_site_id);
+    const { bn, state: bnState } = pageTracker(tr.lookup);
     const siteIds = list(it.linked_site_ids);
     const stopRows = (stopsByTrip.get(id) ?? []).sort((a, b) => Number(a.stop_order) - Number(b.stop_order));
     planSuggestions[suggestPlanStatus(stopRows)].push(id);
     const stops = stopRows.map(st => {
       const site = siteById.get(st.site_id);
       const out = { order: Number(st.stop_order), kind: st.site_id ? 'site' : 'place', name: st.stop_name, note: st.notes };
+      // A site stop shows the site's own names; a place shows its translated stop_name (spec 14 FR-9).
+      const stopNameBn = site ? nameBn(site) : bn('itinerary_stops', st, 'stop_name');
+      if (stopNameBn) out.nameBn = stopNameBn;
+      const noteBn = bn('itinerary_stops', st, 'notes');
+      if (noteBn) out.noteBn = noteBn;
       if (st.time_or_day) out.time = st.time_or_day;
       if (st.site_id) {
         out.siteId = st.site_id;
@@ -443,36 +546,42 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
 
     const anchorCosts = costsBySite.get(anchor.site_id) ?? [];
     const byCat = (rows, cat) => rows.find(c => c.category === cat);
-    const rows = [budgetRow(byCat(anchorCosts, 'transport_dhaka_one_way'), `Dhaka → ${anchor.name_en}, one way`, 'transport_dhaka_one_way')];
+    const rows = [budgetRow(byCat(anchorCosts, 'transport_dhaka_one_way'), [`Dhaka → ${anchor.name_en}, one way`, `ঢাকা → ${nameBn(anchor)}, এক দিকে`], 'transport_dhaka_one_way', bn)];
     // Fares between stops, in stop order, then cost_id: "Rickshaw, stops 4 → 5" (the note names the places).
     const firstStop = c => parseLegs(c.legs)[0][0];
     for (const c of anchorCosts.filter(c => LEG_FARE.test(c.category) && c.legs).sort((a, b) => firstStop(a) - firstStop(b) || a.cost_id.localeCompare(b.cost_id))) {
       const stopsText = parseLegs(c.legs).map(([a, b]) => `${a} → ${b}`).join(', ');
-      rows.push(budgetRow(c, `${MODE_NAME[LEG_FARE.exec(c.category)[1]]}, stops ${stopsText}`, c.category));
+      const mode = LEG_FARE.exec(c.category)[1];
+      rows.push(budgetRow(c, [`${MODE_NAME[mode]}, stops ${stopsText}`, `${MODE_NAME_BN[mode]}, স্টপ ${stopsText}`], c.category, bn));
     }
     for (const sid of siteIds.length ? siteIds : [anchor.site_id])
-      rows.push(budgetRow(byCat(costsBySite.get(sid) ?? [], 'entry_fee'), `Entry: ${siteById.get(sid).name_en}`, 'entry_fee'));
+      rows.push(budgetRow(byCat(costsBySite.get(sid) ?? [], 'entry_fee'), [`Entry: ${siteById.get(sid).name_en}`, `প্রবেশ: ${nameBn(siteById.get(sid))}`], 'entry_fee', bn));
     for (const cat of ['food', 'local_guide', ...(it.duration === 'Overnight / multi-day' ? ['accommodation'] : [])])
-      rows.push(budgetRow(byCat(anchorCosts, cat), COST_LABEL[cat], cat));
+      rows.push(budgetRow(byCat(anchorCosts, cat), [COST_LABEL[cat], COST_LABEL_BN[cat]], cat, bn));
     const perPerson = rows.filter(r => r.amount !== undefined && r.unit === 'per_person');
-    const omitted = rows.filter(r => r.amount === undefined && !r.noTicket && r.status !== 'not_applicable').map(r => r.item);
+    const left = rows.filter(r => r.amount === undefined && !r.noTicket && r.status !== 'not_applicable');
+    const omitted = left.map(r => r.item);
     const dates = rows.map(r => r.date).filter(Boolean).sort();
-    const budget = { rows, ...(perPerson.length && { known: perPerson.reduce((n, r) => n + r.amount, 0) }), omitted };
+    const budget = { rows, ...(perPerson.length && { known: perPerson.reduce((n, r) => n + r.amount, 0) }), omitted, omittedBn: left.map(r => r.itemBn) };
 
     const title = tripTitle(it.title);
+    const titleBn = tripTitleBn(bn('itineraries', it, 'title'));
+    const notesBn = it.planning_notes ? bn('itineraries', it, 'planning_notes') : undefined;
     if (!it.plan_status) editorialPlan.push(cell('itineraries', it, 'plan_status', [`trips/${id}.json planStatus`, `trips.json ${id}`]));
     const trip = {
-      id, title,
+      id, title, ...(titleBn && { titleBn }),
       duration: ['One day', 'Overnight / multi-day'].includes(it.duration) ? it.duration : 'Not stated',
       ...(PLAN_STATUS.includes(it.plan_status) && { planStatus: it.plan_status }),
       anchor: anchor.site_id, siteIds, stops, legs, schematic: legs.length === 0,
       notes: it.planning_notes ? [it.planning_notes] : [],
+      ...(notesBn && { notesBn: [notesBn] }),
       budget,
       ...(dates.length && { costsEstimated: { from: dates[0], to: dates.at(-1) } })
     };
+    trip.bnState = { ...bnState };
     trips.push(trip);
     const summary = {
-      id, title, duration: trip.duration, ...(trip.planStatus && { planStatus: trip.planStatus }),
+      id, title, ...(titleBn && { titleBn }), duration: trip.duration, ...(trip.planStatus && { planStatus: trip.planStatus }),
       anchor: anchor.site_id, anchorSlug: anchor.dataset_slug, anchorEn: anchor.name_en, ...(anchor.name_bn && { anchorBn: anchor.name_bn }),
       division: anchor.division, district: anchor.district, siteIds, stopCount: stops.length, bucket: BUCKET[anchor.travel_time_bucket] ?? 'unknown'
     };
@@ -637,7 +746,8 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
     { title: 'Suggested plan_status (O11; only the editor\'s value is published)', lines: PLAN_STATUS.map(p => `${p} (${planSuggestions[p].length}): ${ids(planSuggestions[p])}`) },
     { title: 'Sites without a Bangla name', lines: [ids(bnMissing)] },
     { title: 'History events dropped as placeholders ("Not documented" only)', lines: [`${placeholderEvents.length}: ${ids(placeholderEvents)}`] },
-    { title: 'History events with year_end before year_start (shown as year_start)', lines: [`${reversedYears.length}: ${ids(reversedYears)}`] }
+    { title: 'History events with year_end before year_start (shown as year_start)', lines: [`${reversedYears.length}: ${ids(reversedYears)}`] },
+    ...translationReport(tr)
   );
 
   // ---------------------------------------------------------------- write
@@ -651,6 +761,8 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', env = pr
   write('sources.json', sourcesOut);
   write('credits.json', credits);
   write('meta.json', meta);
+  // Every translatable cell with its state, for /dev/bn-review/ (spec 14 FR-22). Build time only, like the rest.
+  write('translations.json', { cells: tr.cells, orphans: tr.orphans });
 
   result.counts = meta.counts;
   result.stats = { ...conflictStats, modes: modeCount, modeInferred, plan: Object.fromEntries(PLAN_STATUS.map(p => [p, planSuggestions[p].length])), bnMissing: bnMissing.length };

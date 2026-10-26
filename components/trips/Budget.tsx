@@ -3,7 +3,7 @@
 // entry fee of 0, "Not estimated yet" otherwise. The closing line gives what is known per person and names what
 // it leaves out; there is never a total, and no fare the data has no row for (no return fare, no fare between stops).
 
-import { Both, Latin, T } from '@/components/T';
+import { Both, Prose, T } from '@/components/T';
 import { both, formatDate, formatMoney } from '@/lib/format';
 import type { Dual } from '@/lib/i18n';
 import { budgetLine, rowValue } from '@/lib/trips';
@@ -49,11 +49,11 @@ export function Budget({ trip, correctionHref }: { trip: Itinerary; correctionHr
           {trip.budget.rows.map((r, k) => (
             <tr key={k} className="border-b border-line align-top print:break-inside-avoid" data-budget-row={r.category}>
               <th scope="row" className="py-2 pr-4 font-normal">
-                <Latin>{r.item}</Latin>
+                <Prose en={r.item} bn={r.itemBn} />
                 {r.note ? (
                   <details className="text-sm text-muted print:hidden">
                     <summary className="min-h-[24px] cursor-pointer underline"><T k="budget.details" /></summary>
-                    <Latin>{r.note}</Latin>
+                    <Prose en={r.note} bn={r.noteBn} />
                   </details>
                 ) : null}
               </th>
@@ -68,7 +68,7 @@ export function Budget({ trip, correctionHref }: { trip: Itinerary; correctionHr
               {line.known !== undefined ? <strong data-known={line.known}><T k="budget.knownValue" vars={{ amount: both(formatMoney, line.known) }} /></strong> : null}
               {line.omitted.length ? (
                 <span className="block text-sm text-muted" data-omitted={line.omitted.length}>
-                  <T k="budget.notCounted" /> <Latin>{line.omitted.join(' · ')}</Latin>
+                  <T k="budget.notCounted" /> {line.omitted.map((o, k) => <span key={k}>{k ? ' · ' : ''}<Prose en={o} bn={trip.budget.omittedBn?.[k]} /></span>)}
                 </span>
               ) : null}
             </td>

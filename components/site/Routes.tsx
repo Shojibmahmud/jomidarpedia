@@ -2,7 +2,7 @@
 // alternatives as disclosures, and every cost with its basis and date. Unknown and mixed modes get neutral
 // icons; an unknown mode is never drawn as a bus.
 
-import { Both, Latin, T } from '@/components/T';
+import { Both, Prose, T } from '@/components/T';
 import { both, formatDate, formatHours, formatMoney } from '@/lib/format';
 import type { Mode, Route, SiteRecord } from '@/lib/types';
 import { SuggestCorrection } from './SuggestCorrection';
@@ -54,9 +54,9 @@ export function RouteSteps({ route }: { route: Route }) {
         <li key={k} className="flex gap-3">
           <span aria-hidden="true" className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-sm font-semibold">{k + 1}</span>
           <span>
-            <Latin>{s.label}</Latin>
-            {s.note ? <span className="block text-sm text-muted"><Latin>{s.note}</Latin></span> : null}
-            {s.costText ? <span className="block text-sm text-muted"><Latin>{s.costText}</Latin></span> : null}
+            <Prose en={s.label} bn={s.labelBn} />
+            {s.note ? <span className="block text-sm text-muted"><Prose en={s.note} bn={s.noteBn} /></span> : null}
+            {s.costText ? <span className="block text-sm text-muted"><Prose en={s.costText} /></span> : null}
           </span>
         </li>
       ))}
@@ -73,7 +73,7 @@ export function RouteAccordion({ routes }: { routes: Route[] }) {
         <details key={k} className="rounded-md border border-line bg-surface">
           <summary className="flex min-h-tap cursor-pointer items-center px-4"><ModeLabel route={r} /></summary>
           <div className="space-y-2 border-t border-line px-4 py-3">
-            <p><Latin>{r.description}</Latin></p>
+            <p><Prose en={r.description} bn={r.descriptionBn} /></p>
             <Summary route={r} />
           </div>
         </details>
@@ -101,7 +101,7 @@ export function CostTable({ routes }: { routes: Route[] }) {
             <tr key={k} className="border-b border-line align-top">
               <td className="py-2 pr-3"><T k={`mode.${r.mode}`} /></td>
               <td className="py-2 pr-3"><Both value={both(formatMoney, r.cost!)} /></td>
-              <td className="py-2 pr-3">{r.costBasis ? <Latin>{r.costBasis}</Latin> : <em className="text-muted"><T k="cost.basisUnknown" /></em>}</td>
+              <td className="py-2 pr-3">{r.costBasis ? <Prose en={r.costBasis} bn={r.costBasisBn} /> : <em className="text-muted"><T k="cost.basisUnknown" /></em>}</td>
               <td className="py-2" data-cost-date>{r.estimateDate ? <Both value={both(formatDate, r.estimateDate)} /> : <T k="route.undated" />}</td>
             </tr>
           ))}

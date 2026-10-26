@@ -1,6 +1,6 @@
 # Bangla prose
 
-**Status:** Draft
+**Status:** Approved (by the owner, 2026-10-26)
 **Roadmap reference:** `roadmap/DEVELOPMENT_ROADMAP.md` §4 "Phase 11a (if O6 changes): Bangla prose"; decision O6 (§2, line 158) and recommendation I3 (dual-span rendering); `.claude/specs/03-App-foundations.md` (i18n), `.claude/specs/05-Site-page.md`, `.claude/specs/08-Search.md` (D4 search fields), `.claude/specs/09-Trips-and-itineraries.md`, `.claude/specs/10-Areas-sources-about-and-system-states.md` (About)
 **Source task:** "Phase 11a (if O6 changes): Bangla prose. `_bn` columns, or `content/bn/` files; translation; a review workflow; `lang` handling. The target design is `বাংলা · Baliati · mobile`."
 **Branch:** `16-bangla-text`

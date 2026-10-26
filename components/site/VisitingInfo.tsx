@@ -1,7 +1,7 @@
 // "Visiting" (roadmap task 5.11, spec 05 FR-26, FR-27): per-field values through Unknown, closing days from
 // the reviewed column only, the fee only as a real price (R6), and a notice for private houses (A-1).
 
-import { Latin, T } from '@/components/T';
+import { Prose, T } from '@/components/T';
 import type { StringKey } from '@/lib/i18n';
 import { both, formatMoney } from '@/lib/format';
 import type { SiteRecord } from '@/lib/types';
@@ -32,21 +32,21 @@ export function VisitingInfo({ site }: { site: SiteRecord }) {
       <dl>
         <Row k="visit.hours">
           <Unknown value={v.hours} />
-          {v.hoursNote ? <span className="block text-sm text-muted"><Latin>{v.hoursNote}</Latin></span> : null}
+          {v.hoursNote ? <span className="block text-sm text-muted"><Prose en={v.hoursNote} bn={v.hoursNoteBn} /></span> : null}
         </Row>
         <Row k="visit.closed">
           {cd.known
             ? cd.days.length ? <span>{cd.days.map((d, k) => <span key={d}>{k ? ', ' : ''}<T k={`day.${d}`} /></span>)}</span> : <T k="closed.none" />
             : <em className="text-muted"><T k="closed.unknown" /></em>}
-          {v.closed.known ? <span className="block text-sm text-muted"><T k="closed.asWritten" /> <Latin>{v.closed.value}</Latin></span> : null}
+          {v.closed.known ? <span className="block text-sm text-muted"><T k="closed.asWritten" /> <Prose en={v.closed.value} bn={v.closed.bn} /></span> : null}
         </Row>
         <Row k="visit.entry">
           <span data-fee>
             {v.fee.known
               ? <T k="visit.perPerson" vars={{ amount: both(formatMoney, v.fee.value) }} />
-              : site.access === 'open_no_ticket_reported' ? <em className="text-muted"><T k="visit.noTicket" /></em> : <UnknownText text={v.fee.text} />}
+              : site.access === 'open_no_ticket_reported' ? <em className="text-muted"><T k="visit.noTicket" /></em> : <UnknownText text={v.fee.text} bn={v.fee.textBn} />}
           </span>
-          {v.fee.known && v.feeNote ? <span className="block text-sm text-muted"><Latin>{v.feeNote}</Latin></span> : null}
+          {v.fee.known && v.feeNote ? <span className="block text-sm text-muted"><Prose en={v.feeNote} bn={v.feeNoteBn} /></span> : null}
         </Row>
         <Row k="visit.restrictions"><Unknown value={v.restrictions} /></Row>
         <Row k="visit.photography"><Unknown value={v.photography} /></Row>

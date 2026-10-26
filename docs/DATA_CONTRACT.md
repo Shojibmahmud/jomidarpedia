@@ -9,6 +9,7 @@ The specification is `.claude/specs/02-Data-contracts.md`.
 - Only named public fields reach the output (I7). These columns never do: `site_sources.citation_note`, `sources.local_path`, `images.identity_verification`, `images.license_evidence`, `images.notes`.
 - The browser fetches only `public/data/index.json`. Everything in `data/build/**` is read at build time and passed to pages as props.
 - Hidden pins (`map_display = hide`, or no coordinates) never carry coordinates anywhere (R5).
+- Bangla prose (spec 14) comes only from `data/translations/bn/<table>.csv`, and only while its `en_hash` matches the current English. It appears as a sibling of the English field (`summaryBn`, `textBn`, `bn` on a `Maybe`, …), which is absent when there is no valid translation; the page then shows the English with `lang="en"`. See §5.
 
 ## 1. Features rendered in the browser
 
@@ -37,7 +38,7 @@ The specification is `.claude/specs/02-Data-contracts.md`.
 | Condition, access, division, district, travel time, confidence | `c`, `ac`, `dv`, `d`, `tb`, `rc` | |
 
 ### Map summary card (pin popover, mobile sheet)
-Index fields only: `e`, `b`, `u`, `d`, `db`, `c`, `ac`, `fe`, `sm`, `h`, `tb`, `oc`, `dt`, `lc`, `f`, `ll`, `img`, plus "Read more" to `/site/<i>/<s>/` and "Directions" for a mappable site. The one-line summary is `sm` (spec 07 D1); the location line is the status label from `lc`, with no source count (D2).
+Index fields only: `e`, `b`, `u`, `d`, `db`, `c`, `ac`, `fe`, `sm` (`smb` in Bangla mode), `h`, `tb`, `oc`, `dt`, `lc`, `f`, `ll`, `img`, plus "Read more" to `/site/<i>/<s>/` and "Directions" for a mappable site. The one-line summary is `sm` (spec 07 D1); the location line is the status label from `lc`, with no source count (D2).
 
 ### Search results
 | Group | Fields | From |
@@ -84,7 +85,9 @@ Photos: `lib/home-images.json` names the hero, the 4 category tiles and one tile
 | `e`, `b` | names | `name_en`, `name_bn` | `b` only when recorded |
 | `sm` | card summary | `short_description`: first sentence (two when the first is under 60 characters), cut at a word boundary to 160 characters with "…" (`cardSummary` in `scripts/lib/rules.mjs`) | not blank |
 | `a` | alternate names | `alternate_names` | not blank |
+| `smb` | card summary in Bangla | the valid translation of `short_description`, cut like `sm` | translated |
 | `fm` | founder or family | `founder_or_family` | known (not blank, not "Unknown…") |
+| `fmb` | founder or family in Bangla (search only, spec 14 FR-21) | the valid translation of `founder_or_family` | known and translated |
 | `dv`, `d`, `db`, `u` | place | `division`, `district`, `district_bn`, `upazila` | `u` when not blank |
 | `ll` | pin | `latitude`, `longitude` | mappable only |
 | `lc`, `f` | location status, flagged | `coordinates_status`, `map_display` | `f` when `show_flagged` |
@@ -137,6 +140,12 @@ For About (spec 10 §6): `counts.locations` (the same shape as an area's `locati
 ### Credits (`data/build/credits.json`)
 `imageId`, `thumb`, `siteId`, `siteSlug`, `siteEn`, `siteBn`, `creator`, `license` (without the "Open license:" prefix), `credit` (`required_credit`), `view` (`view_category`), `sourcePage` (`source_page_url`, absent when blank).
 
+### Bangla siblings and translation state (spec 14)
+- Site record: `summaryBn`; `bn` on known `Maybe`/`Fact` values and `textBn` on an unknown with its own wording (never on "Not documented" or "No ticket reported", which are interface strings); `location.noteBn`; `visiting.hoursNoteBn`, `feeNoteBn`; route `descriptionBn`, `costBasisBn` and step `labelBn`/`noteBn` (steps split on `->` like the English); history `textBn` and `yearBn` (only when the year comes from `date_text`); legend `textBn`; conflict `fieldBn` and version `textBn`; related `noteBn`; itinerary `titleBn`; image `altBn`; `stillToConfirmBn` (one entry per `stillToConfirm` item: bare field names have fixed Bangla labels; `null` keeps that item English).
+- Itinerary: `titleBn`, `notesBn`, stop `nameBn` (a site stop: the site's `name_bn`; a place: its translated `stop_name`) and `noteBn`, budget row `itemBn` (generated wording) and `noteBn`, `budget.omittedBn`. Trip summary: `titleBn`.
+- `bnState: { draft, english }` on site records and itineraries: whether the page shows any unchecked draft, or any English where Bangla is missing. The Bangla-mode note under the header follows it (spec 14 FR-16).
+- `data/build/translations.json`: every translatable cell with its state (`reviewed`, `draft`, `outdated`, `invalid`, `missing`) and the orphan rows. Read only by `/dev/bn-review/`.
+
 ## 4. Reviewed columns and optional tables
 
 | Column or table | Values | Blank or missing |
@@ -152,3 +161,27 @@ For About (spec 10 §6): `counts.locations` (the same shape as an area's `locati
 | `itinerary_places.csv` | `itinerary_id`, `stop_order`, `latitude`, `longitude`, `source_ids` (required) | no place coordinates |
 | `itinerary_legs.csv` | `itinerary_id`, `from_stop`, `to_stop`, `mode`, `duration`, `cost_row`, `source_ids` | `legs: []`, schematic |
 | `features.csv` | `site_id`, `feature`, `feature_bn`, `measurement`, `unit`, `source_ids`, `status` | `features: []` |
+
+## 5. Bangla translations (`data/translations/bn/<table>.csv`)
+
+Optional, one file per source table. Columns: `key` (the row key, as in the data report: `JB-DHK-064`, `IT-BSL-001-1#3`), `column` (the English column), `bn`, `status` (`draft` or `reviewed`), `en_hash` (the first 12 hex digits of SHA-256 over the English cell, after LF line endings, NFC and trimming). Written by `npm run bn -- merge`, never by hand; the rules for drafting are in `docs/TRANSLATION_BN.md`.
+
+| Table | Translatable columns |
+|---|---|
+| `sites` | `short_description`, `established_era`, `founder_or_family`, `architectural_style`, `preservation_status`, `coordinates_note`, `unverified_fields` |
+| `visitor_info` | `opening_hours`, `hours_note`, `weekly_closing_days`, `entry_fee_note`, `restrictions_and_permissions`, `photography_rules`, `facilities`, `accessibility`, `best_time_to_visit` |
+| `travel_routes` | `route_description`, `last_mile`, `cost_basis` |
+| `history_events` | `description`, `date_text` |
+| `itineraries`, `itinerary_stops` | `title`, `planning_notes`; `stop_name`, `notes` |
+| `claims`, `costs`, `legends`, `images`, `site_relationships` | `claim_text`, `basis_and_assumptions`, `narrative`, `caption_alt_text`, `note` |
+
+| Problem | Effect |
+|---|---|
+| An unknown table or column, a bad `status` or `en_hash`, a repeated key and column, malformed CSV | structural: fails every mode |
+| `en_hash` differs from the current English (outdated) | the English shows; listed in the report |
+| An internal-note term, a "free entry" phrase, or a different number of route steps, claim versions or still-to-confirm items (invalid) | the English shows; listed in the report |
+| No matching row, or the English is blank (orphan) | ignored; listed in the report |
+| No translation | the English shows; counted in the report's coverage |
+
+None of these fails a release build (spec 14 D-9). Coverage counts only cells a page shows: conflict claims, non-placeholder history events, Ready photos with their own alt text, place stops, mappable sites' location notes; bare "Not documented" values are interface strings and never need translating.
+

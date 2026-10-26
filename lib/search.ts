@@ -65,6 +65,8 @@ interface Entry {
   site: IndexSite;
   /** The distinctive words of the English and the Bangla name, for how much of a name a query covers. */
   names: Set<string>[];
+  /** The founder or family text: the English, then the Bangla translation (spec 14 FR-21), joined by " · " so a phrase never spans both. */
+  fmText: string;
   fm: Token[];
   /** The folded founder or family text, padded with spaces for whole-word tests. */
   fmPadded: string;
@@ -109,9 +111,10 @@ export function createMatcher(sites: readonly IndexSite[], Fuse: FuseCtor): Matc
   };
 
   sites.forEach((site, k) => {
-    const fm = site.fm ? tokens(site.fm) : [];
+    const fmText = [site.fm, site.fmb].filter(Boolean).join(' · ');
+    const fm = fmText ? tokens(fmText) : [];
     const names = [site.e, site.b].filter((v): v is string => !!v).map(v => new Set(words(v).filter(w => !GENERIC.has(w))));
-    entries.push({ site, names, fm, fmPadded: ` ${fm.map(t => t.word).join(' ')} ` });
+    entries.push({ site, names, fmText, fm, fmPadded: ` ${fm.map(t => t.word).join(' ')} ` });
     const named: [Field, string | undefined][] = [['e', site.e], ['b', site.b], ['a', site.a], ['d', site.d], ['d', site.db]];
     for (const [field, value] of named) {
       if (!value) continue;
@@ -192,7 +195,7 @@ export function createMatcher(sites: readonly IndexSite[], Fuse: FuseCtor): Matc
    * ("Roy Chowdhury" rather than "Bandhu Roy Chowdhury"); if none is shared, the longest window.
    */
   function familyPhrase(entry: Entry, terms: ReadonlySet<string>): { key: string; phrase: string } | undefined {
-    const fm = entry.site.fm ?? '';
+    const fm = entry.fmText;
     const t = entry.fm;
     const at = t.findIndex(x => terms.has(x.word) && !NOT_A_NAME.has(x.word) && isCapitalised(fm.slice(x.start, x.end)));
     if (at < 0) return undefined;
@@ -236,7 +239,7 @@ export function createMatcher(sites: readonly IndexSite[], Fuse: FuseCtor): Matc
       const at = entry.fm.findIndex(x => terms.has(x.word));
       if (at < 0) return undefined;
       const from = entry.fm[Math.max(0, at - 3)], to = entry.fm[Math.min(entry.fm.length - 1, at + 3)];
-      return site.fm!.slice(from.start, to.end);
+      return entry.fmText.slice(from.start, to.end);
     }
     return undefined;
   }
@@ -306,7 +309,7 @@ export function createMatcher(sites: readonly IndexSite[], Fuse: FuseCtor): Matc
       const at = entry.fm.findIndex((x, k) => entry.fm.slice(k, k + terms.size).map(y => y.word).join(' ') === key);
       return {
         site: entry.site, words: terms.size, score: 1, field: 'fm', terms,
-        detail: entry.site.fm!.slice(entry.fm[at].start, entry.fm[at + terms.size - 1].end),
+        detail: entry.fmText.slice(entry.fm[at].start, entry.fm[at + terms.size - 1].end),
       };
     }).sort((x, y) => x.site.e.localeCompare(y.site.e, 'en') || x.site.i.localeCompare(y.site.i));
     return { words: key.split(' '), sites, families: [], districts: [] };

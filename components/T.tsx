@@ -19,7 +19,15 @@ export function T({ k, vars }: { k: StringKey; vars?: Vars }) {
   return <Both value={dual(k, vars)} />;
 }
 
-/** Text that keeps Latin script in Bangla mode: IDs, coordinates, English-only prose (O6). */
+/**
+ * Data prose (spec 14 FR-15): the Bangla in Bangla mode when the build found a valid translation; otherwise
+ * the English, marked lang="en", in both modes (the page note says so).
+ */
+export function Prose({ en, bn }: { en: string; bn?: string }) {
+  return bn ? <Both value={{ en, bn }} /> : <span lang="en">{en}</span>;
+}
+
+/** Text that keeps Latin script in Bangla mode: IDs, coordinates, credits, source titles. */
 export function Latin({ children }: { children: React.ReactNode }) {
   return <span lang="en">{children}</span>;
 }

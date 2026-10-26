@@ -16,13 +16,14 @@ import { TYPE_GROUP, BUCKET, latlon, isMappable } from './lib/validate.mjs';
 import { loadTables, validateTables } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, ZERO_OR_FREE } from './lib/checks.mjs';
 import { cardSummary, hoursKnown, isKnownText, isReadyImage, leadFirst } from './lib/rules.mjs';
+import { loadTranslations, TRANSLATIONS_DIR } from './lib/translations.mjs';
 
 export const INDEX_BUDGET = 150 * 1024;
 const DAY = { TRUE: 1, FALSE: 0 };
 
-/** @param {{ sitesPath?: string, imagesPath?: string, visitorPath?: string, outDir?: string, budget?: number }} [options] */
+/** @param {{ sitesPath?: string, imagesPath?: string, visitorPath?: string, outDir?: string, translationsDir?: string, budget?: number }} [options] */
 export function buildIndex({
-  sitesPath = 'data/csv/sites.csv', imagesPath = 'data/csv/images.csv', visitorPath, outDir = 'public/data', budget = INDEX_BUDGET
+  sitesPath = 'data/csv/sites.csv', imagesPath = 'data/csv/images.csv', visitorPath, outDir = 'public/data', translationsDir = TRANSLATIONS_DIR, budget = INDEX_BUDGET
 } = {}) {
   visitorPath ??= join(dirname(sitesPath), 'visitor_info.csv');
   const outFile = join(outDir, 'index.json');
@@ -36,6 +37,9 @@ export function buildIndex({
     structural.push(...errors.map(e => ({ ...e, file: basename(path) })));
   }
   if (!structural.length) structural.push(...validateTables(T));
+  // Bangla card line and founder text (spec 14 FR-9, FR-21). Only the sites table is checked here; build-data checks the rest.
+  const tr = structural.length ? null : loadTranslations({ sites: T.sites }, translationsDir);
+  if (tr) structural.push(...tr.errors.filter(e => e.file === 'translations/bn/sites.csv'));
   if (structural.length) {
     result.structural = structural;
     rmSync(outFile, { force: true });
@@ -55,8 +59,10 @@ export function buildIndex({
       s: s.dataset_slug,                  // URL slug
       e: s.name_en, b: s.name_bn || undefined, // no b: Bangla name not yet recorded (O13)
       sm: cardSummary(s.short_description) || undefined, // the map card's one-liner (spec 07 FR-34)
+      smb: cardSummary(tr.lookup('sites', s, 'short_description')?.bn) || undefined, // the same in Bangla (spec 14 FR-9)
       a: s.alternate_names || undefined,  // searched, not shown in the list
       fm: isKnownText(s.founder_or_family) ? s.founder_or_family : undefined, // founder or family, as text for search
+      fmb: isKnownText(s.founder_or_family) ? tr.lookup('sites', s, 'founder_or_family')?.bn : undefined, // the same in Bangla (FR-21)
       dv: s.division, d: s.district, db: s.district_bn, u: s.upazila || undefined,
       ll: latlon(s),
       lc: s.coordinates_status,           // verified | single_source | approximate | unverified | not_found

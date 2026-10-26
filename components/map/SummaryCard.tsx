@@ -6,7 +6,7 @@
 
 import Link from 'next/link';
 import { useEffect, useId, useRef } from 'react';
-import { Both, SrT, T } from '@/components/T';
+import { Both, Prose, SrT, T } from '@/components/T';
 import { PlaceholderArt } from '@/components/art/PlaceholderArt';
 import { AccessBadge, ConditionBadge, LocationBadge } from '@/components/site/Badges';
 import { bucketLabel } from '@/lib/explore-labels';
@@ -64,7 +64,7 @@ export function SummaryCard({ site, variant, onClose, focusOnOpen = false }: {
         </div>
       </div>
       <div className={`space-y-3 ${sheet ? 'pt-3' : 'px-4 pb-4 pt-2'}`}>
-        {site.sm ? <p lang="en" className="text-[15px] leading-6" data-summary-text>{site.sm}</p> : null}
+        {site.sm ? <p className="text-[15px] leading-6" data-summary-text><Prose en={site.sm} bn={site.smb} /></p> : null}
         <div data-summary-location><LocationBadge status={site.lc} mappable={!!site.ll} flagged={site.f === 1} /></div>
         <div className="grid grid-cols-3 gap-2 text-sm">
           <Tile tone="indigo" value={time ? <Both value={time} /> : <T k="card.timeUnknown" />} label={time ? <T k="summary.fromDhaka" /> : null} />

@@ -2,9 +2,9 @@
 // footnotes link to, the list of disagreements, the open questions and "Still to confirm".
 
 import Link from 'next/link';
-import { Latin, T } from '@/components/T';
+import { Prose, T } from '@/components/T';
 import type { SiteRecord, Conflict } from '@/lib/types';
-import { OpenQuestion } from './Conflicts';
+import { ConflictField, OpenQuestion } from './Conflicts';
 import { sourceAnchor } from './Footnotes';
 import { SuggestCorrection } from './SuggestCorrection';
 
@@ -33,7 +33,7 @@ export function DisagreementIndex({ items }: { items: { conflict: Conflict; anch
     <div id="where-sources-disagree" className="rounded-lg border border-gold/40 bg-gold-tint p-4 text-sm">
       <p className="font-semibold text-gold"><T k="conflict.summary" /></p>
       <ul className="mt-1 list-disc pl-5">
-        {items.map(({ conflict, anchor }) => <li key={anchor}><a href={`#${anchor}`} className="underline"><Latin>{conflict.field}</Latin></a></li>)}
+        {items.map(({ conflict, anchor }) => <li key={anchor}><a href={`#${anchor}`} className="underline"><ConflictField conflict={conflict} /></a></li>)}
       </ul>
     </div>
   );
@@ -49,7 +49,7 @@ export function StillToConfirm({ site, pageUrl }: { site: SiteRecord; pageUrl: s
     <div className="rounded-lg border border-line bg-surface p-4 text-sm" data-still-to-confirm>
       <p className="font-semibold"><T k="stc.title" /></p>
       {site.stillToConfirm.length
-        ? <p className="mt-1"><Latin>{site.stillToConfirm.join(' · ')}</Latin></p>
+        ? <p className="mt-1">{site.stillToConfirm.map((f, k) => <span key={k}>{k ? ' · ' : ''}<Prose en={f} bn={site.stillToConfirmBn?.[k] ?? undefined} /></span>)}</p>
         : <p className="mt-1 italic text-muted"><T k="stc.none" /></p>}
       <div className="mt-2"><SuggestCorrection siteId={site.id} pageUrl={pageUrl} field="sources" /></div>
     </div>

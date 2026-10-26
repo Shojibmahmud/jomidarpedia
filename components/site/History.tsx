@@ -1,12 +1,14 @@
 // "History and owners" (roadmap task 5.7) and "Stories told about this place" (5.8), spec 05 FR-22 to FR-24.
 // Legends are a separate section after the timeline, never inside it (R3), each with its attribution.
 
-import { Latin, T } from '@/components/T';
+import { Latin, Prose, T } from '@/components/T';
 import type { SiteRecord } from '@/lib/types';
 import { FactValue } from './AtAGlance';
 import { Footnotes } from './Footnotes';
 import { SuggestCorrection } from './SuggestCorrection';
 
+// The build's wording for a legend with no named source (scripts/build-data.mjs): an interface string.
+const NOT_ATTRIBUTED = 'Not attributed to a named source';
 const STATUS = { as_reported: 'history.as_reported', needs_verification: 'history.needs_verification' } as const;
 
 export function HistoryTimeline({ site, pageUrl }: { site: SiteRecord; pageUrl: string }) {
@@ -32,8 +34,8 @@ export function HistoryTimeline({ site, pageUrl }: { site: SiteRecord; pageUrl: 
         {site.history.map((e, k) => (
           <li key={k} className="relative">
             <span aria-hidden="true" className="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-primary bg-surface" />
-            <p className="font-serif text-lg font-semibold">{e.year ? <Latin>{e.year}</Latin> : <em className="text-muted"><T k="history.dateUnknown" /></em>}</p>
-            <p><Latin>{e.text}</Latin><Footnotes refs={e.sources} /></p>
+            <p className="font-serif text-lg font-semibold">{e.year ? <Prose en={e.year} bn={e.yearBn} /> : <em className="text-muted"><T k="history.dateUnknown" /></em>}</p>
+            <p><Prose en={e.text} bn={e.textBn} /><Footnotes refs={e.sources} /></p>
             {e.status in STATUS ? <p className="text-xs text-muted"><T k={STATUS[e.status as keyof typeof STATUS]} /></p> : null}
           </li>
         ))}
@@ -57,9 +59,9 @@ export function LegendBox({ site, pageUrl }: { site: SiteRecord; pageUrl: string
         {site.legends.map((l, k) => (
           <li key={k} className="rounded-md border border-line bg-surface p-4">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted"><T k={`legend.${l.evidence}`} /></p>
-            <p><Latin>{l.text}</Latin></p>
+            <p><Prose en={l.text} bn={l.textBn} /></p>
             <p className="mt-2 text-sm text-muted">
-              <Latin>{l.attribution}</Latin>
+              {l.attribution === NOT_ATTRIBUTED ? <T k="legend.notAttributed" /> : <Latin>{l.attribution}</Latin>}
               {l.sources.length ? <> · <T k="legend.reportedBy" /> <Footnotes refs={l.sources} /></> : null}
             </p>
           </li>
