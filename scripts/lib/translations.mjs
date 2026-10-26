@@ -58,7 +58,8 @@ export function enHash(text) {
 export const ROUTE_STEPS = /\s*->\s*/;
 export const VERSUS = /\s+(?:vs\.?|বনাম)\s+/;
 // The site never says entry is free (R6, scripts/lib/checks.mjs FREE_ENTRY); the same holds in Bangla.
-export const FREE_BN = /বিনা\s*মূল্যে|বিনামূল্যে|ফ্রি|প্রবেশ\s*ফি\s*নেই/;
+// A whole word only: 'ফ্রি' must not match inside 'ফ্রিজ' (frieze).
+export const FREE_BN = /বিনা\s*মূল্যে|বিনামূল্যে|ফ্রি(?![\u0980-\u09FF])|প্রবেশ\s*ফি\s*নেই/;
 const parts = (text, re) => text.split(re).filter(Boolean).length;
 const SHAPE = {
   'travel_routes.route_description': (en, bn) => parts(en, ROUTE_STEPS) === parts(bn, ROUTE_STEPS) || 'route steps (->) differ from the English',

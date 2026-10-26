@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Fuse from 'fuse.js';
 import { approve, formatTranslations, merge, todo } from '../scripts/bn.mjs';
-import { enHash, loadTranslations } from '../scripts/lib/translations.mjs';
+import { enHash, FREE_BN, loadTranslations } from '../scripts/lib/translations.mjs';
 import { loadTables, TABLES } from '../scripts/lib/structure.mjs';
 import { Prose } from '@/components/T';
 import { bnNoteKey, ProseNote } from '@/components/shell/ProseNote';
@@ -103,6 +103,10 @@ describe('translation files (FR-1 to FR-7, AC-1)', () => {
     writeBn(dir, 'visitor_info', [{ key: 'JB-DHK-001', column: 'entry_fee_note', bn: 'প্রবেশ বিনামূল্যে।' }]);
     const { cells } = loadTranslations(loadTables(dir, TABLES).T, translationsDirOf(dir));
     expect(cells.find(c => c.column === 'entry_fee_note')).toMatchObject({ state: 'invalid', reason: expect.stringMatching(/free/) });
+  });
+  it('does not mistake a word that only contains ফ্রি for "free"', () => {
+    expect(FREE_BN.test('পলেস্তারার ফ্রিজ')).toBe(false);
+    expect(FREE_BN.test('প্রবেশ ফ্রি।')).toBe(true);
   });
 });
 
