@@ -10,6 +10,7 @@ import { ConditionBadge } from '@/components/site/Badges';
 import { getDivisions, getIndex, getSources } from '@/lib/data';
 import { both, formatCount, formatDate } from '@/lib/format';
 import { divisionHref } from '@/lib/nav';
+import { pageMeta } from '@/lib/seo';
 import { canonicalUrl, siteHref } from '@/lib/site-url';
 import { isProjectFile, sourceDate, typeKey, typeToken } from '@/lib/sources';
 import type { IndexSite, RecordConfidence, SourceEntry } from '@/lib/types';
@@ -33,7 +34,12 @@ function source(id: string): SourceEntry {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { id } = await params;
-  return { title: `${source(id).title} (${id})` };
+  const s = source(id);
+  const by = s.publisher ? ` (${s.publisher})` : '';
+  return pageMeta({
+    title: `${s.title} (${id})`, path: `/sources/${id}/`, canonical: false,
+    description: `${s.typeLabel}${by}: ${s.title}. Cited by ${s.sites.length} ${s.sites.length === 1 ? 'site' : 'sites'} on Jomidarpedia.`,
+  });
 }
 
 function Field({ k, children }: { k: Parameters<typeof T>[0]['k']; children: React.ReactNode }) {

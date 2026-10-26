@@ -2,7 +2,7 @@
 // AC-10, AC-12 to AC-19, AC-21). Expected names and counts come from the built data, never typed (I6).
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page, type Response } from '@playwright/test';
+import { expect, test, type Page, type Response } from './fixtures';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';

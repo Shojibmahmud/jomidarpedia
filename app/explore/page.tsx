@@ -10,10 +10,14 @@ import { Suspense } from 'react';
 import { T } from '@/components/T';
 import { ExploreApp } from '@/components/explore/ExploreApp';
 import { Skeleton } from '@/components/shell/Skeleton';
-import { getDistricts, getDivisions } from '@/lib/data';
+import { getDistricts, getDivisions, getMeta } from '@/lib/data';
 import type { PlaceList } from '@/lib/filters';
+import { pageMeta } from '@/lib/seo';
 
-export const metadata: Metadata = { title: 'Explore' };
+export function generateMetadata(): Metadata {
+  const { sites } = getMeta().counts;
+  return pageMeta({ title: 'Explore', path: '/explore/', description: `Browse and filter ${sites} zamindar sites in Bangladesh by condition, access, travel time from Dhaka, division and district, as a list or on a map.` });
+}
 
 export default function ExplorePage() {
   const places: PlaceList = {

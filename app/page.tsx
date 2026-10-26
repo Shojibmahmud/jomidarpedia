@@ -3,13 +3,29 @@
 // trust band. Every number comes from build data (FR-1); every photo prints its credit; the page loads no Leaflet,
 // and no Fuse.js until the search box is used (NFR-1). The header lies over the hero (app/tokens.css, FR-19).
 
+import type { Metadata } from 'next';
 import { T } from '@/components/T';
 import { MapTeaser } from '@/components/areas/AreaParts';
 import { CategoryTiles, DivisionTiles, FeaturedTrips, Hero, STAT_ICONS, StatStrip, TrustBand } from '@/components/home/HomeParts';
 import { getDistricts } from '@/lib/data';
 import { both, formatCount } from '@/lib/format';
 import { CHIP_HREF } from '@/lib/home';
-import { homeData } from '@/lib/home-data';
+import { homeData, homePhoto } from '@/lib/home-data';
+import HOME_IMAGES from '@/lib/home-images.json';
+import { getMeta } from '@/lib/data';
+import { pageMeta } from '@/lib/seo';
+
+// The home page shares the hero photo (spec 13 FR-38, D8); the layout's default title is kept.
+export function generateMetadata(): Metadata {
+  const hero = homePhoto(HOME_IMAGES.hero);
+  const { counts } = getMeta();
+  const meta = pageMeta({
+    title: 'Jomidarpedia · জমিদারপিডিয়া', path: '/',
+    description: `The zamindar palaces of Bangladesh: ${counts.sites} sites with sources, conditions and day trips from Dhaka.`,
+    image: { url: hero.src, width: hero.width, height: hero.height, alt: hero.alt },
+  });
+  return { ...meta, title: { absolute: 'Jomidarpedia · জমিদারপিডিয়া' } };
+}
 
 export default function Home() {
   const { counts, hero, categories, divisions, trips, mapSvg } = homeData();

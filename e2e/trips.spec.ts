@@ -2,7 +2,7 @@
 // numbers typed here (I6). Run `npm run build:local` first.
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 import { readdirSync, readFileSync } from 'node:fs';
 import { parseCsv } from '../scripts/csv.mjs';
 import { isMappable } from '../scripts/lib/validate.mjs';
@@ -109,6 +109,7 @@ test.describe('listing', () => {
 test.describe('itinerary page', () => {
   test('with no reviewed status: no status badge and no times; places labelled (FR-12, FR-24, FR-25)', async ({ page }) => {
     const t = trips.find(x => !x.planStatus && x.stops.some(s => s.time) && x.stops.some(s => s.kind === 'place'))!;
+    test.skip(!t, 'every itinerary has a reviewed plan_status (Phase 12 FR-20)');
     await page.goto(href(t));
     await expect(page.locator('[data-plan]')).toHaveCount(0);
     await expect(page.locator('[data-time]')).toHaveCount(0);

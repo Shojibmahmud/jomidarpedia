@@ -3,6 +3,7 @@
 // it works without JavaScript and loads no search index here; Search finds a site by its ID (FR-53), which is
 // what the copy promises.
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { T } from '@/components/T';
 import { NotFoundArt } from '@/components/art/EmptyStates';
@@ -12,6 +13,9 @@ import { SEARCH_HREF } from '@/lib/nav';
 
 const button = 'inline-flex min-h-tap items-center rounded-md border border-line-strong bg-surface px-4 font-semibold hover:bg-surface-2';
 const EXAMPLE_ID = { en: 'JB-DHK-064', bn: 'JB-DHK-064' };
+
+// Never indexed, in any mode (spec 13 FR-36): it is served for every unknown path.
+export const metadata: Metadata = { title: 'Page not found', robots: { index: false, follow: true } };
 
 export default function NotFound() {
   return (

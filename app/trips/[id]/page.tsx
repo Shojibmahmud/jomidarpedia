@@ -28,6 +28,7 @@ import { getTrips } from '@/lib/data';
 import { both, formatCount } from '@/lib/format';
 import { dual, type StringKey } from '@/lib/i18n';
 import { correctionUrl } from '@/lib/site-page';
+import { pageMeta, thumbImage } from '@/lib/seo';
 import { canonicalUrl, siteHref } from '@/lib/site-url';
 import { tripPage } from '@/lib/trip-data';
 import { cssString, dayPicker, exploreStopsHref, mapStops, timeRange, type DayStop } from '@/lib/trips';
@@ -44,7 +45,16 @@ export function generateStaticParams(): Params[] {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { id } = await params;
-  return { title: tripPage(id).trip.title };
+  const { trip, card, place, anchor } = tripPage(id);
+  const photo = card.photos?.[0]?.thumb ?? anchor.images[0]?.thumb;
+  const where = place.dist ? `${place.dist.en}, ${place.div.en} Division` : `${place.div.en} Division`;
+  const length = trip.duration === 'Not stated' ? 'A trip' : trip.duration === 'One day' ? 'A one-day trip' : 'An overnight trip';
+  return pageMeta({
+    // Several trips share a title, so the anchor site makes each one unique (spec 13 FR-34).
+    title: `${trip.title} (${card.anchorEn})`, path: `/trips/${trip.id}/`, type: 'article', canonical: false,
+    description: `${length} around ${card.anchorEn} in ${where}, Bangladesh: ${card.stopCount} stops, with travel times, known costs and sources.`,
+    ...(photo && { image: thumbImage(photo, card.anchorEn) }),
+  });
 }
 
 function Heading({ id, k, icon, className = '' }: { id: string; k: StringKey; icon: React.ReactNode; className?: string }) {

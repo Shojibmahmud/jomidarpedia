@@ -20,12 +20,21 @@ type Store = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 // Lite mode sets data-lite="1" when stored on, or when nothing is stored and Save-Data is on; the automatic
 // case also sets data-lite-auto="1" for the "We switched to Lite mode" note (spec 07 FR-35, FR-36).
 // When storage throws, Lite mode follows Save-Data only.
+/** The drawing shown in place of a local photo that fails to load (public/placeholder.svg). */
+export const PHOTO_FALLBACK = '/placeholder.svg';
+
 export const BOOT_SCRIPT =
   `(function(d){d.dataset.lang='en';try{var t=localStorage.getItem('${THEME_KEY}');if(t==='light'||t==='dark')d.dataset.theme=t;` +
   `if(localStorage.getItem('${LANG_KEY}')==='bn'){d.lang='bn';d.dataset.lang='bn'}}catch(e){}` +
   `var l=null;try{l=localStorage.getItem('${LITE_KEY}')}catch(e){}` +
   `var c=typeof navigator!=='undefined'&&navigator.connection;` +
-  `if(l==='1'||(l!=='0'&&c&&c.saveData)){d.dataset.lite='1';if(l!=='1')d.dataset.liteAuto='1'}})(document.documentElement)`;
+  `if(l==='1'||(l!=='0'&&c&&c.saveData)){d.dataset.lite='1';if(l!=='1')d.dataset.liteAuto='1'}` +
+  // A local photo that fails to load shows the placeholder drawing instead (spec 13 FR-16). Registered here, before
+  // any image loads, so a failure before hydration is caught too; Wikimedia files (the lightbox) handle their own.
+  `if(d.addEventListener)d.addEventListener('error',function(e){var i=e.target;if(!i||i.tagName!=='IMG'||i.dataset.failed)return;` +
+  `try{if(new URL(i.currentSrc||i.src).origin!==location.origin)return}catch(x){return}` +
+  `i.dataset.failed='1';i.removeAttribute('srcset');i.src='${PHOTO_FALLBACK}'},true)` +
+  `})(document.documentElement)`;
 
 export const currentLite = (root: Root): boolean => root.dataset.lite === '1';
 export const currentLang = (root: Root): Lang => (root.dataset.lang === 'bn' ? 'bn' : 'en');

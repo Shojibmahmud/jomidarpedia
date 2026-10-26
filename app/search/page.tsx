@@ -9,10 +9,14 @@ import { Suspense } from 'react';
 import { T } from '@/components/T';
 import { Skeleton } from '@/components/shell/Skeleton';
 import { SearchApp } from '@/components/search/SearchApp';
-import { getDistricts, getIndex } from '@/lib/data';
+import { getDistricts, getIndex, getMeta } from '@/lib/data';
 import { exampleSearches } from '@/lib/search';
+import { pageMeta } from '@/lib/seo';
 
-export const metadata: Metadata = { title: 'Search' };
+export function generateMetadata(): Metadata {
+  const { sites } = getMeta().counts;
+  return pageMeta({ title: 'Search', path: '/search/', description: `Search ${sites} zamindar sites in Bangladesh by name in English or Bangla, family, place or site ID.` });
+}
 
 export default function SearchPage() {
   const index = getIndex();

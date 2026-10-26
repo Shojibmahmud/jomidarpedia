@@ -14,6 +14,7 @@ import { both, formatCount } from '@/lib/format';
 import { dual } from '@/lib/i18n';
 import { divisionHref } from '@/lib/nav';
 import { pageCorrectionUrl } from '@/lib/site-page';
+import { pageMeta } from '@/lib/seo';
 import { canonicalUrl } from '@/lib/site-url';
 
 type Params = { slug: string };
@@ -27,7 +28,11 @@ export function generateStaticParams(): Params[] {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  return { title: `${divisionPage(slug).div.en} Division` };
+  const { div, districts } = divisionPage(slug);
+  return pageMeta({
+    title: `${div.en} Division`, path: divisionHref(div.slug), canonical: false,
+    description: `${div.count} zamindar ${div.count === 1 ? 'site' : 'sites'} in ${districts.length} districts of ${div.en} Division, Bangladesh: conditions, map locations and day trips.`,
+  });
 }
 
 export default async function DivisionPage({ params }: { params: Promise<Params> }) {

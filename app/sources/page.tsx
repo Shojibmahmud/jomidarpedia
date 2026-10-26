@@ -12,8 +12,12 @@ import { getSources } from '@/lib/data';
 import { both, formatCount } from '@/lib/format';
 import { dual } from '@/lib/i18n';
 import { sortSources, sourceRow, SOURCES_PAGE } from '@/lib/sources';
+import { pageMeta } from '@/lib/seo';
 
-export const metadata: Metadata = { title: 'Sources' };
+export function generateMetadata(): Metadata {
+  const n = getSources().length;
+  return pageMeta({ title: 'Sources', path: '/sources/', description: `The ${n} books, articles, websites and records cited for the zamindar sites of Bangladesh on Jomidarpedia.` });
+}
 
 export default function SourcesPage() {
   const rows = getSources().map(sourceRow);

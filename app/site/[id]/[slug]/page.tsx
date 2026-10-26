@@ -24,6 +24,7 @@ import { VisitingInfo } from '@/components/site/VisitingInfo';
 import { getDistricts, getDivisions, getIndex, getSite } from '@/lib/data';
 import { dual, type StringKey } from '@/lib/i18n';
 import { conflictAnchor, conflictSection, disagreements, isSparse, openQuestions, SECTIONS, sectionHint, sectionId, type ConflictSection, type Section } from '@/lib/site-page';
+import { pageMeta, thumbImage } from '@/lib/seo';
 import { canonicalUrl, siteHref } from '@/lib/site-url';
 import type { SiteRecord } from '@/lib/types';
 
@@ -44,7 +45,18 @@ async function load(params: Promise<Params>) {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const site = await load(params);
-  return { title: site.name.en };
+  const photo = site.images[0];
+  return pageMeta({
+    title: siteTitle(site), description: site.summary || `${site.name.en}, ${site.place.district}, ${site.place.division} Division, Bangladesh.`,
+    path: siteHref(site.id, site.slug), type: 'article', canonical: false,
+    ...(photo && { image: thumbImage(photo.thumb, photo.alt) }),
+  });
+}
+
+/** The page title: the English name, with the district when another site has the same name (spec 13 FR-34). */
+function siteTitle(site: SiteRecord) {
+  const shared = getIndex().some(s => s.i !== site.id && s.e === site.name.en);
+  return shared ? `${site.name.en}, ${site.place.district}` : site.name.en;
 }
 
 const TITLE: Record<Section, StringKey> = {

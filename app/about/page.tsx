@@ -14,8 +14,11 @@ import { Blocks, inline, parseMarkdown } from '@/lib/markdown';
 import { CORRECTIONS_URL } from '@/lib/nav';
 import { canonicalUrl } from '@/lib/site-url';
 import { ABOUT_PATH, aboutValues, fillTokens, parseAbout } from '@/scripts/lib/about.mjs';
+import { pageMeta } from '@/lib/seo';
 
-export const metadata: Metadata = { title: 'About and methodology' };
+export function generateMetadata(): Metadata {
+  return pageMeta({ title: 'About and methodology', path: '/about/', canonical: false, description: 'How Jomidarpedia records the zamindar palaces of Bangladesh: sources, how sure each fact is, what is not done yet, and how to suggest a correction.' });
+}
 
 function aboutDoc() {
   const { reviewed, body } = parseAbout(readFileSync(join(process.cwd(), ABOUT_PATH), 'utf8'));
