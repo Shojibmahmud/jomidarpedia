@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Both, Latin, T } from '@/components/T';
 import { LiteNotices } from '@/components/explore/LiteNotices';
+import { ProseNote } from '@/components/shell/ProseNote';
 import { ShareButton } from '@/components/site/CopyButton';
 import { AccessBadge, Badge } from '@/components/site/Badges';
 import { SuggestCorrection } from '@/components/site/SuggestCorrection';
@@ -142,6 +143,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
           </div>
           <p className="hidden text-sm print:block"><T k="print.date" /> ____________________</p>
         </div>
+        <ProseNote k="common.pageProseInEnglish" />
       </header>
 
       <div data-no-print>{dayPicker(dayStops) ? <DayCheck stops={dayStops} /> : sites.length ? <DayNote /> : null}</div>

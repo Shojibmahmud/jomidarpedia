@@ -8,6 +8,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { T } from '@/components/T';
 import { Licences } from '@/components/about/Licences';
+import { ProseNote } from '@/components/shell/ProseNote';
 import { getMeta, getSources } from '@/lib/data';
 import { dual } from '@/lib/i18n';
 import { Blocks, inline, parseMarkdown } from '@/lib/markdown';
@@ -38,7 +39,7 @@ export default function AboutPage() {
         <p className="text-xs font-bold uppercase tracking-wider text-primary"><T k="about.eyebrow" /></p>
         <h1 className="font-serif text-display"><T k="about.title" /></h1>
         <p lang="bn" data-l="en" aria-hidden="true" className="font-bn-serif text-bn-h3 text-muted">{dual('about.title').bn}</p>
-        <p lang="bn" data-l="bn" className="text-sm text-muted">{dual('common.proseInEnglish').bn}</p>
+        <ProseNote k="common.proseInEnglish" />
         {reviewed ? null : <p role="note" className="rounded-lg border border-gold bg-gold-tint p-3 text-sm" data-about-draft><T k="about.draft" /></p>}
         <div lang="en" className="space-y-3 text-lg"><Blocks blocks={doc.lead} /></div>
       </header>

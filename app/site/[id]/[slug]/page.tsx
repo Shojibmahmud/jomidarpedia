@@ -15,6 +15,7 @@ import { BadgeRow, BilingualName, Breadcrumb, RecordBanner } from '@/components/
 import { HistoryTimeline, LegendBox } from '@/components/site/History';
 import { LocationPanel } from '@/components/site/LocationPanel';
 import { NoPhotoPanel } from '@/components/site/NoPhotoPanel';
+import { ProseNote } from '@/components/shell/ProseNote';
 import { CombineWith, IdentityNotes, Itineraries } from '@/components/site/Related';
 import { GettingThere } from '@/components/site/Routes';
 import { SectionNav, type NavItem } from '@/components/site/SectionNav';
@@ -120,6 +121,7 @@ export default async function SitePage({ params }: { params: Promise<Params> }) 
         </div>
         <BadgeRow site={site} disagree={multi.length} questions={questions.length} />
         {sparse ? <RecordBanner /> : null}
+        <ProseNote k="common.pageProseInEnglish" />
       </header>
 
       {site.images.length ? <Gallery images={site.images} /> : <NoPhotoPanel site={site} pageUrl={pageUrl} />}

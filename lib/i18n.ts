@@ -49,6 +49,7 @@ export const STRINGS = {
   'common.notDocumented': { en: 'Not documented', bn: 'নথিভুক্ত নয়', needsReview: true },
   'common.bnNameMissing': { en: 'Bangla name not yet recorded', bn: 'বাংলা নাম এখনও লেখা হয়নি', needsReview: true },
   'common.proseInEnglish': { en: 'This text is in English.', bn: 'এই লেখাটি ইংরেজিতে।', needsReview: true },
+  'common.pageProseInEnglish': { en: 'Descriptions on this page are in English for now.', bn: 'এই পাতার বিবরণগুলো আপাতত ইংরেজিতে।', needsReview: true },
   'common.dismiss': { en: 'Dismiss', bn: 'বন্ধ করুন', needsReview: true },
   'url.droppedFilters': { en: 'Some filters in this link were not recognised and have been removed.', bn: 'এই লিংকের কিছু ফিল্টার চেনা যায়নি, তাই সরিয়ে দেওয়া হয়েছে।', needsReview: true },
   'common.sitesOnMap': { en: '{count} on the map', bn: 'মানচিত্রে {count}টি' },
