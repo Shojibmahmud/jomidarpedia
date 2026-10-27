@@ -37,6 +37,7 @@ export const STRINGS = {
   'theme.dark': { en: 'Dark', bn: 'গাঢ়', needsReview: true },
 
   // Footer
+  'footer.contact': { en: 'Contact:', bn: 'যোগাযোগ:', needsReview: true },
   'footer.updated': { en: 'Data last updated {date}', bn: 'তথ্য সর্বশেষ হালনাগাদ {date}', needsReview: true },
   'footer.mapCredit': { en: 'Maps: © OpenStreetMap contributors. Boundaries: geoBoundaries; districts BBS/OCHA, CC BY 3.0 IGO.', bn: 'মানচিত্র: © OpenStreetMap অবদানকারীরা। সীমানা: geoBoundaries; জেলা BBS/OCHA, CC BY 3.0 IGO।', needsReview: true },
   'footer.credits': { en: 'Image credits', bn: 'ছবির কৃতজ্ঞতা', needsReview: true },

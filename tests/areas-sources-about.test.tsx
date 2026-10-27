@@ -14,6 +14,7 @@ import { districtPage, divisionPage } from '@/lib/area-data';
 import { getDistricts, getDivisions, getIndex, getMeta, getSources } from '@/lib/data';
 import { Blocks, parseMarkdown } from '@/lib/markdown';
 import { FONTS, tileCredits } from '@/lib/licences';
+import { CONTACT_EMAIL } from '@/lib/nav';
 import { createMatcher, searchAll, siteIdQuery } from '@/lib/search';
 import {
   filterSources, pageCount, pageLinks, parseSources, serializeSources, sortSources, sourceDate, sourceRow, SOURCES_PAGE, typeCounts, typeToken,
@@ -186,7 +187,9 @@ describe('About (spec 10 FR-35 to FR-44, AC-10, AC-11)', () => {
     expect(html).not.toMatch(/download|CSV files/i);
     expect(html).toContain(links['url.corrections']);
     expect(html).toContain(links['url.photoOffer']);
-    expect(html).not.toMatch(/@[a-z0-9-]+\.[a-z]/i); // no email address while O2 is unset
+    // O2 settled 2026-10-27: the project address is the only email the page may show.
+    expect(html.replaceAll(CONTACT_EMAIL, '')).not.toMatch(/@[a-z0-9-]+\.[a-z]/i);
+    expect(html).toContain(`mailto:${CONTACT_EMAIL}`);
   });
 
   it('says "no tracking" only while no analytics script ships (FR-44)', () => {

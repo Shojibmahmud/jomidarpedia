@@ -25,7 +25,9 @@ export function CorrectionDialog() {
       if (url.origin !== location.origin || url.pathname !== CORRECTIONS_URL || location.pathname === CORRECTIONS_URL) return;
       e.preventDefault();
       const value = correctionContext(url.searchParams);
-      setCtx(c => ({ n: (c?.n ?? 0) + 1, value: { ...value, pageUrl: value.pageUrl ?? location.href } }));
+      // A full address, so the link in the email works: without SITE_URL the page links carry a bare path.
+      const pageUrl = value.pageUrl ? new URL(value.pageUrl, location.href).href : location.href;
+      setCtx(c => ({ n: (c?.n ?? 0) + 1, value: { ...value, pageUrl } }));
     };
     document.addEventListener('click', click, true);
     return () => document.removeEventListener('click', click, true);

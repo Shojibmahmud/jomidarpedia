@@ -69,6 +69,8 @@ We only show photos with an open licence or in the public domain, each with its 
 
 Both forms send an email to the editor. Your address is used only to reply, and nothing you send is published.
 
+- **Anything else?** Write to [jomidarpedia@gmail.com](mailto:jomidarpedia@gmail.com).
+
 ## Licences {#licences}
 
 ::licences

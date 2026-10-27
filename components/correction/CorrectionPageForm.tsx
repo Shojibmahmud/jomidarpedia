@@ -10,5 +10,8 @@ const noop = () => () => {};
 
 export function CorrectionPageForm() {
   const query = useSyncExternalStore(noop, () => location.search, () => '');
-  return <CorrectionForm key={query} ctx={correctionContext(new URLSearchParams(query))} titleId="jp-correction-title" />;
+  const ctx = correctionContext(new URLSearchParams(query));
+  // The address only exists in the browser; the static HTML leaves it out.
+  if (ctx.pageUrl && typeof location !== 'undefined') ctx.pageUrl = new URL(ctx.pageUrl, location.href).href;
+  return <CorrectionForm key={query} ctx={ctx} titleId="jp-correction-title" />;
 }

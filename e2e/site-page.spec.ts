@@ -124,7 +124,8 @@ test('Elangi: sparse banner, checklist, empty history, open question and no-phot
   await expect(page.getByText(/Sources disagree on/)).toHaveCount(0);
   await expect(page.locator('[data-no-photo]')).toBeVisible();
   await expect(page.locator('[data-no-photo] a[data-correction="photo"]')).toHaveAttribute('href', /^\/correction\/\?.*field=photo/);
-  await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
+  await expect(page.locator('main a[href^="mailto:"]')).toHaveCount(0);
+  await expect(page.locator('footer a[data-contact]')).toHaveAttribute('href', 'mailto:jomidarpedia@gmail.com');
   await expect(page.locator('[data-location-state]')).toHaveAttribute('data-location-state', 'noPin');
 });
 

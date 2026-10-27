@@ -18,6 +18,7 @@ export const divisionHref = (slug: string) => `/division/${slug}/`;
 // The form posts to Web3Forms, which emails it to the project address; the access key is public by design.
 export const CORRECTIONS_URL = '/correction/';
 export const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
+export const CONTACT_EMAIL = 'jomidarpedia@gmail.com';
 export const WEB3FORMS_KEY = 'd70a4566-f7dd-41de-8a1b-926420f46e99';
 
 export const FOOTER_LINKS: NavLink[] = [
