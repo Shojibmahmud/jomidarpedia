@@ -44,7 +44,6 @@ export function CorrectionForm({ ctx, titleId, onDone }: { ctx: CorrectionContex
       ) : (
         <form action={WEB3FORMS_URL} method="post" onSubmit={submit} className="space-y-4">
           <p className="text-sm text-muted"><T k={photo ? 'correct.photoIntro' : 'correct.intro'} /></p>
-          {ctx.pageUrl ? <p className="text-xs text-muted"><T k="correct.page" /> <span lang="en" className="[overflow-wrap:anywhere]">{ctx.pageUrl}</span></p> : null}
           <input type="hidden" name="access_key" value={WEB3FORMS_KEY} />
           <input type="hidden" name="from_name" value="Jomidarpedia" />
           {ctx.siteId ? <input type="hidden" name="site_id" value={ctx.siteId} /> : null}
