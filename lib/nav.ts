@@ -14,8 +14,11 @@ export const HEADER_LINKS: NavLink[] = [
 export const SEARCH_HREF = '/search/';
 export const divisionHref = (slug: string) => `/division/${slug}/`;
 
-// The public issues-only repository for corrections (O1, task 0.9); the email fallback stays hidden (O2).
-export const CORRECTIONS_URL = 'https://github.com/Shojibmahmud/jomidarpedia-corrections/issues/new?template=correction.yml';
+// The correction form: its own page, which every correction link opens as a popup instead (CorrectionDialog).
+// The form posts to Web3Forms, which emails it to the project address; the access key is public by design.
+export const CORRECTIONS_URL = '/correction/';
+export const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
+export const WEB3FORMS_KEY = 'd70a4566-f7dd-41de-8a1b-926420f46e99';
 
 export const FOOTER_LINKS: NavLink[] = [
   { href: '/credits/', k: 'footer.credits' },

@@ -11,5 +11,5 @@ const noop = () => () => {};
 
 export function BrokenLinkReport({ className }: { className: string }) {
   const href = useSyncExternalStore(noop, () => pageCorrectionUrl(window.location.href, 'general'), () => CORRECTIONS_URL);
-  return <a href={href} rel="noopener" className={className} data-report-link><T k="nf.report" /></a>;
+  return <a href={href} className={className} data-report-link><T k="nf.report" /></a>;
 }

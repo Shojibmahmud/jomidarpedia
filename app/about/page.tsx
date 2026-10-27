@@ -25,9 +25,7 @@ export function generateMetadata(): Metadata {
 
 function aboutDoc(path: string) {
   const { reviewed, body } = parseAbout(readFileSync(join(process.cwd(), path), 'utf8'), path);
-  const photoOffer = new URL(CORRECTIONS_URL);
-  photoOffer.searchParams.set('template', 'photo-offer.yml');
-  const values = aboutValues(getMeta(), getSources(), { 'url.corrections': CORRECTIONS_URL, 'url.photoOffer': photoOffer.href });
+  const values = aboutValues(getMeta(), getSources(), { 'url.corrections': CORRECTIONS_URL, 'url.photoOffer': `${CORRECTIONS_URL}?field=photo` });
   return { reviewed, doc: parseMarkdown(fillTokens(body, values, path)) };
 }
 

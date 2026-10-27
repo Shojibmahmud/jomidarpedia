@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { fontVariables } from './fonts';
 import { T } from '@/components/T';
+import { CorrectionDialog } from '@/components/correction/CorrectionDialog';
 import { OfflineNotice } from '@/components/shell/OfflineNotice';
 import { SiteFooter } from '@/components/shell/SiteFooter';
 import { SiteHeader } from '@/components/shell/SiteHeader';
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="flex-1">{children}</div>
         <SiteFooter />
         <OfflineNotice />
+        <CorrectionDialog />
       </body>
     </html>
   );

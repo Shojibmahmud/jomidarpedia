@@ -67,7 +67,7 @@ We only show photos with an open licence or in the public domain, each with its 
 - **Spotted a mistake?** [Suggest a correction]({{url.corrections}}). The form takes the site, the field and what you know.
 - **Have a photo you can share under an open licence?** [Offer a photo]({{url.photoOffer}}).
 
-Both forms are public issues on GitHub, so please leave out anything private.
+Both forms send an email to the editor. Your address is used only to reply, and nothing you send is published.
 
 ## Licences {#licences}
 

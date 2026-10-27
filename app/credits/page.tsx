@@ -112,7 +112,7 @@ export default function CreditsPage() {
           </section>
           <p className="rounded-lg bg-gold-tint p-4 text-sm">
             <strong><T k="credits.mistake" /></strong>{' '}
-            <a href={CORRECTIONS_URL} rel="noopener" className="underline"><T k="credits.mistakeBody" /></a>
+            <a href={CORRECTIONS_URL} className="underline"><T k="credits.mistakeBody" /></a>
           </p>
         </aside>
       </div>

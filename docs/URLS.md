@@ -32,6 +32,7 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 | `/sources/<id>/` | Source page (1,136) | built | 10.4 |
 | `/about/` | About and methodology (text: `content/about.en.md`) | built | 10.5–10.9 |
 | `/credits/` | Image credits and licences | built | 10.7 |
+| `/correction/` | Correction and photo-offer form (noindex); every correction link opens it as a popup instead | built | 5.13 |
 | `/404.html` | Not found (served for any unknown path, status 404) | built | 10.10 |
 | `/dev/i18n/` | Language test page: local and preview builds only, never in release | built | 3.1 |
 
@@ -108,6 +109,5 @@ Slugs come from the data: site `dataset_slug`; division and district `slug` in `
 
 ## Outbound links
 
-- **Corrections:** `https://github.com/Shojibmahmud/jomidarpedia-corrections/issues/new?template=correction.yml`, prefilled where known with `site_id`, `page_url` and `field` (task 5.13; `lib/nav.ts` `CORRECTIONS_URL`). The email fallback stays hidden until O2 is decided.
-- **Photo offers:** the same repository with `template=photo-offer.yml`.
+- **Corrections:** not an outbound link any more. Links go to `/correction/`, prefilled where known with `site_id`, `page_url` and `field` (`field=photo` for a photo offer; `lib/nav.ts` `CORRECTIONS_URL`). `CorrectionDialog` opens the form as a popup, and it posts to Web3Forms, which emails the project address.
 - **Visitor photos for hidden-pin sites:** a name-only Google Maps search, with no coordinates (O10, 2.12).

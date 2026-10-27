@@ -123,7 +123,7 @@ test('Elangi: sparse banner, checklist, empty history, open question and no-phot
   await expect(page.locator('[data-open-question]')).toHaveCount(openQuestions(elangi).length);
   await expect(page.getByText(/Sources disagree on/)).toHaveCount(0);
   await expect(page.locator('[data-no-photo]')).toBeVisible();
-  await expect(page.locator('[data-no-photo] a[data-correction="photo"]')).toHaveAttribute('href', /template=photo-offer\.yml/);
+  await expect(page.locator('[data-no-photo] a[data-correction="photo"]')).toHaveAttribute('href', /^\/correction\/\?.*field=photo/);
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
   await expect(page.locator('[data-location-state]')).toHaveAttribute('data-location-state', 'noPin');
 });
@@ -138,11 +138,35 @@ test('Baliati is not sparse', async ({ page }) => {
 test('the header correction link is prefilled', async ({ page }) => {
   await page.goto(href(baliati));
   const link = page.locator('header a[data-correction="general"]');
-  const url = new URL((await link.getAttribute('href'))!);
-  expect(url.searchParams.get('template')).toBe('correction.yml');
+  const url = new URL((await link.getAttribute('href'))!, page.url());
+  expect(url.pathname).toBe('/correction/');
   expect(url.searchParams.get('site_id')).toBe(baliati.id);
   expect(url.searchParams.get('field')).toBe('general');
   expect(url.searchParams.get('page_url')).toContain(href(baliati));
+});
+
+test('a correction link opens the form as a popup and sends it by email', async ({ page }) => {
+  let sent: string | null = null;
+  await page.route('https://api.web3forms.com/submit', async route => {
+    sent = route.request().postData();
+    await route.fulfill({ json: { success: true } });
+  });
+  await page.goto(href(baliati));
+  await page.locator('header a[data-correction="general"]').click();
+  const dialog = page.locator('[data-correction-dialog]');
+  await expect(dialog).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(href(baliati)));
+  await expect(dialog.locator('input[name="subject"]')).toHaveValue(`Correction · ${baliati.id}`);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await page.locator('header a[data-correction="general"]').click();
+  await dialog.locator('input[name="email"]').fill('reader@example.org');
+  await dialog.locator('textarea[name="message"]').fill('The gate is open on Fridays.');
+  await dialog.locator('[data-correction-send]').click();
+  await expect(dialog.locator('[data-correction-sent]')).toBeVisible();
+  expect(sent).toContain('reader@example.org');
+  expect(sent).toContain(baliati.id);
+  expect(sent).toContain('Jomidarpedia: Correction');
 });
 
 test('JB-MYM-019: the disagreement pill counts multi-version conflicts only', async ({ page }) => {

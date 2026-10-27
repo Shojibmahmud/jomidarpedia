@@ -158,7 +158,7 @@ describe('security headers', () => {
     expect(directive('script-src')).toBe("script-src 'self' 'unsafe-inline'");
     expect(directive('style-src')).toBe("style-src 'self' 'unsafe-inline'");
     expect(directive('img-src')).toMatch(/^img-src 'self' data: https:\/\/thumb\.wikimedia\.org https:\/\/upload\.wikimedia\.org /);
-    for (const d of ["connect-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "font-src 'self'"]) {
+    for (const d of ["connect-src 'self' https://api.web3forms.com", "object-src 'none'", "base-uri 'self'", "form-action 'self' https://api.web3forms.com", "frame-ancestors 'none'", "font-src 'self'"]) {
       expect(csp.split(';').map(s => s.trim())).toContain(d);
     }
   });

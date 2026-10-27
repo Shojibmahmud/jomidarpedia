@@ -111,7 +111,7 @@ S = server component, C = client component. "Data" says where the props come fro
 | `ThemeToggle` | C | | system / light / dark (localStorage `jp-theme`) | none |
 | `Breadcrumb` | S | `items: {label, labelBn?, href?}[]` | | page data |
 | `SectionNav` | C | `sections: {id, label, empty?: 'no pin'\|'not yet'\|'none'}[]` | desktop sticky TOC with active section; mobile `<select>` jump | page data |
-| `SuggestCorrection` | S | `siteId?, field?, variant: 'button'\|'link'` | builds a pre-filled GitHub issue URL; email fallback | none |
+| `SuggestCorrection` | S | `siteId?, field?, variant: 'button'\|'link'` | links to the pre-filled `/correction/` form, opened as a popup that emails the editor | none |
 | `Skeleton` | S | `variant: 'row'\|'card'\|'map'` | | none |
 | `OfflineNotice` | C | | online / slow (Lite suggested) / offline | `navigator.onLine`, `navigator.connection` |
 

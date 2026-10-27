@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { divisionHref, FOOTER_LINKS, HEADER_LINKS, SEARCH_HREF } from '@/lib/nav';
+import { CORRECTIONS_URL, divisionHref, FOOTER_LINKS, HEADER_LINKS, SEARCH_HREF } from '@/lib/nav';
 
 const urls = readFileSync('docs/URLS.md', 'utf8');
 const roadmap = readFileSync('roadmap/DEVELOPMENT_ROADMAP.md', 'utf8');
@@ -40,10 +40,9 @@ describe('shell links (task 3.9)', () => {
     for (const h of hrefs) expect(resolves(h), h).toBe(true);
   });
 
-  it('the external correction link is the one URLS.md documents', () => {
-    const external = FOOTER_LINKS.filter(l => !l.href.startsWith('/'));
-    expect(external).toHaveLength(1);
-    expect(urls).toContain(external[0].href);
+  it('every footer link is on this site, the correction form included', () => {
+    expect(FOOTER_LINKS.filter(l => !l.href.startsWith('/'))).toEqual([]);
+    expect(FOOTER_LINKS.map(l => l.href)).toContain(CORRECTIONS_URL);
   });
 
   it('no count is hard-coded in app/ or components/', () => {

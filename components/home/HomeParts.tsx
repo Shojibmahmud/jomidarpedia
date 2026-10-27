@@ -258,7 +258,7 @@ export function TrustBand({ disagreements, legends, sources }: { disagreements: 
           {dot('bg-[#3A2620] text-[#F2B49D]', icon('M4 20h4L19 9l-4-4L4 16zM14 6l4 4'))}
           <span>
             <span className="block font-semibold"><T k="home.trustFamily" /></span>
-            <a href={CORRECTIONS_URL} rel="noopener" className={`text-sm text-[#F2B49D] ${link}`} data-trust="correction"><T k="footer.correction" /></a>
+            <a href={CORRECTIONS_URL} className={`text-sm text-[#F2B49D] ${link}`} data-trust="correction"><T k="footer.correction" /></a>
           </span>
         </p>
       </div>

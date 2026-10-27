@@ -2,7 +2,7 @@
 
 Roadmap tasks 13.7 to 13.10; spec `.claude/specs/13-Quality-accessibility-and-security.md` FR-22 to FR-33.
 
-The site is a static export served by Vercel. There are no accounts, no forms that send data anywhere, no cookies and no analytics. The headers below are set for every path in `vercel.json`. `serve.json` is a copy of them for the Playwright test server, and `tests/release-checks.test.ts` fails if the two differ.
+The site is a static export served by Vercel. There are no accounts, no cookies and no analytics. The one form that sends data elsewhere is the correction form, which posts to Web3Forms (`https://api.web3forms.com`), which emails it to the project address. The headers below are set for every path in `vercel.json`. `serve.json` is a copy of them for the Playwright test server, and `tests/release-checks.test.ts` fails if the two differ.
 
 ## Assets the export uses (FR-22)
 
@@ -18,7 +18,9 @@ Scanned on 26 Oct 2026 in two ways: over `out/`, and against the code that loads
 | | `https://tile.openstreetmap.org` | Map tiles (until O4, see `docs/tiles.md`) |
 | | `data:` | Kept for Leaflet and the browser's own images (roadmap 13.7) |
 | Fetch / XHR | `'self'` | `/data/index.json` (`lib/search-client.ts`) |
+| | `https://api.web3forms.com` | The correction form's submission (`components/correction/CorrectionForm.tsx`) |
 | Forms | `'self'` | The 404 and hero search forms submit to `/search/` |
+| | `https://api.web3forms.com` | The correction form's plain post, when JavaScript is off |
 | Frames | none | Nothing embeds a frame, and nothing may frame the site |
 
 Links to GitHub, Wikipedia, Commons and source websites are plain links, not loaded resources, so the CSP does not list them.
@@ -31,12 +33,12 @@ script-src 'self' 'unsafe-inline';
 style-src 'self' 'unsafe-inline';
 img-src 'self' data: https://thumb.wikimedia.org https://upload.wikimedia.org https://tile.openstreetmap.org;
 font-src 'self';
-connect-src 'self';
+connect-src 'self' https://api.web3forms.com;
 manifest-src 'self';
 worker-src 'self';
 object-src 'none';
 base-uri 'self';
-form-action 'self';
+form-action 'self' https://api.web3forms.com;
 frame-ancestors 'none'
 ```
 
@@ -51,11 +53,11 @@ So `script-src` is `'self' 'unsafe-inline'` (spec 13 D4).
 **What this costs:** if an attacker could inject markup into a page, the CSP would not stop an inline script.
 
 **What limits that risk:**
-- **No user content.** Every page is built from the project's own CSV data, and readers can't post anything.
+- **No user content.** Every page is built from the project's own CSV data, and readers can't post anything to it (the correction form only sends an email).
 - **React escapes text.** The only raw HTML is the boot script, the escaped credits list (`app/credits/page.tsx`) and generated SVG maps. All three are built from project data at build time.
 - **No external script origin is allowed.** Even an injected `<script src>` can only load from this site.
-- **`connect-src 'self'`.** An injected script could not send data to another server with `fetch`.
-- **`object-src 'none'`, `base-uri 'self'`, `form-action 'self'` and `frame-ancestors 'none'`** close the other common routes: plugins, base-tag hijacking, form redirection and clickjacking.
+- **`connect-src 'self' https://api.web3forms.com`.** An injected script could not send data to another server with `fetch`, apart from the form service, which only emails the project address.
+- **`object-src 'none'`, `base-uri 'self'`, `form-action` (this site and the form service only) and `frame-ancestors 'none'`** close the other common routes: plugins, base-tag hijacking, form redirection and clickjacking.
 - **Checks over `out/` on every build:** `npm run check:out` and the data gates in `scripts/lib/checks.mjs`.
 
 ## Other headers (FR-27)

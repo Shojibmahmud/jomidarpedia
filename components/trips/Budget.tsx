@@ -76,7 +76,7 @@ export function Budget({ trip, correctionHref }: { trip: Itinerary; correctionHr
         </tfoot>
       </table>
       {trip.costsEstimated ? <p className="text-sm text-muted"><DateSpan span={trip.costsEstimated} one="budget.estimates" range="budget.estimatesRange" /></p> : null}
-      <p data-no-print><a href={correctionHref} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline"><T k="budget.tellUs" /><span className="sr-only"> <T k="common.newTab" /></span></a></p>
+      <p data-no-print><a href={correctionHref} className="font-semibold text-primary underline"><T k="budget.tellUs" /></a></p>
     </div>
   );
 }
