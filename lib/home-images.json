@@ -8,12 +8,12 @@
   },
   "divisions": {
     "dhaka": "IMG-DHK-002-008",
-    "chattogram": "IMG-CTG-015-001",
-    "rajshahi": "IMG-RAJ-053-001",
-    "khulna": "IMG-KHL-022-001",
+    "chattogram": "IMG-CTG-013-015",
+    "rajshahi": "IMG-RAJ-047-014",
+    "khulna": "IMG-KHL-014-008",
     "barishal": "IMG-BSL-016-001",
-    "sylhet": "IMG-SYL-016-001",
-    "rangpur": "IMG-RNG-040-001",
+    "sylhet": "IMG-SYL-013-003",
+    "rangpur": "IMG-RNG-040-009",
     "mymensingh": "IMG-MYM-010-002"
   }
 }

@@ -145,7 +145,7 @@ export function NoPinList({ sites, correctionHref }: { sites: NoPinSite[]; corre
           <ul>{sites.slice(SHOWN).map(s => <NoPinItem key={s.id} s={s} />)}</ul>
         </details>
       ) : null}
-      <p><a href={correctionHref} rel="noopener" className="text-sm font-semibold text-primary underline" data-nopin-tell><T k="nopin.tell" /></a></p>
+      <p><a href={correctionHref} className="text-sm font-semibold text-primary underline" data-nopin-tell><T k="nopin.tell" /></a></p>
     </section>
   );
 }

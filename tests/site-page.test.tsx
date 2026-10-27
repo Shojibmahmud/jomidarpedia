@@ -5,7 +5,7 @@ import { AccessBadge, ConditionBadge, DayTripBadge, LocationBadge } from '@/comp
 import { Unknown } from '@/components/site/Unknown';
 import { CONDITIONS } from '@/components/art/ConditionGlyph';
 import { STRINGS } from '@/lib/i18n';
-import { correctionUrl, directionsUrl, coordsText, isSparse, isStale, knownItems, sectionHint, disagreements, openQuestions, conflictSection } from '@/lib/site-page';
+import { correctionContext, correctionUrl, pageCorrectionUrl, directionsUrl, coordsText, isSparse, isStale, knownItems, sectionHint, disagreements, openQuestions, conflictSection } from '@/lib/site-page';
 import { getSite } from '@/lib/data';
 import type { Access, LocationStatus, SiteRecord } from '@/lib/types';
 
@@ -113,11 +113,13 @@ describe('conflicts (FR-34 to FR-36)', () => {
 
 describe('outbound links (FR-19, FR-39)', () => {
   it('prefill the correction and photo-offer forms', () => {
-    const u = new URL(correctionUrl('JB-DHK-064', '/site/JB-DHK-064/baliati-palace/', 'visiting'));
-    expect([u.host, u.searchParams.get('template'), u.searchParams.get('site_id'), u.searchParams.get('field'), u.searchParams.get('page_url')])
-      .toEqual(['github.com', 'correction.yml', 'JB-DHK-064', 'visiting', '/site/JB-DHK-064/baliati-palace/']);
-    const p = new URL(correctionUrl('JB-RAJ-002', '/x/', 'photo'));
-    expect([p.searchParams.get('template'), p.searchParams.get('field')]).toEqual(['photo-offer.yml', null]);
+    const u = new URL(correctionUrl('JB-DHK-064', '/site/JB-DHK-064/baliati-palace/', 'visiting'), 'https://example.org');
+    expect([u.pathname, u.searchParams.get('site_id'), u.searchParams.get('field'), u.searchParams.get('page_url')])
+      .toEqual(['/correction/', 'JB-DHK-064', 'visiting', '/site/JB-DHK-064/baliati-palace/']);
+    const p = new URL(correctionUrl('JB-RAJ-002', '/x/', 'photo'), 'https://example.org');
+    expect(p.searchParams.get('field')).toBe('photo');
+    expect(correctionContext(p.searchParams)).toEqual({ siteId: 'JB-RAJ-002', field: 'photo', pageUrl: '/x/' });
+    expect(pageCorrectionUrl('/division/dhaka/')).toBe('/correction/?page_url=%2Fdivision%2Fdhaka%2F');
   });
   it('directions and copied coordinates use Latin digits and 5 decimals', () => {
     expect(directionsUrl([23.99444, 90.0425])).toBe('https://www.google.com/maps/dir/?api=1&destination=23.99444,90.04250');

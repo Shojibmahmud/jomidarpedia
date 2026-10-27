@@ -66,22 +66,28 @@ export function sectionHint(site: SiteRecord, s: Section): Hint | undefined {
 // ---------------------------------------------------------------- corrections (FR-39, Assumption A-3)
 export type CorrectionField = 'general' | 'summary' | 'location' | 'history' | 'architecture' | 'stories' | 'visiting' | 'getting-there' | 'sources';
 
-/** The prefilled issue form: correction.yml with site_id, field and page_url, or photo-offer.yml (no field). */
+/** What the correction form is about: from the link's query, with the page it was opened on as the fallback. */
+export interface CorrectionContext { siteId?: string; field?: CorrectionField | 'photo'; pageUrl?: string }
+
+const formUrl = (params: Record<string, string | undefined>) => {
+  const q = new URLSearchParams(Object.entries(params).filter((e): e is [string, string] => !!e[1]));
+  return `${CORRECTIONS_URL}?${q}`;
+};
+
+/** The prefilled correction form: site_id, field and page_url; field=photo for the photo offer. */
 export function correctionUrl(siteId: string, pageUrl: string, field: CorrectionField | 'photo'): string {
-  const url = new URL(CORRECTIONS_URL);
-  if (field === 'photo') url.searchParams.set('template', 'photo-offer.yml');
-  url.searchParams.set('site_id', siteId);
-  if (field !== 'photo') url.searchParams.set('field', field);
-  url.searchParams.set('page_url', pageUrl);
-  return url.href;
+  return formUrl({ site_id: siteId, field, page_url: pageUrl });
 }
 
 /** The correction form for a page about no single site (area pages, the 404): page_url, and the field when known. */
 export function pageCorrectionUrl(pageUrl: string, field?: CorrectionField): string {
-  const url = new URL(CORRECTIONS_URL);
-  if (field) url.searchParams.set('field', field);
-  url.searchParams.set('page_url', pageUrl);
-  return url.href;
+  return formUrl({ field, page_url: pageUrl });
+}
+
+/** Reads a correction link's query back (the inverse of correctionUrl). */
+export function correctionContext(params: URLSearchParams): CorrectionContext {
+  const get = (k: string) => params.get(k)?.trim().slice(0, 300) || undefined;
+  return { siteId: get('site_id'), field: get('field') as CorrectionContext['field'], pageUrl: get('page_url') };
 }
 
 // ---------------------------------------------------------------- outbound map links (FR-19, 5.18)

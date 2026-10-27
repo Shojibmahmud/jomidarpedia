@@ -1,0 +1,17 @@
+'use client';
+// The form on /correction/ itself (opened in a new tab, or with JavaScript off): the site, field and page come
+// from this page's query. The static HTML has none of them, so the form still works without JavaScript.
+
+import { useSyncExternalStore } from 'react';
+import { correctionContext } from '@/lib/site-page';
+import { CorrectionForm } from './CorrectionForm';
+
+const noop = () => () => {};
+
+export function CorrectionPageForm() {
+  const query = useSyncExternalStore(noop, () => location.search, () => '');
+  const ctx = correctionContext(new URLSearchParams(query));
+  // The address only exists in the browser; the static HTML leaves it out.
+  if (ctx.pageUrl && typeof location !== 'undefined') ctx.pageUrl = new URL(ctx.pageUrl, location.href).href;
+  return <CorrectionForm key={query} ctx={ctx} titleId="jp-correction-title" />;
+}
