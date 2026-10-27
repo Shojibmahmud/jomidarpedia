@@ -360,7 +360,7 @@ export default function MapView({ sites, fitKey, selected, hovered, onSelect, po
         </div>
       ) : null}
       {popover && anchor ? (
-        <div ref={pop} className="absolute z-panel" style={{ left: popLeft, top: popTop, opacity: popH ? 1 : 0 }} data-popover>
+        <div ref={pop} className="absolute z-panel" style={{ left: popLeft, top: popTop, maxHeight: anchor.h - 16, opacity: popH ? 1 : 0 }} data-popover>
           {popover}
         </div>
       ) : null}
