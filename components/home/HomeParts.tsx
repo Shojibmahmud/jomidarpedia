@@ -1,6 +1,7 @@
 // The home page's sections (roadmap Phase 11, spec .claude/specs/11-Home-page.md): hero, category tiles, the numbers
 // strip, division tiles, featured trips and the trust band. Server components: every number is passed in from
-// meta.json or divisions.json (FR-1), every photo comes with its exact credit line, printed beside it (FR-4, AC-19).
+// meta.json or divisions.json (FR-1), every photo comes with its exact credit line, printed beside it or behind a
+// camera button on the tiles (FR-4, AC-19).
 
 import Link from 'next/link';
 import { Both, T } from '@/components/T';
@@ -13,6 +14,7 @@ import { CORRECTIONS_URL, divisionHref } from '@/lib/nav';
 import type { SearchDistrict } from '@/lib/search';
 import type { TripCard } from '@/lib/trips';
 import type { Division } from '@/lib/types';
+import { CreditButton } from './CreditButton';
 import { HeroSearch } from './HeroSearch';
 
 const n = (v: number) => both(formatCount, v);
@@ -117,8 +119,8 @@ export function CategoryTiles({ photos, counts }: { photos: Record<CategoryKey, 
       <h2 id="jp-home-see" className="font-serif text-h2"><T k="home.seeTitle" /></h2>
       <ul className="grid grid-cols-2 gap-3 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-4">
         {keys.map(k => (
-          // Below lg the tiles are too narrow for a credit over the photo, so it sits under the tile instead.
-          <li key={k} className="relative flex flex-col gap-1" data-home-category={k}>
+          // The credit is behind a camera button, so it never covers the photo.
+          <li key={k} className="relative" data-home-category={k}>
             <div className="relative isolate flex aspect-[3/4] flex-col justify-end overflow-hidden rounded-lg bg-ink p-3 text-white lg:aspect-auto lg:h-[440px] lg:p-4">
               <Photo photo={photos[k]} sizes="(min-width: 1024px) 25vw, 50vw" />
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -130,8 +132,7 @@ export function CategoryTiles({ photos, counts }: { photos: Record<CategoryKey, 
                 <p><span className="badge bg-surface text-ink"><T k={CATEGORY[k].badge} vars={{ count: n(counts[k]) }} /></span></p>
               </div>
             </div>
-            <PhotoCredit credit={photos[k].credit}
-              className="max-lg:!max-w-none max-lg:!bg-transparent max-lg:!p-0 max-lg:!text-muted lg:!absolute lg:right-3 lg:top-3" />
+            <CreditButton credit={photos[k].credit} />
           </li>
         ))}
       </ul>
@@ -184,8 +185,8 @@ export function DivisionTiles({ tiles, count }: { tiles: { div: Division; photo:
       <h2 id="jp-home-divisions" className="font-serif text-h2"><T k="home.divisionsTitle" vars={{ count: n(count) }} /></h2>
       <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0">
         {tiles.map(({ div, photo }) => (
-          // As with the category tiles, below lg the credit sits under the tile rather than over half the photo.
-          <li key={div.slug} data-home-division={div.slug} className="relative flex w-[72%] shrink-0 snap-start flex-col gap-1 md:w-auto">
+          // As with the category tiles, the credit is behind a camera button.
+          <li key={div.slug} data-home-division={div.slug} className="relative w-[72%] shrink-0 snap-start md:w-auto">
             <div className="relative isolate flex h-[170px] flex-col justify-end overflow-hidden rounded-lg bg-ink p-3 text-white lg:h-[150px]">
               <Photo photo={photo} sizes="(min-width: 768px) 25vw, 72vw" />
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
@@ -199,8 +200,7 @@ export function DivisionTiles({ tiles, count }: { tiles: { div: Division; photo:
                 <span className="font-serif text-[32px] font-semibold leading-none"><Both value={n(div.count)} /></span>
               </div>
             </div>
-            <PhotoCredit credit={photo.credit}
-              className="max-lg:!max-w-none max-lg:!bg-transparent max-lg:!p-0 max-lg:!text-muted lg:!absolute lg:right-2 lg:top-2" />
+            <CreditButton credit={photo.credit} />
           </li>
         ))}
       </ul>
