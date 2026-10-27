@@ -4,7 +4,7 @@
 // place or clock time (D15); the photo strip numbers each photo by its stop (D4), with credits behind a button.
 
 import Link from 'next/link';
-import { Both, T } from '@/components/T';
+import { Both, Prose, T } from '@/components/T';
 import { PlaceholderArt } from '@/components/art/PlaceholderArt';
 import { Badge } from '@/components/site/Badges';
 import { both, formatCount, formatHours } from '@/lib/format';
@@ -59,7 +59,7 @@ export function ItineraryCard({ trip, headingLevel = 2 }: { trip: TripCard; head
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <Heading className="font-serif text-h3">
-          <Link prefetch={false} href={tripHref(trip.id)} lang="en" className="after:absolute after:inset-0 hover:underline">{trip.title}</Link>
+          <Link prefetch={false} href={tripHref(trip.id)} className="after:absolute after:inset-0 hover:underline"><Prose en={trip.title} bn={trip.titleBn} /></Link>
         </Heading>
         <p className="text-sm text-muted">
           <T k="trip.mainSite" />{' '}

@@ -10,20 +10,22 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const ABOUT_PATH = 'content/about.en.md';
+// The Bangla text (spec 14 FR-20): optional, same sections and ids. Its review state is reported, never fatal (D-9).
+export const ABOUT_BN_PATH = 'content/about.bn.md';
 
 /** Tokens that are not counts: links the page passes in (lib/nav.ts). */
 export const LINK_TOKENS = ['url.corrections', 'url.photoOffer'];
 
-/** `---\nreviewed: true\n---\nbody` → { reviewed, body }. Anything else in the front matter is an error. */
-export function parseAbout(text) {
+/** `---\nreviewed: true\n---\nbody` → { reviewed, body }. Anything else in the front matter is an error; `path` names the file in messages. */
+export function parseAbout(text, path = ABOUT_PATH) {
   const m = /^---\n([\s\S]*?)\n---\n/.exec(text);
-  if (!m) throw new Error(`${ABOUT_PATH}: no front matter (---\\nreviewed: true|false\\n---)`);
+  if (!m) throw new Error(`${path}: no front matter (---\\nreviewed: true|false\\n---)`);
   const fields = Object.fromEntries(m[1].split('\n').filter(l => l.trim()).map(l => {
     const [k, ...v] = l.split(':');
     return [k.trim(), v.join(':').trim()];
   }));
-  for (const k of Object.keys(fields)) if (k !== 'reviewed') throw new Error(`${ABOUT_PATH}: unknown front matter field "${k}"`);
-  if (!['true', 'false'].includes(fields.reviewed)) throw new Error(`${ABOUT_PATH}: reviewed must be true or false`);
+  for (const k of Object.keys(fields)) if (k !== 'reviewed') throw new Error(`${path}: unknown front matter field "${k}"`);
+  if (!['true', 'false'].includes(fields.reviewed)) throw new Error(`${path}: reviewed must be true or false`);
   return { reviewed: fields.reviewed === 'true', body: text.slice(m[0].length) };
 }
 
@@ -50,18 +52,27 @@ export function aboutValues(meta, sources, links) {
 }
 
 /** Fills {{token}}s. Throws on a token with no value, naming it (FR-36). */
-export function fillTokens(body, values) {
+export function fillTokens(body, values, path = ABOUT_PATH) {
   const unknown = new Set();
   const out = body.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, name) => {
     if (!(name in values)) { unknown.add(name); return ''; }
     return values[name];
   });
-  if (unknown.size) throw new Error(`${ABOUT_PATH}: unknown token${unknown.size > 1 ? 's' : ''} ${[...unknown].map(t => `{{${t}}}`).join(', ')}`);
+  if (unknown.size) throw new Error(`${path}: unknown token${unknown.size > 1 ? 's' : ''} ${[...unknown].map(t => `{{${t}}}`).join(', ')}`);
   return out;
 }
 
+// The section headings' {#ids}, in order: the Bangla text must have the English ones, so links work in both.
+const sectionIds = body => [...body.matchAll(/^##\s.*\{#([\w-]+)\}\s*$/gm)].map(m => m[1]);
+
+/** Throws unless two parsed documents have the same section ids in the same order. */
+export function sameSections(en, bn) {
+  const a = en.map(s => s.id).join(', '), b = bn.map(s => s.id).join(', ');
+  if (a !== b) throw new Error(`${ABOUT_BN_PATH}: sections must match ${ABOUT_PATH} (${a}); found ${b}`);
+}
+
 /** The data step's check: the text parses, every token is known, and (release only) it has been reviewed. */
-export function checkAbout({ path = ABOUT_PATH, buildDir = 'data/build' } = {}) {
+export function checkAbout({ path = ABOUT_PATH, bnPath = ABOUT_BN_PATH, buildDir = 'data/build' } = {}) {
   const result = { name: 'check-about', structural: [], gates: [], editorial: {}, warnings: [], info: [] };
   const structural = message => result.structural.push({ file: path, column: '', message, value: '' });
   if (!existsSync(path)) { structural('missing: the About page has no text'); return result; }
@@ -73,6 +84,16 @@ export function checkAbout({ path = ABOUT_PATH, buildDir = 'data/build' } = {}) 
     fillTokens(body, aboutValues(JSON.parse(readFileSync(metaPath, 'utf8')), JSON.parse(readFileSync(sourcesPath, 'utf8')), links));
     if (!reviewed) result.editorial.about = [{ table: '(content)', key: path, column: 'reviewed', value: 'reviewed: false', outputs: ['/about/'] }];
     result.info.push(`about            ${reviewed ? 'reviewed' : 'draft (reviewed: false; fails a release build)'}`);
+    if (existsSync(bnPath)) {
+      const bn = parseAbout(readFileSync(bnPath, 'utf8'), bnPath);
+      fillTokens(bn.body, aboutValues(JSON.parse(readFileSync(metaPath, 'utf8')), JSON.parse(readFileSync(sourcesPath, 'utf8')), links), bnPath);
+      const a = sectionIds(body).join(', '), b = sectionIds(bn.body).join(', ');
+      if (a !== b) throw new Error(`${bnPath}: sections must match ${path} (${a}); found ${b}`);
+      result.info.push(`about (Bangla)   ${bn.reviewed ? 'reviewed' : 'draft: shows the "not yet checked" note'}`);
+      result.notes = [{ title: 'Bangla translation: About page', lines: [`${bnPath}: ${bn.reviewed ? 'reviewed' : 'draft'}`] }];
+    } else {
+      result.notes = [{ title: 'Bangla translation: About page', lines: [`${bnPath}: missing (Bangla mode shows the English with a note)`] }];
+    }
   } catch (e) {
     structural(e.message);
   }

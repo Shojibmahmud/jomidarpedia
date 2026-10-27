@@ -4,7 +4,7 @@
 // In print the list becomes the stop table with a checkbox column (FR-47).
 
 import Link from 'next/link';
-import { Both, T } from '@/components/T';
+import { Both, Prose, T } from '@/components/T';
 import { Badge } from '@/components/site/Badges';
 import { both, formatCount } from '@/lib/format';
 import { siteHref } from '@/lib/site-url';
@@ -30,7 +30,7 @@ export function StopName({ stop, site }: { stop: Itinerary['stops'][number]; sit
       </Link>
     );
   }
-  return <span lang="en" className="font-semibold">{stop.name}</span>;
+  return <span className="font-semibold"><Prose en={stop.name} bn={stop.nameBn} /></span>;
 }
 
 export function Stops({ trip, sites }: { trip: Itinerary; sites: Record<string, StopSite> }) {
@@ -51,7 +51,7 @@ export function Stops({ trip, sites }: { trip: Itinerary; sites: Record<string, 
               <StopName stop={s} site={s.siteId ? sites[s.siteId] : undefined} />
               {s.kind === 'place' ? <Badge><T k="trip.place" /></Badge> : null}
             </p>
-            {s.note ? <p lang="en" className="text-sm text-muted">{s.note}</p> : null}
+            {s.note ? <p className="text-sm text-muted"><Prose en={s.note} bn={s.noteBn} /></p> : null}
           </div>
           <span aria-hidden="true" className="hidden h-5 w-5 border-2 border-ink print:mt-1 print:inline-block" />
         </li>

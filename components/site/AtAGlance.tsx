@@ -38,7 +38,7 @@ export function AtAGlance({ site }: { site: SiteRecord }) {
             {site.preservation.known ? <span className="block text-muted"><FactValue fact={site.preservation} /></span> : null}
         </Row>
         <Row k="glance.entry">
-          {v.fee.known ? <Both value={both(formatMoney, v.fee.value)} /> : <UnknownText text={v.fee.text} />}
+          {v.fee.known ? <Both value={both(formatMoney, v.fee.value)} /> : <UnknownText text={v.fee.text} bn={v.fee.textBn} />}
         </Row>
         <Row k="glance.access"><T k={`access.${site.access}`} /></Row>
         <Row k="glance.fromDhaka">

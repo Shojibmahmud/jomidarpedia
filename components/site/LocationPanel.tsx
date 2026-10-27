@@ -4,7 +4,7 @@
 // (R5); its note is left out by the build because it may name coordinates.
 
 import Link from 'next/link';
-import { Latin, T } from '@/components/T';
+import { Latin, Prose, T } from '@/components/T';
 import { MiniMap } from '@/components/map/MiniMap';
 import { formatCoords } from '@/lib/format';
 import { coordsText, directionsUrl } from '@/lib/site-page';
@@ -41,7 +41,7 @@ export function LocationPanel({ site, pageUrl }: { site: SiteRecord; pageUrl: st
       <div className="space-y-1">
         <LocationBadge status={loc.status} mappable={!!ll} flagged={loc.flagged} />
         <p className="text-sm"><T k={`location.${status}.body`} /></p>
-        {ll && loc.note ? <p className="text-sm text-muted"><Latin>{loc.note}</Latin></p> : null}
+        {ll && loc.note ? <p className="text-sm text-muted"><Prose en={loc.note} bn={loc.noteBn} /></p> : null}
         {ll && loc.status === 'approximate' ? <p className="text-sm italic text-muted"><T k="location.radius" /></p> : null}
       </div>
       {ll ? (

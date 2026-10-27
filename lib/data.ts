@@ -6,7 +6,7 @@
 import 'server-only';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { Credit, District, Division, IndexSite, Itinerary, Meta, SiteRecord, SourceEntry, TripSummary } from './types';
+import type { Credit, District, Division, IndexSite, Itinerary, Meta, SiteRecord, SourceEntry, TranslationCells, TripSummary } from './types';
 
 export function createReaders(buildDir = join(process.cwd(), 'data/build'), indexPath = join(process.cwd(), 'public/data/index.json')) {
   const cache = new Map<string, unknown>();
@@ -30,6 +30,7 @@ export function createReaders(buildDir = join(process.cwd(), 'data/build'), inde
     getDistricts: file<District[]>('districts.json'),
     getSources: file<SourceEntry[]>('sources.json'),
     getCredits: file<Credit[]>('credits.json'),
+    getTranslations: file<TranslationCells>('translations.json'),
     getTrips,
     getSite(id: string): SiteRecord {
       if (!ids(getIndex()).has(id)) throw new Error(`getSite: no site "${id}" in the index`);
@@ -42,4 +43,4 @@ export function createReaders(buildDir = join(process.cwd(), 'data/build'), inde
   };
 }
 
-export const { getIndex, getMeta, getDivisions, getDistricts, getSources, getCredits, getTrips, getSite, getTrip } = createReaders();
+export const { getIndex, getMeta, getDivisions, getDistricts, getSources, getCredits, getTranslations, getTrips, getSite, getTrip } = createReaders();

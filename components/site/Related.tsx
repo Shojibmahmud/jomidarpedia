@@ -3,7 +3,7 @@
 // and a reviewed timed plan also shows its stops with clock times (spec 09 FR-51, FR-52, D7).
 
 import Link from 'next/link';
-import { Both, Latin, T } from '@/components/T';
+import { Both, Prose, T } from '@/components/T';
 import { PlaceholderArt } from '@/components/art/PlaceholderArt';
 import { both, formatHours } from '@/lib/format';
 import { getTrip } from '@/lib/data';
@@ -25,7 +25,7 @@ export function IdentityNotes({ site }: { site: SiteRecord }) {
           <Link prefetch={false} href={siteHref(r.id, r.slug)} className="font-semibold text-primary underline">
             <span lang="en">{r.en}</span>{r.bn ? <> (<span lang="bn">{r.bn}</span>)</> : null}
           </Link>
-          {r.note ? <span className="block text-muted"><Latin>{r.note}</Latin></span> : null}
+          {r.note ? <span className="block text-muted"><Prose en={r.note} bn={r.noteBn} /></span> : null}
         </li>
       ))}
     </ul>
@@ -66,7 +66,7 @@ export function Itineraries({ site }: { site: SiteRecord }) {
         return (
           <li key={it.id} className="space-y-3 px-4 py-3" data-itinerary={it.id}>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <Link prefetch={false} href={tripHref(it.id)} lang="en" className="font-semibold text-primary underline">{it.title}</Link>
+              <Link prefetch={false} href={tripHref(it.id)} className="font-semibold text-primary underline"><Prose en={it.title} bn={it.titleBn} /></Link>
               <span className="flex flex-wrap gap-1.5">
                 <span className="badge bg-indigo-tint text-indigo"><T k={`trip.${it.duration as Itinerary['duration']}`} /></span>
                 <PlanBadge status={trip.planStatus} />
@@ -89,7 +89,7 @@ function TimedPreview({ trip }: { trip: Itinerary }) {
         {trip.stops.map(s => (
           <li key={s.order} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2">
             <span lang="en" className="font-mono">{s.time ?? ''}</span>
-            <span lang="en">{s.name}</span>
+            <span><Prose en={s.name} bn={s.nameBn} /></span>
           </li>
         ))}
       </ol>

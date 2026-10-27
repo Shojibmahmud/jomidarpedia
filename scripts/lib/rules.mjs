@@ -5,6 +5,8 @@
 // "Unknown", "Unknown (not researched)" and blanks are bare unknowns; "Unknown. The book says…" keeps its detail.
 export const UNKNOWN = /^(unknown|not documented|not researched|n\/a)\b/i;
 export const BARE_UNKNOWN = /^(unknown|not documented)\s*(\([^)]*\))?\.?$/i;
+// Alt text the importer wrote for Wiki Loves Monuments photos; the build replaces it with "<view>: <site name>".
+export const BOILERPLATE_ALT = /^This is a photo of a monument in Bangladesh identified by the ID/i;
 export const isKnownText = v => !!(v || '').trim() && !UNKNOWN.test((v || '').trim());
 
 // ---------------------------------------------------------------- photos
@@ -35,7 +37,7 @@ const NOT_AN_END = /(?:^|[\s(])(?:[A-Z]|[A-Z]\.[A-Z]|Md|Mohd|Dr|Mr|Mrs|Sri|St|Mt
 function sentences(text) {
   const out = [];
   let start = 0;
-  for (const m of text.matchAll(/[.!?](?=\s+["'‘“(]?[A-Z0-9ঀ-৿])/g)) {
+  for (const m of text.matchAll(/[.!?।](?=\s+["'‘“(]?[A-Z0-9ঀ-৿])/g)) { // । ends a Bangla sentence
     const end = m.index + 1;
     if (m[0] === '.' && NOT_AN_END.test(text.slice(start, end))) continue;
     out.push(text.slice(start, end).trim());

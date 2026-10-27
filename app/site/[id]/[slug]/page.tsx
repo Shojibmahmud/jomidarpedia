@@ -4,7 +4,7 @@
 // sources (R3). Routing and metadata are Phase 4's (spec 04 FR-1, FR-6).
 
 import type { Metadata } from 'next';
-import { Latin, T } from '@/components/T';
+import { Latin, Prose, T } from '@/components/T';
 import { LiteNotices } from '@/components/explore/LiteNotices';
 import { AtAGlance, FactValue, KnownChecklist } from '@/components/site/AtAGlance';
 import { ShareButton } from '@/components/site/CopyButton';
@@ -15,6 +15,7 @@ import { BadgeRow, BilingualName, Breadcrumb, RecordBanner } from '@/components/
 import { HistoryTimeline, LegendBox } from '@/components/site/History';
 import { LocationPanel } from '@/components/site/LocationPanel';
 import { NoPhotoPanel } from '@/components/site/NoPhotoPanel';
+import { ProseNote } from '@/components/shell/ProseNote';
 import { CombineWith, IdentityNotes, Itineraries } from '@/components/site/Related';
 import { GettingThere } from '@/components/site/Routes';
 import { SectionNav, type NavItem } from '@/components/site/SectionNav';
@@ -120,6 +121,7 @@ export default async function SitePage({ params }: { params: Promise<Params> }) 
         </div>
         <BadgeRow site={site} disagree={multi.length} questions={questions.length} />
         {sparse ? <RecordBanner /> : null}
+        <ProseNote state={site.bnState} />
       </header>
 
       {site.images.length ? <Gallery images={site.images} /> : <NoPhotoPanel site={site} pageUrl={pageUrl} />}
@@ -132,7 +134,7 @@ export default async function SitePage({ params }: { params: Promise<Params> }) 
         </aside>
         <div className="min-w-0 space-y-10 lg:col-start-2 lg:row-start-1">
           <Block section="summary">
-            <p className="max-w-prose text-lg"><Latin>{site.summary}</Latin></p>
+            <p className="max-w-prose text-lg"><Prose en={site.summary} bn={site.summaryBn} /></p>
             <IdentityNotes site={site} />
           </Block>
           <Block section="location">

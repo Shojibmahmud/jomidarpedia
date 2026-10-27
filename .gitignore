@@ -2,6 +2,7 @@ node_modules/
 .next/
 out/
 data/build/
+data/translations/todo/
 public/data/
 data/reports/*
 !data/reports/classification-*.md

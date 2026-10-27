@@ -22,7 +22,7 @@ const card = (over: Partial<TripCard>): TripCard => ({
   stopCount: 3, bucket: '1-2', divSlug: 'dhaka', ...over,
 });
 const trip = (over: Partial<Itinerary>): Itinerary => ({
-  id: 'IT-DHK-001-1', title: 'Test loop', duration: 'One day', anchor: 'JB-DHK-001', siteIds: ['JB-DHK-001'],
+  id: 'IT-DHK-001-1', title: 'Test loop', duration: 'One day', anchor: 'JB-DHK-001', siteIds: ['JB-DHK-001'], bnState: { draft: false, english: false },
   stops: [
     { order: 1, kind: 'place', name: 'Leave Gabtoli', note: '', time: '7:00 AM' },
     { order: 2, kind: 'site', siteId: 'JB-DHK-001', name: 'Test House', note: 'Ask first', time: '9:30 AM', latlon: [23.9, 90.1] },

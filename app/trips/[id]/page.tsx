@@ -9,8 +9,9 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Both, Latin, T } from '@/components/T';
+import { Both, Latin, Prose, T } from '@/components/T';
 import { LiteNotices } from '@/components/explore/LiteNotices';
+import { ProseNote } from '@/components/shell/ProseNote';
 import { ShareButton } from '@/components/site/CopyButton';
 import { AccessBadge, Badge } from '@/components/site/Badges';
 import { SuggestCorrection } from '@/components/site/SuggestCorrection';
@@ -127,7 +128,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
         </ul>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="min-w-0 space-y-2">
-            <h1 lang="en" className="font-serif text-h1">{trip.title}</h1>
+            <h1 className="font-serif text-h1"><Prose en={trip.title} bn={trip.titleBn} /></h1>
             <p className="text-muted">
               <T k="trip.mainSite" />{' '}
               <Link prefetch={false} href={siteHref(anchor.id, anchor.slug)} className="font-semibold text-primary underline print:text-ink print:no-underline">
@@ -142,6 +143,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
           </div>
           <p className="hidden text-sm print:block"><T k="print.date" /> ____________________</p>
         </div>
+        <ProseNote state={trip.bnState} />
       </header>
 
       <div data-no-print>{dayPicker(dayStops) ? <DayCheck stops={dayStops} /> : sites.length ? <DayNote /> : null}</div>
@@ -188,7 +190,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
           {trip.notes.length ? (
             <section aria-labelledby="jp-notes" className="space-y-3 rounded-lg border border-line bg-surface p-5 order-6 print:border-0 print:p-0" data-notes>
               <Heading id="jp-notes" k="trip.notes" icon={ICON.note} />
-              {trip.notes.map((note, k) => <p key={k} lang="en">{note}</p>)}
+              {trip.notes.map((note, k) => <p key={k}><Prose en={note} bn={trip.notesBn?.[k]} /></p>)}
             </section>
           ) : null}
 
@@ -202,7 +204,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
         </div>
 
         <section aria-labelledby="jp-before" className={`order-3 hidden space-y-4 print:block ${map.show ? 'print:break-before-page' : ''}`} data-before-you-go>
-          <p className="border-b border-line pb-2 text-sm"><Latin><strong className="font-serif">{trip.title}</strong></Latin> · <T k="print.beforeSub" /></p>
+          <p className="border-b border-line pb-2 text-sm"><strong className="font-serif"><Prose en={trip.title} bn={trip.titleBn} /></strong> · <T k="print.beforeSub" /></p>
           <div className="space-y-2 rounded-lg border-2 border-gold p-4">
             <h2 id="jp-before" className="font-serif text-h3"><T k="print.before" /></h2>
             <ul className="list-disc space-y-1 pl-5 text-sm">

@@ -29,9 +29,12 @@ export function fixtureDir(group?: string, name?: string) {
 }
 
 // Runs both builders the way `npm run data` (scripts/lib/cli.mjs) does; output goes to <out>/build and <out>/public.
+// Bangla translations come from <csvDir>/translations-bn (none unless a test writes them), never from the real data.
+export const translationsDirOf = (csvDir: string) => join(csvDir, 'translations-bn');
 export function runBuilders(csvDir: string, out = tempDir('out'), env: Record<string, string> = {}, budget?: number) {
-  const index = buildIndex({ sitesPath: join(csvDir, 'sites.csv'), imagesPath: join(csvDir, 'images.csv'), outDir: join(out, 'public'), budget });
-  const data = buildData({ csvDir, outDir: join(out, 'build'), env });
+  const translationsDir = translationsDirOf(csvDir);
+  const index = buildIndex({ sitesPath: join(csvDir, 'sites.csv'), imagesPath: join(csvDir, 'images.csv'), outDir: join(out, 'public'), translationsDir, budget });
+  const data = buildData({ csvDir, outDir: join(out, 'build'), translationsDir, env });
   if (index.structural.length || data.structural.length) discardOutputs([index, data]);
   return { out, results: [index, data], index, data };
 }

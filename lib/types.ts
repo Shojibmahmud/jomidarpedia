@@ -15,8 +15,10 @@ export interface IndexSite {
   s: string;              // slug
   e: string; b?: string;  // name_en, name_bn; no b → "Bangla name not yet recorded" (O13)
   sm?: string;            // first sentence of short_description, ≤160 chars: the map card's one-liner (spec 07 D1)
+  smb?: string;           // the same from the valid Bangla translation (spec 14 FR-9); absent → sm shows
   a?: string;             // alternate_names (search only)
   fm?: string;            // founder or family, as text (search only; not a normalized family)
+  fmb?: string;           // the same in Bangla, from a valid translation (search only, spec 14 FR-21)
   dv: string; d: string; db: string; u?: string; // division, district, district_bn, upazila
   ll?: [number, number];  // absent when map_display = hide → "No map location yet"
   lc: LocationStatus;
@@ -36,8 +38,14 @@ export interface IndexSite {
   img?: { id: string; credit: string }; // first Ready image, for the card photo
 }
 
-/** A value that may be unknown. Render `text` ("Not documented", "No ticket reported") — never a blank, 0 or "Free". */
-export type Maybe<T> = { known: true; value: T; note?: string } | { known: false; text: string };
+/**
+ * A value that may be unknown. Render `text` ("Not documented", "No ticket reported") — never a blank, 0 or "Free".
+ * bn / textBn: the value's or the unknown's own wording in Bangla, from a valid translation (spec 14); absent → English.
+ */
+export type Maybe<T> = { known: true; value: T; bn?: string; note?: string } | { known: false; text: string; textBn?: string };
+
+/** Whether a page shows unchecked Bangla drafts, or English where Bangla is missing (spec 14 FR-10, FR-16). */
+export interface BnState { draft: boolean; english: boolean }
 
 export type Relation = 'supports' | 'disputed_by' | 'reported_by';
 /** site_relationships.relation_type. Only combine_on_trip is a trip suggestion; the others are notes about identity. */
@@ -50,13 +58,13 @@ export type Fact = Maybe<string> & { sources: SourceRef[] };
  * Versions carry only the sources whose publisher their text names. Sources that match no version, or
  * more than one, are in unattributedSources: "Sources for this disagreement (not matched to a version)".
  */
-export interface Conflict { field: string; versions: { text: string; sources: SourceRef[] }[]; unattributedSources?: SourceRef[] }
+export interface Conflict { field: string; fieldBn?: string; versions: { text: string; textBn?: string; sources: SourceRef[] }[]; unattributedSources?: SourceRef[] }
 
 export interface ImageRecord {
   id: string;                 // IMG-DHK-064-001
   thumb: string;              // /thumbs/IMG-DHK-064-001.webp (4:3, in the repo)
   full: string;               // the source file (Wikimedia Commons), loaded only in the lightbox; the thumbnail when there is none (an owner's photo)
-  alt: string; altLang: 'en' | 'bn';
+  alt: string; altLang: 'en' | 'bn'; altBn?: string;
   view: string;               // view_category
   credit: string;             // required_credit, printed verbatim
   sourcePage?: string;        // source_page_url; absent for a photo with no web page (an owner's photo)
@@ -68,31 +76,34 @@ export interface SiteRecord {
   name: { en: string; bn?: string; alt: string[] };
   bnMissing?: true;           // no Bangla name yet: show the English name with lang="en" (O13)
   place: { division: string; divisionBn: string; district: string; districtBn: string; upazila: string; upazilaBn: string; union?: string; unionBn?: string; locality?: string; localityBn?: string };
-  location: { latlon?: [number, number]; status: LocationStatus; flagged: boolean; note?: string; googleMapsUrl: string }; // no note for a hidden pin (it may name coordinates)
+  location: { latlon?: [number, number]; status: LocationStatus; flagged: boolean; note?: string; noteBn?: string; googleMapsUrl: string }; // no note for a hidden pin (it may name coordinates)
   summary: string;            // short_description, public text only (build fails on internal notes)
+  summaryBn?: string;         // Bangla siblings (…Bn, bn, textBn) come from valid translations only (spec 14); absent → English
   era: Fact; founder: Fact; style: Fact;
   condition: Condition; preservation: Fact;
   access: Access;
   visiting: {
-    hours: Maybe<string>; hoursKnown: boolean; hoursNote?: string;
+    hours: Maybe<string>; hoursKnown: boolean; hoursNote?: string; hoursNoteBn?: string;
     closed: Maybe<string>;    // weekly_closing_days as written (unreviewed text)
     closedDays: ClosedDays;   // the reviewed closed_days column; DayCheck reads only this
-    fee: Maybe<number>; feeNote?: string; restrictions: Maybe<string>; photography: Maybe<string>; facilities: Maybe<string>; accessibility: Maybe<string>; bestTime: Maybe<string>;
+    fee: Maybe<number>; feeNote?: string; feeNoteBn?: string; restrictions: Maybe<string>; photography: Maybe<string>; facilities: Maybe<string>; accessibility: Maybe<string>; bestTime: Maybe<string>;
     date?: string;            // visitor_info.last_verified: "Visiting info checked …"
   };
   travel: { hours?: number; bucket: TravelBucket; dayTrip?: boolean; oneWayCost?: number; routes: Route[] };
-  history: { year: string; type: string; text: string; status: string; sources: SourceRef[] }[]; // placeholder events dropped; [] → "No history recorded yet"
+  history: { year: string; yearBn?: string; type: string; text: string; textBn?: string; status: string; sources: SourceRef[] }[]; // placeholder events dropped; [] → "No history recorded yet"
   features: Feature[];        // from features.csv only; [] → FeatureList shows "Not documented"
-  legends: { text: string; evidence: 'local_oral_account' | 'unattributed_report' | 'legend_or_folklore'; attribution: string; note: string; sources: SourceRef[] }[];
+  legends: { text: string; textBn?: string; evidence: 'local_oral_account' | 'unattributed_report' | 'legend_or_folklore'; attribution: string; note: string; sources: SourceRef[] }[];
   conflicts: Conflict[];
   images: ImageRecord[];      // Ready only. 'Needs review' and 'Permission required' never reach this file.
   externalPhotos?: { label: string; url: string }; // only without Ready images; a hidden pin gets a name-only search (O10)
-  related: { id: string; slug: string; en: string; bn?: string; c: Condition; h?: number; thumb?: string; relation: SiteRelation; note?: string }[];
-  itineraries: { id: string; title: string; duration: string }[];
+  related: { id: string; slug: string; en: string; bn?: string; c: Condition; h?: number; thumb?: string; relation: SiteRelation; note?: string; noteBn?: string }[];
+  itineraries: { id: string; title: string; titleBn?: string; duration: string }[];
   sources: { n: number; id: string; title: string; publisher: string; date?: string; url?: string }[];
   stillToConfirm: string[];   // from unverified_fields, as plain words
+  stillToConfirmBn?: (string | null)[]; // the same items in Bangla; null → that item stays English (spec 14 A-6)
   confidence: RecordConfidence;
   lastVerified: string;
+  bnState: BnState;
 }
 
 /** Closing days from the reviewed column. known: false → "Closing days not documented". */
@@ -107,16 +118,16 @@ export type Mode = 'bus' | 'train' | 'launch' | 'ferry' | 'car' | 'air' | 'boat'
 export interface Route {
   kind: 'primary' | 'alternative';
   mode: Mode; inferred?: true;
-  steps: { label: string; mode?: string; note?: string; costText?: string }[];
-  hours?: number; cost?: number; costBasis?: string; estimateDate?: string;
-  description: string;
+  steps: { label: string; labelBn?: string; mode?: string; note?: string; noteBn?: string; costText?: string }[];
+  hours?: number; cost?: number; costBasis?: string; costBasisBn?: string; estimateDate?: string;
+  description: string; descriptionBn?: string;
 }
 
 export type PlanStatus = 'timed' | 'circuit' | 'incomplete';
 
 /** A budget row from costs.csv. No amount → the item is listed under budget.omitted (unless noTicket). */
 export interface BudgetRow {
-  item: string; category: string;
+  item: string; itemBn?: string; category: string; // itemBn: the generated label in Bangla
   amount?: number;            // a number > 0, never 0
   range?: [number, number];   // reserved: not emitted until costs.csv has min/max columns
   noTicket?: true;            // entry fee 0: "No ticket reported", in neither the subtotal nor omitted
@@ -125,6 +136,7 @@ export interface BudgetRow {
   basis?: 'shared' | 'reserved';
   legs?: [number, number][];  // stop-order pairs the cost covers
   note?: string;              // basis_and_assumptions, as written
+  noteBn?: string;
   date?: string;              // estimate_date
   status: string;
   sources: string[];          // SRC- IDs
@@ -137,21 +149,22 @@ export interface Itinerary {
   planStatus?: PlanStatus;    // absent until the editor reviews plan_status
   anchor: string; siteIds: string[];
   stops: {
-    order: number; kind: 'site' | 'place'; time?: string; siteId?: string; name: string; note: string;
+    order: number; kind: 'site' | 'place'; time?: string; siteId?: string; name: string; nameBn?: string; note: string; noteBn?: string;
     latlon?: [number, number];  // a site: when it has a pin; a place: only from itinerary_places.csv
     sources?: string[];         // a place's location sources
     visitingChecked?: string;   // a site's visitor_info.last_verified
   }[];
   legs: { from: number; to: number; mode: Mode; hours?: number; costRow?: string; sources: string[] }[];
   schematic: boolean;         // no legs: "schematic: stops in order, roads not drawn"
-  notes: string[];
-  budget: { rows: BudgetRow[]; known?: number; omitted: string[] }; // known: per-person amounts only
+  notes: string[]; notesBn?: string[];
+  budget: { rows: BudgetRow[]; known?: number; omitted: string[]; omittedBn?: string[] }; // known: per-person amounts only
   costsEstimated?: { from: string; to: string };  // "Costs estimated …"
+  bnState: BnState;
 }
 
 /** data/build/trips.json — one row per itinerary, for /trips, Home and division pages. */
 export interface TripSummary {
-  id: string; title: string; duration: Itinerary['duration']; planStatus?: PlanStatus;
+  id: string; title: string; titleBn?: string; duration: Itinerary['duration']; planStatus?: PlanStatus;
   anchor: string; anchorSlug: string; anchorEn: string; anchorBn?: string;
   division: string; district: string; siteIds: string[]; stopCount: number;
   hours?: number; bucket: TravelBucket; dayTrip?: boolean; thumb?: string;
@@ -217,3 +230,14 @@ export interface Meta {
     possibleDuplicates: number;
   };
 }
+
+/** data/build/translations.json — every translatable cell (spec 14 FR-22), for /dev/bn-review/ only. */
+export type TranslationState = 'reviewed' | 'draft' | 'outdated' | 'invalid' | 'missing' | 'orphan';
+export interface TranslationCell {
+  table: string; key: string; column: string;
+  en?: string;                // absent for an orphan
+  bn?: string; status?: 'draft' | 'reviewed';
+  state: TranslationState; reason?: string;
+  site?: string; trip?: string; // the page that shows the cell
+}
+export interface TranslationCells { cells: TranslationCell[]; orphans: TranslationCell[] }

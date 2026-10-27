@@ -9,7 +9,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { T } from '@/components/T';
 import { both, formatCount } from '@/lib/format';
+import type { Lang } from '@/lib/i18n';
 import type { ImageRecord } from '@/lib/types';
+import { useUiLang } from '@/lib/use-ui-lang';
+
+/** Alt text in the interface language when the build has a Bangla translation (spec 14 FR-19); credits never change. */
+const altProps = (im: ImageRecord, lang: Lang) => (lang === 'bn' && im.altBn ? { alt: im.altBn, lang: 'bn' } : { alt: im.alt, lang: im.altLang });
 
 const TILES = 4;
 const n = (v: number) => both(formatCount, v);
@@ -23,6 +28,7 @@ function Credit({ image }: { image: ImageRecord }) {
 }
 
 export function Gallery({ images }: { images: ImageRecord[] }) {
+  const uiLang = useUiLang();
   const [open, setOpen] = useState<number | null>(null);
   const opener = useRef<HTMLElement | null>(null);
   const show = (k: number) => (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -41,7 +47,7 @@ export function Gallery({ images }: { images: ImageRecord[] }) {
   const thumb = (im: ImageRecord, k: number, className: string, eager = false) => (
     <a href={im.sourcePage ?? im.full} onClick={show(k)} className="block" data-gallery-open={k}>
       {/* eslint-disable-next-line @next/next/no-img-element -- static export: committed, pre-sized thumbnails */}
-      <img src={im.thumb} alt={im.alt} lang={im.altLang} width={480} height={360} loading={eager ? 'eager' : 'lazy'} className={className} />
+      <img src={im.thumb} alt={altProps(im, uiLang).alt} lang={altProps(im, uiLang).lang} width={480} height={360} loading={eager ? 'eager' : 'lazy'} className={className} />
       <span className="sr-only"><T k="gallery.open" vars={{ n: n(k + 1), count: n(images.length) }} /></span>
     </a>
   );
@@ -74,6 +80,7 @@ export function Gallery({ images }: { images: ImageRecord[] }) {
 }
 
 function Lightbox({ images, start, onClose }: { images: ImageRecord[]; start: number; onClose: () => void }) {
+  const uiLang = useUiLang();
   const dialog = useRef<HTMLDialogElement>(null);
   const [k, setK] = useState(start);
   const [failed, setFailed] = useState<Set<number>>(new Set());
@@ -103,7 +110,7 @@ function Lightbox({ images, start, onClose }: { images: ImageRecord[]; start: nu
           onPointerDown={e => { touch.current = e.clientX; }}
           onPointerUp={e => { if (touch.current !== null && count > 1 && Math.abs(e.clientX - touch.current) > 50) go(e.clientX < touch.current ? 1 : -1); touch.current = null; }}>
           {/* eslint-disable-next-line @next/next/no-img-element -- the full file is loaded only here, from Wikimedia */}
-          <img key={im.id} src={failed.has(k) ? im.thumb : im.full} alt={im.alt} lang={im.altLang}
+          <img key={im.id} src={failed.has(k) ? im.thumb : im.full} alt={altProps(im, uiLang).alt} lang={altProps(im, uiLang).lang}
             onError={() => setFailed(f => new Set(f).add(k))} draggable={false}
             className="max-h-full min-h-0 max-w-full select-none object-contain" />
           <figcaption className="max-w-3xl text-center text-sm [overflow-wrap:anywhere]">
