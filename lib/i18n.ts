@@ -369,7 +369,6 @@ export const STRINGS = {
   'correct.message': { en: 'Message', bn: 'বার্তা', needsReview: true },
   'correct.subjectDefault': { en: 'Correction', bn: 'সংশোধন', needsReview: true },
   'correct.subjectPhoto': { en: 'Photo offer', bn: 'ছবির প্রস্তাব', needsReview: true },
-  'correct.page': { en: 'About this page:', bn: 'এই পাতা সম্পর্কে:', needsReview: true },
   'correct.send': { en: 'Send', bn: 'পাঠান', needsReview: true },
   'correct.sending': { en: 'Sending…', bn: 'পাঠানো হচ্ছে…', needsReview: true },
   'correct.sent': { en: 'Thank you. Your message has been sent.', bn: 'ধন্যবাদ। আপনার বার্তা পাঠানো হয়েছে।', needsReview: true },
