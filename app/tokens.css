@@ -89,13 +89,13 @@
      for everything inside them; a class on the element itself still wins (utilities come later). */
   :root {
     --face-en: var(--font-source-sans), system-ui, sans-serif;
-    --face-bn: var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif;
+    --face-bn: var(--font-bn-digits), var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif;
   }
   .font-sans { --face-en: var(--font-source-sans), system-ui, sans-serif; }
   .font-serif { --face-en: var(--font-fraunces), Georgia, serif; --face-bn: var(--font-tiro-bangla), 'Noto Serif Bengali', serif; }
   .font-wordmark { --face-en: var(--font-cinzel), Georgia, serif; }
   .font-mono { --face-en: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .font-bn { --face-bn: var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif; }
+  .font-bn { --face-bn: var(--font-bn-digits), var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif; }
   .font-bn-serif { --face-bn: var(--font-tiro-bangla), 'Noto Serif Bengali', serif; }
   :lang(en) { font-family: var(--face-en); }
   :lang(bn) { font-family: var(--face-bn); line-height: 1.65; } /* Bangla never below 1.6 */

@@ -26,7 +26,7 @@ export default {
         serif: ['var(--font-fraunces)', 'Georgia', 'serif'],
         sans: ['var(--font-source-sans)', 'system-ui', 'sans-serif'],
         'bn-serif': ['var(--font-tiro-bangla)', 'Noto Serif Bengali', 'serif'],
-        bn: ['var(--font-hind-siliguri)', 'Noto Sans Bengali', 'sans-serif'],
+        bn: ['var(--font-bn-digits)', 'var(--font-hind-siliguri)', 'Noto Sans Bengali', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       // [size, line-height]. Bangla runs ~5% larger with ~30% taller lines.
