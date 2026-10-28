@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { T } from '@/components/T';
 import { text, type StringKey } from '@/lib/i18n';
-import { WEB3FORMS_KEY, WEB3FORMS_URL } from '@/lib/nav';
+import { CONTACT_EMAIL, WEB3FORMS_KEY, WEB3FORMS_URL } from '@/lib/nav';
 import type { CorrectionContext } from '@/lib/site-page';
 import { useUiLang } from '@/lib/use-ui-lang';
 
@@ -63,6 +63,12 @@ export function CorrectionForm({ ctx, titleId, onDone }: { ctx: CorrectionContex
             <span className="text-sm font-semibold"><T k="correct.message" /></span>
             <textarea name="message" required rows={6} maxLength={5000} className={`${FIELD} resize-y`} />
           </label>
+          {/* Web3Forms takes files only on its paid plan, so files go by plain email, with the form's subject to match the two up. */}
+          <p className="rounded-lg border border-line bg-surface-2 p-3 text-sm" data-correction-attach>
+            <T k="correct.attach" />{' '}
+            <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Jomidarpedia: ${subject}`)}`} lang="en"
+              className="font-semibold text-primary underline underline-offset-4">{CONTACT_EMAIL}</a>
+          </p>
           {state === 'error' ? <p role="alert" className="rounded-lg border border-gold bg-gold-tint p-3 text-sm" data-correction-error><T k="correct.error" /></p> : null}
           <button type="submit" disabled={state === 'sending'} data-correction-send
             className="inline-flex min-h-tap items-center rounded-md bg-primary px-5 font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-60">
