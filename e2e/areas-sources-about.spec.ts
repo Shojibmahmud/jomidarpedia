@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import type { Credit, District, Division, IndexSite, Meta, SourceEntry } from '../lib/types';
 import { stubTiles, TILE } from './tiles';
+import { formatCount } from '../lib/format';
 
 test.beforeEach(async ({ page }) => { await stubTiles(page); });
 
@@ -253,7 +254,9 @@ test.describe('About (AC-10)', () => {
     const n = (v: number) => v.toLocaleString('en');
     for (const v of [c.sites, c.sources, c.confidence.confirmed, c.stillToConfirm, c.locations.verified, c.locations.noPin, c.disagreements, c.openQuestions, c.legends, c.images, c.imagesNeedReview, c.imagesPermissionRequired])
       expect(text).toContain(n(v));
-    expect(text).toContain(`${n(c.disagreements)} disagreements`);
+    // The disagreement figures are separate number tiles, never added together.
+    const tiles = await page.locator('#disagreements [data-l="en"] [data-number-tiles]').innerText();
+    for (const v of [c.disagreements, c.openQuestions, c.legends]) expect(tiles).toContain(n(v));
     expect(text).not.toContain(n(c.disagreements + c.openQuestions));
     const licences = await page.locator('#licences').innerText();
     for (const s of ['CC BY-SA 4.0', 'WebP', 'OpenStreetMap', 'CC BY 3.0 IGO', 'Fraunces']) expect(licences).toContain(s);
@@ -399,14 +402,16 @@ test.describe('accessibility and language (AC-18, AC-21)', () => {
     await expect(page.locator('[data-nopin-list] li')).toHaveCount(dhaka.noPin.length);
   });
 
-  test('Bangla mode: labels and digits in Bangla, names in Bangla, About prose stays English', async ({ page }) => {
+  test('Bangla mode: labels and digits in Bangla, names in Bangla, About prose in Bangla', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('jp-lang', 'bn'));
     await page.goto('/division/dhaka/');
     await expect(page.locator('h1')).toContainText('ঢাকা');
     await expect(page.locator('[data-on-map]')).toContainText('মানচিত্রে');
     await expect(page.locator('[data-area-intro]')).toContainText('১১১');
     await page.goto('/about/');
-    await expect(page.locator('#grading [lang="en"]').first()).toBeVisible();
-    await expect(page.locator('main')).toContainText('এই লেখাটি ইংরেজিতে।');
+    // content/about.bn.md (spec 14 FR-20): the Bangla text, with Bangla digits in its counts.
+    await expect(page.locator('#grading [lang="bn"]').first()).toBeVisible();
+    await expect(page.locator('#grading [lang="en"]').first()).toBeHidden();
+    await expect(page.locator('main')).toContainText(formatCount(meta.counts.sites, 'bn'));
   });
 });

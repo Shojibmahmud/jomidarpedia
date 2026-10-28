@@ -74,12 +74,21 @@ export function inline(text: string): ReactNode[] {
   return out;
 }
 
-export function Blocks({ blocks, directives = {} }: { blocks: Block[]; directives?: Record<string, ReactNode> }) {
+/** `listIcon`, when given, leads every list item (a section's own marker, such as "not done yet"). */
+export function Blocks({ blocks, directives = {}, listIcon }: { blocks: Block[]; directives?: Record<string, ReactNode>; listIcon?: ReactNode }) {
   return blocks.map((b, k) => {
     switch (b.kind) {
       case 'p': return <p key={k}>{inline(b.text)}</p>;
       case 'h3': return <h3 key={k} className="font-serif text-h3">{inline(b.text)}</h3>;
-      case 'ul': return <ul key={k} className="space-y-2">{b.items.map((it, i) => <li key={i} className="rounded-lg border border-line bg-surface p-3">{inline(it)}</li>)}</ul>;
+      case 'ul': return (
+        <ul key={k} className="space-y-2">
+          {b.items.map((it, i) => (
+            <li key={i} className={listIcon ? 'flex gap-3 rounded-lg border border-line bg-surface p-3' : 'rounded-lg border border-line bg-surface p-3'}>
+              {listIcon ? <><span aria-hidden="true" className="mt-0.5 shrink-0 text-muted">{listIcon}</span><span>{inline(it)}</span></> : inline(it)}
+            </li>
+          ))}
+        </ul>
+      );
       case 'directive': {
         if (!(b.name in directives)) throw new Error(`markdown: unknown directive ::${b.name}`);
         return <div key={k}>{directives[b.name]}</div>;
