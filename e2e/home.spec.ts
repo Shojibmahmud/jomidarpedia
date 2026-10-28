@@ -109,12 +109,16 @@ test.describe('at 390 px (AC-15)', () => {
 
   test('Tab reaches every division tile and keeps it in view', async ({ page }) => {
     await page.goto('/');
-    const links = page.locator('[data-home-division] h3 a');
-    await links.first().focus();
+    const tiles = page.locator('[data-home-division]');
+    await tiles.first().locator('h3 a').focus();
+    // Each tile is its link, then its photo-credit button (CreditButton), then the next tile.
     for (let i = 0; i < counts.divisions; i++) {
-      await expect(links.nth(i)).toBeFocused();
-      await expect(links.nth(i)).toBeInViewport();
-      await page.keyboard.press('Tab');
+      for (const stop of ['h3 a', '[data-photo-credits]']) {
+        const el = tiles.nth(i).locator(stop);
+        await expect(el).toBeFocused();
+        await expect(el).toBeInViewport();
+        await page.keyboard.press('Tab');
+      }
     }
   });
 });
