@@ -22,7 +22,7 @@ export const LIBRARIES = {
   plugin: 'Leaflet.markercluster',
   pluginLicence: { name: 'MIT', url: 'https://github.com/Leaflet/Leaflet.markercluster/blob/master/MIT-LICENCE.txt' },
 } satisfies Record<string, Licence | string>;
-export const FONTS = ['Cinzel', 'Fraunces', 'Source Sans 3', 'Tiro Bangla', 'Hind Siliguri'] as const;
+export const FONTS = ['Cinzel', 'Fraunces', 'Source Sans 3', 'Tiro Bangla', 'Hind Siliguri', 'Noto Sans Bengali'] as const;
 export const FONT_LICENCE: Licence = { name: 'SIL Open Font License', url: 'https://openfontlicense.org/' };
 
 /** Each offered provider's attribution as plain text ("© OpenStreetMap contributors"), once each. */

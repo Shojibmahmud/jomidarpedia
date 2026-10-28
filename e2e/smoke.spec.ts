@@ -98,7 +98,7 @@ test.describe('fonts by language and role', () => {
   test('English: heading spans are Fraunces, body text Source Sans, IDs monospace', async ({ page }) => {
     await page.goto('/about/');
     expect(await family(page, 'h1 [data-l="en"]')).toMatch(/Fraunces/);
-    expect(await family(page, 'h2 [data-l="en"], h2[lang="en"]')).toMatch(/Fraunces/);
+    expect(await family(page, '#core-book h2 [data-l="en"], #core-book h2[lang="en"]')).toMatch(/Fraunces/);
     expect(await family(page, '#grading li')).toMatch(/Source Sans/);
     await page.goto(`/site/${baliati.id}/${baliati.slug}/`);
     expect(await family(page, 'h1 [lang="en"]')).toMatch(/Fraunces/);

@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Fuse from 'fuse.js';
+import { DebateTiles } from '@/components/about/AboutParts';
 import { Licences } from '@/components/about/Licences';
 import { NoPinList } from '@/components/areas/AreaParts';
 import { Skeleton } from '@/components/shell/Skeleton';
@@ -179,10 +180,14 @@ describe('About (spec 10 FR-35 to FR-44, AC-10, AC-11)', () => {
   it('has every section anchor, shows disagreements and open questions apart, and never the combined figure', () => {
     const doc = parseMarkdown(fillTokens(parseAbout(text).body, values));
     expect(doc.sections.map(s => s.id)).toEqual(['core-book', 'grading', 'locations', 'disagreements', 'costs', 'photos', 'not-done', 'contribute', 'licences']);
-    const html = renderToStaticMarkup(<>{doc.sections.map(s => <Blocks key={s.id} blocks={s.blocks} directives={{ licences: <Licences /> }} />)}</>);
     const c = getMeta().counts;
-    expect(html).toContain(`${c.disagreements} disagreements`);
-    expect(html).toContain(`${c.openQuestions} open questions`);
+    // The pictures are stand-ins here, except the number tiles that carry the disagreement figures.
+    const directives = { licences: <Licences />, grades: <i />, locations: <i />, photos: <i />, debate: <DebateTiles counts={c} /> };
+    const html = renderToStaticMarkup(<>{doc.sections.map(s => <Blocks key={s.id} blocks={s.blocks} directives={directives} />)}</>);
+    expect(html).toContain(`>${c.disagreements}</span>`);
+    expect(html).toContain(`>${c.openQuestions}</span>`);
+    expect(html).toContain('disagreements, every version shown');
+    expect(html).toContain('open questions, never stated as fact');
     expect(html).not.toContain(String(c.disagreements + c.openQuestions));
     expect(html).not.toMatch(/download|CSV files/i);
     expect(html).toContain(links['url.corrections']);
@@ -220,7 +225,8 @@ describe('licences (spec 10 FR-43)', () => {
 
   it('lists the fonts app/fonts.ts loads, and only offered tile providers', () => {
     const imported = /import \{([^}]+)\} from 'next\/font\/google'/.exec(readFileSync('app/fonts.ts', 'utf8'))![1].split(',').map(s => s.trim().replace(/_/g, ' ')).sort();
-    expect([...FONTS].sort()).toEqual(imported);
+    // Plus the Bangla digits, a local subset of Noto Sans Bengali (next/font/local).
+    expect([...FONTS].sort()).toEqual([...imported, 'Noto Sans Bengali'].sort());
     expect(tileCredits()).toEqual(['© OpenStreetMap contributors']); // CARTO stays off until O4 (lib/map-config.ts)
   });
 });

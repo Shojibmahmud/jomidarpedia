@@ -1,7 +1,13 @@
 ---
 reviewed: true
 ---
-A non-commercial project by one person: a careful list of {{counts.sites}} zamindar palaces, estate houses and rajbaris, what the sources say about each, and how to reach them from Dhaka. It has no accounts and keeps no tracking.
+Jomidarpedia gathers what is known about the zamindar palaces, rajbaris, kacharis and estate houses of Bangladesh. So far it covers {{counts.sites}} sites across {{counts.divisions}} divisions.
+
+Each site has its own page: who built the house and when, what became of the family, what state it is in today, where exactly it stands and how sure we are of that, how to get there from Dhaka, and what to expect when you arrive. The histories hold {{counts.historyEvents}} dated events; {{counts.legends}} local stories are kept apart from them.
+
+Many of these houses are crumbling, some are already gone, and some survive only as a name on an old list. What is known about them is scattered across books, Banglapedia, newspaper reports and travel guides. This site brings it together, shows the source behind every fact, and says plainly where the record is thin.
+
+It is for anyone planning a day out, for students and researchers, and for families who want to know about the old house in their own village. There are no ads, no accounts and no tracking.
 
 ## The core book {#core-book}
 
@@ -13,6 +19,8 @@ The starting list comes from পূর্ববঙ্গের জমিদা�
 
 Each site carries one of four grades. It appears as a quiet badge on the site page and as the "Only well-documented sites" filter in Explore.
 
+::grades
+
 - **Confirmed** ({{counts.confidence.confirmed}}): written sources describe the site.
 - **Partly confirmed** ({{counts.confidence.partially_confirmed}}): some details are sourced; others are not yet.
 - **Unconfirmed** ({{counts.confidence.unconfirmed}}): only a list entry or a named map place exists. Kept so the place is not lost.
@@ -22,6 +30,8 @@ Fields we could not confirm are listed at the bottom of each site page as "Still
 
 ## What "location confirmed" means {#locations}
 
+::locations
+
 - **Confirmed** ({{counts.locations.verified}}): several independent sources put the pin in the same place, usually within about 150 m.
 - **One source** ({{counts.locations.singleSource}}): a single named place, usually a Google Maps pin. Likely right, not cross-checked.
 - **Approximate** ({{counts.locations.approximate}}): the pin marks a nearby landmark such as the village bazar; the house is within a kilometre or two. The 1.5 km circle on the map is a display convention, not a measurement.
@@ -30,9 +40,11 @@ Fields we could not confirm are listed at the bottom of each site page as "Still
 
 ## Disagreements, open questions and legends {#disagreements}
 
-- **{{counts.disagreements}} disagreements.** When sources give different dates, founders, sizes or hours, the site page shows every version and who said it. We don't pick one quietly.
-- **{{counts.openQuestions}} open questions.** A claim that only one source makes, and that we have not been able to check, is shown as an open question, not as a fact and not as a disagreement.
-- **{{counts.legends}} stories, kept apart.** Local accounts and legends live in their own box, marked "not verified", and never in the history timeline.
+::debate
+
+- **Disagreements.** When sources give different dates, founders, sizes or hours, the site page shows every version and who said it. We don't pick one quietly.
+- **Open questions.** A claim that only one source makes, and that we have not been able to check, is shown as an open question, not as a fact and not as a disagreement.
+- **Stories, kept apart.** Local accounts and legends live in their own box, marked "not verified", and never in the history timeline.
 
 A source is attached to a version only when the version names it. Sources that can't be matched to one version are listed with the disagreement, so the page never suggests that every source supports every claim.
 
@@ -48,6 +60,8 @@ A source is attached to a version only when the version names it. Sources that c
 ## Photos {#photos}
 
 We only show photos with an open licence or in the public domain, each with its credit line. Visitor photos on Google Maps and news photos are never copied here; site pages link out to them instead.
+
+::photos
 
 - **{{counts.images}}** published, for {{counts.withPhotos}} sites.
 - **{{counts.imagesNeedReview}}** held for review, not shown.
@@ -67,7 +81,7 @@ We only show photos with an open licence or in the public domain, each with its 
 - **Spotted a mistake?** [Suggest a correction]({{url.corrections}}). The form takes the site, the field and what you know.
 - **Have a photo you can share under an open licence?** [Offer a photo]({{url.photoOffer}}).
 
-Both forms send an email to the editor. Your address is used only to reply, and nothing you send is published.
+Both forms send an email to the editor. Your address is used only to reply, and nothing you send is published. The forms take text only; send photos or documents by email.
 
 - **Anything else?** Write to [jomidarpedia@gmail.com](mailto:jomidarpedia@gmail.com).
 
