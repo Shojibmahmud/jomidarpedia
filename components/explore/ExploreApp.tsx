@@ -44,7 +44,8 @@ type Memory = { pages?: number; scroll?: number; snap?: Snap; sheetScroll?: numb
 const NO_SITES: IndexSite[] = [];
 const SORT_LABEL: Record<Sort, StringKey> = { time: 'sort.time', name: 'sort.name', district: 'sort.district' };
 
-const memory = (): Memory => (window.history.state?.jp ?? {}) as Memory;
+// `next dev` server-renders a URL with a query string, so there is no window there; the static export never does.
+const memory = (): Memory => (typeof window === 'undefined' ? {} : window.history.state?.jp ?? {}) as Memory;
 /** Updates this entry's memory without changing the URL or adding an entry. */
 const remember = (patch: Memory) => window.history.replaceState({ jp: { ...memory(), ...patch } }, '');
 const rawSearch = () => window.location.search.replace(/^\?/, '');
@@ -167,7 +168,7 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   const setView = (v: 'list' | 'map') => go({ ...view, extras: { ...extras, view: v } }, {});
 
   // Loaded pages and scroll position, restored for this history entry (FR-29).
-  // ExploreApp renders only in the browser (useSearchParams bails out of the static render), so window is there.
+  // In the static export ExploreApp renders only in the browser (useSearchParams bails out of the static render).
   const [pages, setPages] = useState(() => memory().pages ?? 1);
   const [snap, setSnapState] = useState<Snap>(() => memory().snap ?? 'peek');
   const [pagesFor, setPagesFor] = useState(search);

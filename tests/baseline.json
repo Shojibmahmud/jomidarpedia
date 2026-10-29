@@ -1,13 +1,13 @@
 {
   "sites": 413,
-  "onMap": 299,
+  "onMap": 305,
   "onMapByStatus": {
     "approximate": 43,
-    "single_source": 217,
+    "single_source": 221,
     "unverified": 1,
-    "verified": 38
+    "verified": 40
   },
-  "noPin": 114,
+  "noPin": 108,
   "dayTripSites": {
     "blank": 12,
     "FALSE": 269,
@@ -23,19 +23,19 @@
   "stopsWithoutSite": 200,
   "stopsWithTime": 301,
   "itinerariesWithTimedStop": 45,
-  "sources": 1137,
-  "siteSources": 2662,
+  "sources": 1146,
+  "siteSources": 2671,
   "imagesByReadiness": {
     "Needs review": 24,
     "Permission required": 1322,
-    "Ready": 938
+    "Ready": 957
   },
   "readyImageHosts": {
     "none (own photo)": 2,
-    "thumb.wikimedia.org": 814,
-    "upload.wikimedia.org": 122
+    "thumb.wikimedia.org": 828,
+    "upload.wikimedia.org": 127
   },
-  "sitesWithReadyImages": 127,
+  "sitesWithReadyImages": 128,
   "claims": {
     "conflict": 982,
     "fact": 3866,
@@ -49,31 +49,31 @@
   "unclassifiedSites": 0,
   "dhakaDivision": {
     "sites": 111,
-    "noPin": 42,
+    "noPin": 36,
     "locations": {
-      "verified": 11,
-      "singleSource": 44,
+      "verified": 13,
+      "singleSource": 48,
       "approximate": 13,
       "unverified": 1,
-      "noPin": 42
+      "noPin": 36
     }
   },
   "about": {
     "locations": {
-      "verified": 38,
-      "singleSource": 217,
+      "verified": 40,
+      "singleSource": 221,
       "approximate": 43,
       "unverified": 1,
-      "noPin": 114
+      "noPin": 108
     },
     "disagreements": 201,
     "openQuestions": 781,
-    "stillToConfirm": 1871,
+    "stillToConfirm": 1867,
     "imagesNeedReview": 24,
     "imagesPermissionRequired": 1322,
     "possibleDuplicates": 1
   },
-  "indexRowsOnMap": 299,
+  "indexRowsOnMap": 305,
   "hoursKnown": 12,
   "conflictVersions": {
     "withSources": 267,
