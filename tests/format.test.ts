@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bnDigits, both, formatCoords, formatCount, formatDate, formatHours, formatId, formatMoney } from '@/lib/format';
+import { bnDigits, bnProseDigits, both, formatCoords, formatCount, formatDate, formatHours, formatId, formatMoney } from '@/lib/format';
 
 describe('formatters (task 3.2)', () => {
   it('formatCount groups thousands, with Bangla digits in Bangla', () => {
@@ -41,5 +41,38 @@ describe('formatters (task 3.2)', () => {
 
   it('bnDigits maps every digit', () => {
     expect(bnDigits('0123456789')).toBe('০১২৩৪৫৬৭৮৯');
+  });
+});
+
+describe('Bangla prose digits (spec 15 FR-8 to FR-11, AC-4, AC-5)', () => {
+  it('converts numbers in Bangla prose, keeping the punctuation as written', () => {
+    expect(bnProseDigits('1947 সালের পর')).toBe('১৯৪৭ সালের পর');
+    expect(bnProseDigits('সিলেট আই নিউজ, এপ্রিল 2026')).toBe('সিলেট আই নিউজ, এপ্রিল ২০২৬');
+    expect(bnProseDigits('17শ শতক; 18শ-19শ শতক')).toBe('১৭শ শতক; ১৮শ-১৯শ শতক');
+    expect(bnProseDigits('প্রায় 2.5 কিমি, 1,200 টাকা')).toBe('প্রায় ২.৫ কিমি, ১,২০০ টাকা');
+    expect(bnProseDigits('সকাল 7:30 থেকে (2016)।')).toBe('সকাল ৭:৩০ থেকে (২০১৬)।');
+    expect(bnProseDigits('কোনো সংখ্যা নেই')).toBe('কোনো সংখ্যা নেই');
+  });
+
+  it('keeps Latin digits in IDs, codes, URLs and coordinates', () => {
+    for (const keep of [
+      'আলাদা রেকর্ড (JB-DHK-088) দেখুন',
+      'খবর (bdnews24), 2020',
+      'bdnews24-এর প্রতিবেদন',
+      'প্লাস কোড HG57+87, এলাকা AGD.27',
+      'সূত্র https://example.org/a1 দেখুন',
+      'পিন 23.9174, 90.0622 এ',
+      'অবস্থান (23°44‘N, 90°21’E)',
+      'স্থানাঙ্ক 23°11’12.6“N',
+    ]) {
+      const out = bnProseDigits(keep);
+      for (const token of ['JB-DHK-088', 'bdnews24', 'HG57+87', 'AGD.27', 'https://example.org/a1', '23.9174, 90.0622', '23°44‘N,', '90°21’E', '23°11’12.6“N']) {
+        if (keep.includes(token)) expect(out, keep).toContain(token);
+      }
+    }
+    expect(bnProseDigits('খবর (bdnews24), 2020')).toBe('খবর (bdnews24), ২০২০');
+    expect(bnProseDigits('পিন 23.9174, 90.0622 এ, 2 কিমি দূরে')).toBe('পিন 23.9174, 90.0622 এ, ২ কিমি দূরে');
+    expect(bnProseDigits('যোগাযোগ নম্বর (01711-362913)। খোলা 9টা থেকে')).toBe('যোগাযোগ নম্বর (01711-362913)। খোলা ৯টা থেকে');
+    expect(bnProseDigits('+880 1711362913 নম্বরে')).toBe('+880 1711362913 নম্বরে');
   });
 });

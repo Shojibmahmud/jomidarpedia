@@ -11,6 +11,29 @@ const BN_DIGITS = '০১২৩৪৫৬৭৮৯';
 export const bnDigits = (s: string) => s.replace(/[0-9]/g, d => BN_DIGITS[Number(d)]);
 const digits = (s: string, lang: Lang) => (lang === 'bn' ? bnDigits(s) : s);
 
+// Spans of Bangla prose whose digits stay Latin (spec 15 FR-10): URLs, decimal coordinate pairs, phone numbers
+// (docs/TRANSLATION_BN.md; and so a phone still offers to call them), and any whitespace-delimited token with a
+// Latin letter or a degree sign (JB-DHK-088, bdnews24, HG57+87, 23°44‘N).
+const KEEP_LATIN = [
+  /https?:\/\/\S+/g,
+  /-?\d{1,3}\.\d{3,},\s*-?\d{1,3}\.\d{3,}/g,
+  /(?:\+?880[- ]?)?0?1[3-9]\d{2}[- ]?\d{6}(?!\d)/g,
+  /\S*[A-Za-z°]\S*/g,
+];
+
+/**
+ * Bangla prose from the translations, as shown in Bangla mode (spec 15 FR-8 to FR-11): digits become ০–৯,
+ * except in IDs, codes, URLs and coordinates. The translations themselves keep Latin digits (D-3).
+ */
+export function bnProseDigits(s: string): string {
+  if (!/[0-9]/.test(s)) return s;
+  const keep = new Uint8Array(s.length);
+  for (const re of KEEP_LATIN) {
+    for (const m of s.matchAll(re)) if (/[0-9]/.test(m[0])) keep.fill(1, m.index, m.index + m[0].length);
+  }
+  return s.replace(/[0-9]/g, (d, at: number) => (keep[at] ? d : BN_DIGITS[Number(d)]));
+}
+
 const MONTHS: Record<Lang, string[]> = {
   en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   bn: ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'],

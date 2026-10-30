@@ -2,6 +2,7 @@
 // React context: both languages are in the HTML, and app/tokens.css hides the one not named by
 // <html data-lang>. A hidden span is display:none, so screen readers skip it too.
 
+import { bnProseDigits } from '@/lib/format';
 import { dual, type Dual, type StringKey, type Vars } from '@/lib/i18n';
 
 /** Two strings, one per language. Use for values from lib/format.ts and bilingual data. */
@@ -21,10 +22,10 @@ export function T({ k, vars }: { k: StringKey; vars?: Vars }) {
 
 /**
  * Data prose (spec 14 FR-15): the Bangla in Bangla mode when the build found a valid translation; otherwise
- * the English, marked lang="en", in both modes (the page note says so).
+ * the English, marked lang="en", in both modes (the page note says so). Bangla shows Bengali digits (spec 15).
  */
 export function Prose({ en, bn }: { en: string; bn?: string }) {
-  return bn ? <Both value={{ en, bn }} /> : <span lang="en">{en}</span>;
+  return bn ? <Both value={{ en, bn: bnProseDigits(bn) }} /> : <span lang="en">{en}</span>;
 }
 
 /** Text that keeps Latin script in Bangla mode: IDs, coordinates, credits, source titles. */

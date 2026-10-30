@@ -100,7 +100,7 @@ Phase 12 is merged, the release build passes, and production (`main` on `*.verce
 - **FR-12** A **blocker** is a failure where a user cannot reach, operate or understand a control or its content. Blockers are fixed in Phase 13 and rechecked, and the recheck is recorded. Other findings are listed as open items in the doc (D13). The doc states that these checks show progress towards WCAG 2.2 AA and do not certify conformance.
 
 ### Bangla rendering (13.4)
-- **FR-13** On Android Chrome and iOS Safari, Bangla text including "সংরক্ষিত" and "ধ্বংসপ্রায়" renders with correct conjuncts on a site page and in Bangla mode chrome. The result and a screenshot reference are recorded in `docs/a11y-checks.md`. Garbled rendering is a blocker (FR-12).
+- **FR-13** On Android Chrome and iOS Safari, Bangla text including "সংরক্ষিত" and "ধ্বংসাবশেষ" renders with correct conjuncts on a site page and in Bangla mode chrome. The result and a screenshot reference are recorded in `docs/a11y-checks.md`. Garbled rendering is a blocker (FR-12). *(Amended 31 Oct 2026 by spec 15: "ধ্বংসপ্রায়" is no longer shown on the site, and the check covers the pages and rows P1–P8 in spec 15 FR-1.)*
 
 ### Error states (13.5)
 Each is tested in Playwright by blocking or failing the request:

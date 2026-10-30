@@ -23,8 +23,8 @@ export default {
       colors: Object.fromEntries(colors.map((c) => [c, v(c)])),
       fontFamily: {
         wordmark: ['var(--font-cinzel)', 'Georgia', 'serif'], // logo only: uppercase, tracking 0.06em, weight 600
-        serif: ['var(--font-fraunces)', 'Georgia', 'serif'],
-        sans: ['var(--font-source-sans)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-fraunces)', 'var(--font-tiro-bangla)', 'Georgia', 'serif'],
+        sans: ['var(--font-source-sans)', 'var(--font-bn-digits)', 'var(--font-hind-siliguri)', 'system-ui', 'sans-serif'],
         'bn-serif': ['var(--font-tiro-bangla)', 'Noto Serif Bengali', 'serif'],
         bn: ['var(--font-bn-digits)', 'var(--font-hind-siliguri)', 'Noto Sans Bengali', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],

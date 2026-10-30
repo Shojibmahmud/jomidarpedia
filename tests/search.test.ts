@@ -39,8 +39,8 @@ describe('fold (8.1, FR-1 to FR-4)', () => {
     expect(fold('  Ráj-BÁRI,  (Dhaka) ')).toBe('raj bari dhaka');
     expect(fold("Prashanta Karmakar's House")).toBe('prashanta karmakar s house');
   });
-  it('keeps Bangla and English digits apart', () => {
-    expect(fold('১৯৪৭')).not.toBe(fold('1947'));
+  it('folds Bangla digits to English ones (spec 15 FR-13, amending FR-2)', () => {
+    expect(fold('১৯৪৭')).toBe(fold('1947'));
   });
   it('is idempotent, on fixed strings and on every name in the index', () => {
     for (const s of ['Jomidar BADI', 'বাড়ী জমীদার', 'Ráj-BÁRI']) expect(fold(fold(s))).toBe(fold(s));
@@ -165,6 +165,26 @@ describe('districts and families (FR-9 to FR-11)', () => {
     for (let k = 1; k < fams.length; k++) {
       expect(fams[k - 1].count > fams[k].count || (fams[k - 1].count === fams[k].count && fams[k - 1].phrase.localeCompare(fams[k].phrase, 'en') <= 0)).toBe(true);
     }
+  });
+});
+
+describe('Bengali digits in queries (spec 15 FR-13, AC-7)', () => {
+  const ids = (q: string) => searchAll(m, districts, q).sites.map(h => h.site.i);
+  it('fold turns Bengali digits into Latin ones, one character each', () => {
+    expect(fold('১৮৪০')).toBe('1840');
+    expect(foldWithMap('বাড়ি-২').text).toBe(fold('বাড়ি-2'));
+  });
+  it('a query typed with Bengali digits finds what the Latin one finds', () => {
+    expect(ids('১৮৪০')).toEqual(ids('1840'));
+    expect(ids('1840')).toContain('JB-DHK-016');
+    expect(ids('ডাবুয়া ২')).toEqual(ids('ডাবুয়া 2'));
+    expect(ids('ডাবুয়া ২')).toContain('JB-CTG-046');
+  });
+  it('marks the Bengali digits in a name for a Latin-digit query', () => {
+    const name = index.find(s => s.i === 'JB-CTG-046')!.b!;
+    const parts = marks(name, new Set(words('2')));
+    expect(parts.find(p => p.mark)?.text).toBe('২');
+    expect(parts.map(p => p.text).join('')).toBe(name);
   });
 });
 
