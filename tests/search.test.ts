@@ -186,7 +186,10 @@ describe('marks (FR-17)', () => {
 });
 
 describe('performance (FR-38)', () => {
-  it('answers 100 queries in under 50 ms each once built', () => {
+  // The CI-tolerant bound (AC-12): GitHub's runners are about 3x slower than a dev machine, where the worst
+  // query (a no-match that falls through to fuzzy search) takes about 20 ms.
+  const bound = process.env.CI ? 100 : 50;
+  it(`answers 100 queries in under ${bound} ms each once built`, () => {
     const queries = index.slice(0, 100).map((s, k) => (k % 3 === 0 ? s.e.slice(0, 6) : k % 3 === 1 ? (s.b ?? s.e) : `${s.d} ${s.e.split(' ')[0]}x`));
     searchAll(m, districts, 'warm up');
     // Best of three runs per query, so a GC pause or a busy worker doesn't fail a fast query.
@@ -197,7 +200,7 @@ describe('performance (FR-38)', () => {
         searchAll(m, districts, q);
         best = Math.min(best, performance.now() - t);
       }
-      expect(best, q).toBeLessThan(50);
+      expect(best, q).toBeLessThan(bound);
     }
   });
 });
