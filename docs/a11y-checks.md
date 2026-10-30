@@ -65,6 +65,8 @@ Lighthouse Accessibility (`npm run lighthouse`, mobile settings): 1.00 on Home, 
 
 Spec `.claude/specs/15-Bangla-device-check.md`. This check covers the interface (13.4) and the reviewed Bangla prose (11a.9).
 
+Testers get a fillable PDF guide for their phone: `docs/testing/jomidarpedia-android-test-guide.pdf` (Chrome) and `docs/testing/jomidarpedia-iphone-test-guide.pdf` (Safari). Their rows P1–P8 match the table below, and they add extra checks E1–E4 (dark mode, sideways, larger text, search with Bangla digits). Copy their results into the table and their notes under Open items or Blockers.
+
 **How to check.** Open https://jomidarpedia.vercel.app on the phone and choose বাংলা from the menu once; the choice is remembered. Open each page below, wait until it has fully loaded, and scroll through every section. Recheck a fix on the branch's Vercel preview instead.
 
 The first pass (owner's choice, 31 Oct 2026) is on production as it was before spec 15 shipped, so prose there still shows Latin digits and Bangla source titles still use the phone's own font. After spec 15 ships, recheck P2 (Bengali digits in prose) and P4 (Bangla source titles) on production on both phones, and record them under "Blockers fixed and rechecked" even if they pass.
