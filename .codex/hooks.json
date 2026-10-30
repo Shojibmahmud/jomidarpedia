@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/domus_aurea/Project folder/Claude Projects/Jomidar bari/Development/.codex/hooks/check-ts.sh'",
+            "timeout": 90,
+            "statusMessage": "Typecheck and lint"
+          }
+        ]
+      }
+    ]
+  }
+}
