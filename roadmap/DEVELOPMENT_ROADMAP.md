@@ -8,7 +8,7 @@
 - Each phase lists its **required** prerequisites. The order of phases is a suggestion, except where a prerequisite says otherwise.
 - Unticked tasks have not been implemented or verified. Statements about the current state of the repository were checked on 22 October 2026, by reading the files and running both data builders into temporary folders; where Phase 1 changed them, the text says so.
 
-**Status, 29 October 2026.** Phases 0–12 are done; production (`main` on `*.vercel.app`) is live. The owner reversed O6 on 26 Oct, so Bangla prose is now MVP work (**Phase 11a**): the pipeline and the drafts for every site are merged, and the owner's table-by-table review is under way. On 30 Oct every remaining cell was drafted (13,340 in all), so only the owner's review and device check remain in 11a. Phase 13 waits on the owner's device, tile and header checks; Phase 14 has not started. Work merged since the last update (branches 15–21):
+**Status, 30 October 2026.** Phases 0–12 are done; production (`main` on `*.vercel.app`) is live. The owner reversed O6 on 26 Oct, so Bangla prose is now MVP work (**Phase 11a**): the pipeline and the drafts for every site are merged, and the owner's table-by-table review is under way. On 30 Oct every remaining cell was drafted (13,340 in all), so only the owner's review and device check remain in 11a. By the end of 30 Oct the owner had reviewed 5 of 11 tables (2,837 of 13,340 cells). Phase 13 waits on the owner's device, tile and header checks; Phase 14 has not started. Work since the last update (branches 15–24):
 - **15** CI: data is built before unit tests; Lighthouse no longer hangs.
 - **16** Phase 11a: Bangla prose pipeline, review tools and drafts of all site prose (see Phase 11a).
 - **17** Interface polish; corrections now go through a popup email form (O2).
@@ -16,7 +16,9 @@
 - **19** Division pages; Bangla numerals in the Bangla font; the correction form's attachment note; About page expanded.
 - **20** Bangla About text approved; division tab-order test fixed.
 - **21** Map pins for six hidden preserved houses (Masua, Mostofapur, Delduar, Dhalapara, Kuthi Pachuria, Alishakanda); Tetulia mosque photos shared with Salam Manzil.
-- **22** (open) Lead photos for zamindar houses (task 12.11).
+- **22** Bangla drafts for every remaining cell (13,340 in all); photo data fixes.
+- **23** `CLAUDE.md` and the `/maps-lookup` skill.
+- **24** (open) Phase 11a review: the owner has approved legends, relationship notes, photo alt text, trips and claims; the search performance test now takes the best of three runs.
 
 Design references:
 - Canvas (every screen, light and dark, Bangla, print pages): https://claude.ai/artifact/RWUDBkchSgq1mwrDe5LqqC
@@ -987,10 +989,10 @@ Required dependencies between phases 5 and 11:
 - [x] **11a.5** Batch 1 drafts for trips: titles, planning notes, stop names and notes. Done 30 Oct 2026: 1,992 cells (titles 385, planning notes 369, stop names 200, stop notes 1,038).
 - [x] **11a.6** Batch 2 drafts: claims, location notes, cost and budget notes, legends, photo alt text, relationship and citation notes. Done 30 Oct 2026: claims 982, location notes 305, unverified-field notes 79, cost notes 2,034, legends 205, photo alt text 465, relationship notes 431, plus the last hours note. `citation_note` is not on the allow-list, because it is not shown publicly.
 - [x] **11a.7** Bangla About page (`content/about.bn.md`), approved by the owner on 28 Oct 2026.
-- [ ] **11a.8** Owner's review, one table at a time; approving a table sets its rows to `reviewed` and removes the marker. On 30 Oct 2026, 0 of 13,340 drafted cells are reviewed.
+- [ ] **11a.8** Owner's review, one table at a time; approving a table sets its rows to `reviewed` and removes the marker. On 30 Oct 2026, 2,837 of 13,340 cells are reviewed, in 5 of 11 tables: legends 205, relationship notes 431, photo alt text 465, trips 754, claims 982. Still draft: trip stops 1,238, history 1,600, visiting info 1,704, getting there 1,758, costs 2,034, sites 2,169 (10,503 cells). The wording conventions the owner settled (জনশ্রুতি for "tradition", "17শ শতক" centuries, curly quotes, outlet names, no slugs) apply to the remaining tables.
 - [ ] **11a.9** Bangla rendering of the new prose on real devices, together with 13.4.
 
-**Status (30 Oct 2026):** every allow-listed cell has a Bangla draft: 13,340 of 13,340, with 0 invalid, 0 outdated and 0 orphan rows (`data/reports/release-problems.md`). Batch 1 for trips and all of batch 2 were drafted by a multi-agent workflow. Each chunk passed a checker that applies the build's rules (internal terms, "free entry" wording, the `vs` and `;` structure), and trip titles keep the bracket groups that `tripTitle` cuts. Data checks, typecheck and 465 unit tests pass. `index.json` is now 126.8 KB gzipped: under the 150 KB budget, but over the 120 KB warning line. What is left needs the owner: the review (11a.8) and the device check (11a.9).
+**Status (30 Oct 2026):** every allow-listed cell has a Bangla draft: 13,340 of 13,340, with 0 invalid, 0 outdated and 0 orphan rows (`data/reports/release-problems.md`). Batch 1 for trips and all of batch 2 were drafted by a multi-agent workflow. Each chunk passed a checker that applies the build's rules (internal terms, "free entry" wording, the `vs` and `;` structure), and trip titles keep the bracket groups that `tripTitle` cuts. Data checks, typecheck and 465 unit tests pass. `index.json` is now 126.8 KB gzipped: under the 150 KB budget, but over the 120 KB warning line. What is left needs the owner: the review (11a.8, 5 of 11 tables approved by the end of 30 Oct) and the device check (11a.9).
 - **For the review:** some place names outside `names.json` use the drafter's spelling (for example জৈন্তেশ্বরী বাড়ি, মসজিদকুঁড়, মাহিলাড়া মঠ). The language editions of Wikipedia are written two ways in claims ("বাংলা Wikipedia" and "বাংলা উইকিপিডিয়া"); pick one. Five trip titles have a Bangla alternate name added inside the anchor bracket to keep its nesting (Jaintiapur, Morrelganj, Dakshindihi, Madhabpasha, Nakipur).
 
 **Acceptance criteria**
