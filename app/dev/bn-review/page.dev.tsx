@@ -24,7 +24,7 @@ export default function BnReviewPage() {
       <header className="space-y-2">
         <h1 className="font-serif text-h2">Bangla review</h1>
         <p className="text-muted">Local and preview builds only. {done} of {cells.length} cells translated; {orphans.length} orphan rows.
-          To approve rows, set <code>status</code> to <code>reviewed</code> in <code>data/translations/bn/&lt;table&gt;.csv</code>, or ask Claude to.</p>
+          To approve rows, set <code>status</code> to <code>reviewed</code> in <code>data/translations/bn/&lt;table&gt;.csv</code>, or run <code>npm run bn -- approve &lt;table&gt;</code>.</p>
       </header>
       <table className="w-full border-collapse text-left text-sm" data-coverage>
         <thead><tr className="border-b-2 border-ink">
