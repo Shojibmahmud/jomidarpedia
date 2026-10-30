@@ -250,10 +250,10 @@ Batches set drafting order only; the build accepts any allow-listed column at an
 - **D-10** The About page, the card one-liners and Bangla founder/family search are in scope. Searching descriptions is not: spec 08 D4 keeps search to names, places and families in both languages.
 - **D-11** No Bangla SEO metadata without `/bn/` routes. One URL can offer Google only one title, and switching it to Bangla would hide English titles.
 - **D-12** A side-by-side review page on dev and preview builds, so the owner can review a table without reading raw CSV.
-- **D-13** Bangla prose keeps Latin digits (owner's choice), which makes it easy to match against English sources.
+- **D-13** Bangla prose keeps Latin digits (owner's choice), which makes it easy to match against English sources. *(Amended 31 Oct 2026 by spec 15 D-3: the files keep Latin digits, and the site shows them in Bengali digits in Bangla mode, except in IDs, codes, URLs, coordinates and phone numbers.)*
 
 ## 11. Open questions
 
 - **OQ-1** Will anyone besides the owner (e.g. a native-speaker reviewer) approve translations, and does their approval count as `reviewed`?
-- **OQ-2** Numbers formatted by code (timeline year headings, counts, fees) use Bangla digits in Bangla mode, but prose keeps Latin digits (D-13). Is this mix acceptable, or should code-formatted years inside prose-heavy sections also stay Latin?
+- **OQ-2** *(Resolved 31 Oct 2026 by spec 15: every number in Bangla mode shows Bengali digits, prose included.)* Numbers formatted by code (timeline year headings, counts, fees) use Bangla digits in Bangla mode, but prose keeps Latin digits (D-13). Is this mix acceptable, or should code-formatted years inside prose-heavy sections also stay Latin?
 - **OQ-3** Since there is no glossary, should the review page flag recurring English terms (e.g. "zamindar", "kachari", "single source") that are translated differently across rows?

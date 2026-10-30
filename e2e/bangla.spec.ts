@@ -7,6 +7,8 @@ import { expect, test, type Page } from './fixtures';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import type { Itinerary, SiteRecord, TripSummary, IndexSite, TranslationCells } from '../lib/types';
 import { stubTiles } from './tiles';
+import { bnProseDigits } from '../lib/format';
+import { PAGE, sortTrips, type TripCard } from '../lib/trips';
 
 test.beforeEach(async ({ page }) => { await stubTiles(page); });
 
@@ -31,7 +33,7 @@ test('a fully reviewed site: Bangla prose and no note (AC-6)', async ({ page }) 
   test.skip(!reviewed, 'no site is fully translated and reviewed yet');
   await bangla(page);
   await page.goto(href(reviewed!));
-  await expect(page.locator('#summary [lang="bn"]').first()).toHaveText(reviewed!.summaryBn!);
+  await expect(page.locator('#summary p [lang="bn"]').first()).toHaveText(bnProseDigits(reviewed!.summaryBn!));
   await expect(page.locator('[data-prose-note]')).toHaveCount(0);
   await noSeriousAxe(page);
 });
@@ -40,7 +42,7 @@ test('a site with drafts: the "not yet checked" note (AC-6)', async ({ page }) =
   test.skip(!drafted, 'no site has a draft translation yet');
   await bangla(page);
   await page.goto(href(drafted!));
-  await expect(page.locator('#summary p [lang="bn"]').first()).toHaveText(drafted!.summaryBn!);
+  await expect(page.locator('#summary p [lang="bn"]').first()).toHaveText(bnProseDigits(drafted!.summaryBn!));
   await expect(page.locator('[data-prose-note]')).toHaveAttribute('data-prose-note', drafted!.bnState.english ? 'bnNote.both' : 'bnNote.draft');
   await noSeriousAxe(page);
 });
@@ -69,12 +71,15 @@ test('a trip page and its card in Bangla (AC-6, AC-7)', async ({ page }) => {
   test.skip(!translatedTrip, 'no trip title is translated yet');
   await bangla(page);
   await page.goto(`/trips/${translatedTrip!.id}/`);
-  await expect(page.locator('h1 [lang="bn"]')).toHaveText(translatedTrip!.titleBn!);
+  await expect(page.locator('h1 [lang="bn"]')).toHaveText(bnProseDigits(translatedTrip!.titleBn!));
   const t = trip(translatedTrip!.id);
   if (t.bnState.draft || t.bnState.english) await expect(page.locator('[data-prose-note]')).toBeVisible();
   await noSeriousAxe(page);
+  // The card: a translated trip on the list's first page in its default order (time, then name).
+  const firstPage = sortTrips(trips.map((x): TripCard => ({ ...x, divSlug: '' })), 'time', 'bn').slice(0, PAGE).find(x => x.titleBn);
+  test.skip(!firstPage, 'no translated trip on the first page of /trips/');
   await page.goto('/trips/');
-  await expect(page.getByText(translatedTrip!.titleBn!, { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(bnProseDigits(firstPage!.titleBn!), { exact: true }).first()).toBeVisible();
 });
 
 test('the map card shows the Bangla one-liner (AC-7)', async ({ page }) => {
@@ -82,7 +87,7 @@ test('the map card shows the Bangla one-liner (AC-7)', async ({ page }) => {
   test.skip(!row, 'no mappable site has a translated summary yet');
   await bangla(page);
   await page.goto(`/explore/?view=map&sel=${row!.i}`);
-  await expect(page.locator(`[data-summary="${row!.i}"] [data-summary-text] [lang="bn"]`)).toHaveText(row!.smb!);
+  await expect(page.locator(`[data-summary="${row!.i}"] [data-summary-text] [lang="bn"]`)).toHaveText(bnProseDigits(row!.smb!));
 });
 
 test('a translated photo has Bangla alt text and its credit unchanged (AC-7)', async ({ page }) => {
@@ -91,7 +96,7 @@ test('a translated photo has Bangla alt text and its credit unchanged (AC-7)', a
   const im = s!.images.find(x => x.altBn)!;
   await bangla(page);
   await page.goto(href(s!));
-  await expect(page.locator(`[data-gallery] img[src="${im.thumb}"]`).first()).toHaveAttribute('alt', im.altBn!);
+  await expect(page.locator(`[data-gallery] img[src="${im.thumb}"]`).first()).toHaveAttribute('alt', bnProseDigits(im.altBn!));
   await expect(page.locator('[data-gallery]')).toContainText(im.credit);
 });
 

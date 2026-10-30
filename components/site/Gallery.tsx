@@ -8,13 +8,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { T } from '@/components/T';
-import { both, formatCount } from '@/lib/format';
+import { bnProseDigits, both, formatCount } from '@/lib/format';
 import type { Lang } from '@/lib/i18n';
 import type { ImageRecord } from '@/lib/types';
 import { useUiLang } from '@/lib/use-ui-lang';
 
 /** Alt text in the interface language when the build has a Bangla translation (spec 14 FR-19); credits never change. */
-const altProps = (im: ImageRecord, lang: Lang) => (lang === 'bn' && im.altBn ? { alt: im.altBn, lang: 'bn' } : { alt: im.alt, lang: im.altLang });
+const altProps = (im: ImageRecord, lang: Lang) => (lang === 'bn' && im.altBn ? { alt: bnProseDigits(im.altBn), lang: 'bn' } : { alt: im.alt, lang: im.altLang });
 
 const TILES = 4;
 const n = (v: number) => both(formatCount, v);

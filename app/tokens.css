@@ -86,13 +86,15 @@
   /* Fonts by language and role. Every element with a language (each <span lang> from components/T.tsx too)
      takes its face from two inherited variables, so Latin never falls into the Bangla font and Bangla never
      into a Latin one, while a span inside a serif heading stays serif. The font-* classes below set the variables
-     for everything inside them; a class on the element itself still wins (utilities come later). */
+     for everything inside them; a class on the element itself still wins (utilities come later).
+     The Latin faces end in the Bangla ones: Source Sans and Fraunces cover every Latin letter, so only Bangla
+     inside Latin text (a Bangla source title, say) reaches them, instead of the phone's own Bangla font (spec 15). */
   :root {
-    --face-en: var(--font-source-sans), system-ui, sans-serif;
+    --face-en: var(--font-source-sans), var(--font-bn-digits), var(--font-hind-siliguri), system-ui, sans-serif;
     --face-bn: var(--font-bn-digits), var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif;
   }
-  .font-sans { --face-en: var(--font-source-sans), system-ui, sans-serif; }
-  .font-serif { --face-en: var(--font-fraunces), Georgia, serif; --face-bn: var(--font-tiro-bangla), 'Noto Serif Bengali', serif; }
+  .font-sans { --face-en: var(--font-source-sans), var(--font-bn-digits), var(--font-hind-siliguri), system-ui, sans-serif; }
+  .font-serif { --face-en: var(--font-fraunces), var(--font-tiro-bangla), Georgia, serif; --face-bn: var(--font-tiro-bangla), 'Noto Serif Bengali', serif; }
   .font-wordmark { --face-en: var(--font-cinzel), Georgia, serif; }
   .font-mono { --face-en: ui-monospace, SFMono-Regular, Menlo, monospace; }
   .font-bn { --face-bn: var(--font-bn-digits), var(--font-hind-siliguri), 'Noto Sans Bengali', sans-serif; }

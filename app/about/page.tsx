@@ -16,7 +16,7 @@ import { Licences } from '@/components/about/Licences';
 import { STAT_ICONS, StatStrip } from '@/components/home/HomeParts';
 import { ProseNote } from '@/components/shell/ProseNote';
 import { getMeta, getSources } from '@/lib/data';
-import { bnDigits } from '@/lib/format';
+import { bnDigits, bnProseDigits } from '@/lib/format';
 import { HOME_IMAGES } from '@/lib/home';
 import { homePhoto } from '@/lib/home-data';
 import { dual } from '@/lib/i18n';
@@ -35,7 +35,8 @@ function aboutDoc(path: string, lang: 'en' | 'bn' = 'en') {
   const raw = aboutValues(getMeta(), getSources(), { 'url.corrections': CORRECTIONS_URL, 'url.photoOffer': `${CORRECTIONS_URL}?field=photo` });
   // The Bangla text's counts in Bangla digits; the link tokens stay as they are.
   const values = lang === 'en' ? raw : Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, LINK_TOKENS.includes(k) ? v : bnDigits(String(v))]));
-  return { reviewed, doc: parseMarkdown(fillTokens(body, values, path)) };
+  // Numbers written in the Bangla text get Bangla digits too; link targets and tokens contain Latin letters, so stay (spec 15 FR-9).
+  return { reviewed, doc: parseMarkdown(fillTokens(lang === 'en' ? body : bnProseDigits(body), values, path)) };
 }
 
 /** One block in both languages when there is a Bangla text, otherwise the English for both (spec 14 FR-15). */

@@ -9,6 +9,7 @@ import { isMappable } from '../scripts/lib/validate.mjs';
 import { filterTrips, mapStops, NO_FILTERS, PAGE, sortTrips, stopSiteIds, type TripCard } from '../lib/trips';
 import type { Division, Itinerary, TripSummary } from '../lib/types';
 import { stubTiles, TILE } from './tiles';
+import { bnProseDigits } from '../lib/format';
 
 test.beforeEach(async ({ page }) => { await stubTiles(page); });
 
@@ -215,10 +216,12 @@ test.describe('itinerary page', () => {
     await expect(page.locator('[data-timed-preview]')).toHaveCount(anchor.itineraries.filter((i: { id: string }) => trip(i.id).planStatus === 'timed').length);
   });
 
-  test('Bangla: interface in Bangla, trip data in English (FR-53, FR-54)', async ({ page }) => {
+  test('Bangla: interface in Bangla, trip title in Bangla when translated (FR-53, FR-54, spec 14)', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('jp-lang', 'bn'));
     await page.goto(href(withMap));
-    await expect(page.locator('h1')).toHaveText(withMap.title);
+    // Since Phase 11a the title is Bangla when a reviewed translation exists, with Bengali digits (spec 15); else English.
+    if (withMap.titleBn) await expect(page.locator('h1 [lang="bn"]')).toHaveText(bnProseDigits(withMap.titleBn));
+    else await expect(page.locator('h1')).toHaveText(withMap.title);
     expect((await page.locator('#jp-budget').innerText()).trim()).toBe('আনুমানিক খরচ'); // the English twin is hidden
   });
 

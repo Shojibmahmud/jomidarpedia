@@ -60,7 +60,7 @@ The boards set the target:
 
 ### Folding (8.1)
 - **FR-1** `lib/fold.ts` exports `fold(text): string`, pure and deterministic, used by the browser and by the build's tests (A-3). In order: Unicode NFC; lower-case; strip diacritics from Latin letters; remove ZWJ and ZWNJ; Bangla folds ী→ি, ূ→ু, য় (U+09DF) ↔ য + nukta → one form, ড় / ঢ় precomposed ↔ decomposed → one form (D6); punctuation other than letters and digits becomes a space; whitespace collapses.
-- **FR-2** Latin variant words fold to one canonical spelling, on whole words only: jomidar, jamidar, zomindar, zamidar → zamindar; badi, bary → bari; choudhury, chowdhury, chaudhuri, chaudhury, choudhuri, chowdhuri → chowdhury; rajbadi → rajbari. The table lives in `lib/fold.ts` and is the only list of variants. Bangla and English digits are not folded into each other.
+- **FR-2** Latin variant words fold to one canonical spelling, on whole words only: jomidar, jamidar, zomindar, zamidar → zamindar; badi, bary → bari; choudhury, chowdhury, chaudhuri, chaudhury, choudhuri, chowdhuri → chowdhury; rajbadi → rajbari. The table lives in `lib/fold.ts` and is the only list of variants. Bangla and English digits are not folded into each other. *(Amended 31 Oct 2026 by spec 15 FR-13: Bengali digits now fold to Latin, so a query typed with ০–৯ finds the same results.)*
 - **FR-3** `foldWithMap(text)` returns the folded string and, for each folded character, the index of its source character, so a match in folded text can be highlighted in the original (FR-17).
 - **FR-4** Generic words (D4) are a list in `lib/fold.ts`, in folded form: zamindar, bari, rajbari, palace, house, bhaban, kachari, jomidar's Bangla জমিদার, বাড়ি, রাজবাড়ি, ভবন, প্রাসাদ (OQ-2 for the final list).
 

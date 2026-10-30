@@ -16,6 +16,8 @@ const CANONICAL = new Map(VARIANTS.flatMap(group => group.map(w => [w, group[0]]
 // Bangla: ী → ি, ূ → ু; য়, ড়, ঢ় precomposed → base + nukta (D6). NFC already decomposes the three
 // precomposed letters (they are composition exclusions), so the map only makes that explicit.
 const BANGLA: Record<string, string> = { 'ী': 'ি', 'ূ': 'ু', 'য়': 'য়', 'ড়': 'ড়', 'ঢ়': 'ঢ়' };
+// Bengali digits fold to Latin, so "১৮৯৯" finds 1899 (spec 15 FR-13); one character each, so marks stay aligned.
+const BN_DIGIT: Record<string, string> = Object.fromEntries([...'০১২৩৪৫৬৭৮৯'].map((d, k) => [d, String(k)]));
 const JOINERS = /[‌‍]/g;
 const WORD_CHAR = /[\p{L}\p{M}\p{N}]/u;
 const LATIN = /\p{Script=Latin}/u;
@@ -42,7 +44,7 @@ function units(source: string): [number, number][] {
 function foldUnit(unit: string): string {
   let s = unit.normalize('NFC').replace(JOINERS, '').toLowerCase();
   if (LATIN.test(s)) s = s.normalize('NFD').replace(/\p{M}/gu, '');
-  return [...s].map(ch => BANGLA[ch] ?? ch).join('');
+  return [...s].map(ch => BANGLA[ch] ?? BN_DIGIT[ch] ?? ch).join('');
 }
 
 /** fold() with the source range of every folded character. */
