@@ -89,6 +89,20 @@ export function formatDate(value: string, lang: Lang): string {
   return digits(parts, lang);
 }
 
+/** The Bangla part of the day for an hour from 0 to 23, as a clock time is read aloud. */
+const dayPart = (h: number) => (h < 4 ? 'রাত' : h < 6 ? 'ভোর' : h < 12 ? 'সকাল' : h < 15 ? 'দুপুর' : h < 18 ? 'বিকেল' : h < 20 ? 'সন্ধ্যা' : 'রাত');
+
+/** A stop's clock time as the data has it: 8:00 AM / সকাল ৮:০০, 5:30 PM / বিকেল ৫:৩০. A time with no AM or PM keeps its form. */
+export function formatClock(value: string, lang: Lang): string {
+  const m = /^(\d{1,2}):(\d{2})(?:\s*(AM|PM))?$/i.exec(value?.trim() ?? '');
+  if (!m || Number(m[1]) > 23 || Number(m[2]) > 59 || (m[3] && (Number(m[1]) < 1 || Number(m[1]) > 12))) throw new Error(`formatClock: not a clock time ("${value}")`);
+  const [, h, min, half] = m;
+  if (lang === 'en') return value.trim();
+  if (!half) return bnDigits(`${h}:${min}`);
+  const hour24 = (Number(h) % 12) + (half.toUpperCase() === 'PM' ? 12 : 0);
+  return `${dayPart(hour24)} ${bnDigits(`${h}:${min}`)}`;
+}
+
 /** Site, image and source IDs: always Latin digits. Render inside lang="en" (components/T.tsx <Latin>). */
 export function formatId(id: string): string {
   if (!/^[A-Z0-9-]+$/.test(id ?? '')) throw new Error(`formatId: not an ID ("${id}")`);

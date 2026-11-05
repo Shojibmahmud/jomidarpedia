@@ -12,7 +12,7 @@ All 13,340 Bangla prose cells were reviewed by the owner on 30 Oct 2026 (11a.8),
 
 Two further problems were found while preparing the check (31 Oct 2026):
 
-- The 13.4 instructions in `docs/a11y-checks.md` and spec 13 FR-13 name "ধ্বংসপ্রায়", which no longer appears anywhere on the site. The "in ruins" label is now "ধ্বংসাবশেষ" (`lib/i18n.ts`, `condition.in_ruins`).
+- The 13.4 instructions in `docs/a11y-checks.md` and spec 13 FR-13 only named one site-page word for ruins. The site uses two labels for that condition: the badge on site pages and cards reads "ধ্বংসাবশেষ" (`lib/i18n.ts`, `condition.in_ruins`), and the Explore filter and a Home badge read "ধ্বংসপ্রায়" (`filter.cond.in_ruins`, `home.badge.ruins`). *(Corrected 5 Nov 2026: this spec first said "ধ্বংসপ্রায়" was gone from the site. That was wrong; the search missed it because of Unicode normalisation.)* *(5 Nov 2026: the owner settled on one word, so both now read "ধ্বংসাবশেষ".)*
 - Bangla prose shows Latin digits ("1947 সালের", "এপ্রিল 2026") next to labels in Bengali digits ("১৪ অক্টোবর ২০২৬"). This was decision D-13 in spec 14, and spec 14 OQ-2 left the mix open. The owner settled it on 31 Oct 2026: in Bangla mode, prose numbers show Bengali digits too.
 
 **Intended outcome:**
@@ -27,7 +27,7 @@ Two further problems were found while preparing the check (31 Oct 2026):
 ### In scope
 
 - The owner's check on real phones, recorded in `docs/a11y-checks.md` as rows P1–P8 per device. These replace rows B1 and B2.
-- Committed, resized screenshots under `screenshots/a11y/`.
+- Screenshots of each row, kept in the owner's private Drive folder (D-7, amended 5 Nov 2026).
 - Fixing every blocker the check finds, then rechecking it.
 - Showing Bengali digits in Bangla-mode prose at render time, with exceptions (FR-8 to FR-12).
 - Converting Bengali digits in search queries to Latin before matching (FR-13).
@@ -67,13 +67,13 @@ Two further problems were found while preparing the check (31 Oct 2026):
   | P7 | `/division/sylhet/` | area page text and cards |
   | P8 | `/about/` | the Bangla About page |
 
-- **FR-1a** *(Added 31 Oct 2026, owner's choice.)* The first pass runs on production before this branch ships, so it shows Latin prose digits and Bangla source titles in the phone's own font. After this branch ships, P2 (prose digits) and P4 (Bangla source titles) are rechecked on production on both devices and recorded as rechecks.
+- **FR-1a** *(Added 31 Oct 2026; superseded the same day.)* The first pass was planned on production before this branch shipped. The owner shipped it first so testers without a Vercel login could use it, so the phone check runs on the new build and needs no separate recheck of P2 and P4.
 - **FR-2** On every page, the owner scrolls through all visible sections. A row **passes** when, on that device, all Bangla text (prose, headings, labels and buttons) shows joined conjuncts, with no separated hasanta (্), no dotted circle (◌) and no empty box (tofu).
 - **FR-3** The check judges the page only after it has fully loaded and the web fonts are shown. The brief system-font flash before then is not a finding (D-4).
 - **FR-4** Devices: Android with Chrome, and iPhone with Safari (spec 13 D6). Each row records the device model, OS version, browser version, date, result (`pass`, `fail` or `partial`) and the screenshot file name.
-- **FR-5** Screenshots are saved under `screenshots/a11y/` as JPEG, resized to about 1000 px wide. They are named `<row>-<page>-<device>.jpg`, for example `P2-jalsukha-android.jpg`. One screenshot per row per device is the minimum; any failure gets a screenshot of the failing text as well.
+- **FR-5** Screenshots are saved as JPEG in the owner's private Drive folder "Jomidar pedia user testing", named `<row>-<page>-<device>.jpg`, for example `P2-jalsukha-android.jpg`. One screenshot per row per device is the minimum; any failure gets a screenshot of the failing text as well. *(Amended 5 Nov 2026: they were to be committed under `screenshots/a11y/`, see D-7.)*
 - **FR-6** A **blocker** is any FR-2 failure on either device. Blockers are fixed on this branch, deployed to the branch preview, and rechecked on the failing device. The recheck goes in the "Blockers fixed and rechecked" table of `docs/a11y-checks.md`, together with the fixing commit. Other findings are listed under "Open items" with their row number (spec 13 FR-12, D13).
-- **FR-7** When every P1–P8 row passes on both devices, or passes after recheck, 11a.9 and 13.4 are complete. The 13.4 section of `docs/a11y-checks.md` and spec 13 FR-13 name words the site actually shows, so "ধ্বংসপ্রায়" is replaced by "ধ্বংসাবশেষ".
+- **FR-7** When every P1–P8 row passes on both devices, or passes after recheck, 11a.9 and 13.4 are complete. The 13.4 section of `docs/a11y-checks.md` and spec 13 FR-13 name words the site actually shows; since 5 Nov 2026 that is "ধ্বংসাবশেষ" on both badges and the Explore filter.
 
 ### Bengali digits in Bangla prose
 
@@ -104,7 +104,7 @@ Two further problems were found while preparing the check (31 Oct 2026):
 - **NFR-2 (accessibility)** The conversion changes no `lang` attribute. Screen readers keep reading Bangla prose as Bangla, and Latin tokens inside it as they did before.
 - **NFR-3 (performance)** The conversion adds no client-side JavaScript dependency. `index.json` stays under its 150 KB gzipped budget, and the digit conversion must not grow it.
 - **NFR-4 (CI)** The guard runs in the existing `npm run e2e` job on Chromium (`.github/workflows/ci.yml`). It needs no network access, because the fonts are self-hosted by next/font.
-- **NFR-5 (repository size)** All committed screenshots together stay under about 5 MB.
+- **NFR-5 (repository size)** Screenshots are not committed, so they add nothing to the repository. *(Amended 5 Nov 2026.)*
 
 ## 6. Data, interfaces, and integrations
 
@@ -129,16 +129,16 @@ Two further problems were found while preparing the check (31 Oct 2026):
 
 ## 8. Acceptance criteria
 
-- **AC-1** (FR-1, FR-2, FR-4, FR-5) `docs/a11y-checks.md` has a P1–P8 row for Android Chrome and one for iOS Safari. Each row has the date, device, OS and browser versions, a result and a screenshot file name, and every named screenshot exists under `screenshots/a11y/`.
+- **AC-1** (FR-1, FR-2, FR-4, FR-5) `docs/a11y-checks.md` has a P1–P8 row for Android Chrome and one for iOS Safari. Each row has the date, device, OS and browser versions, a result and a screenshot file name, and every named screenshot exists in the owner's Drive folder.
 - **AC-2** (FR-6) Every `fail` or `partial` row caused by a blocker has a matching recheck row showing `pass` and the fixing commit. Non-blocker findings appear under Open items.
-- **AC-3** (FR-7) `docs/a11y-checks.md` and spec 13 FR-13 no longer name "ধ্বংসপ্রায়". Roadmap 11a.9 and 13.4 are ticked only after AC-1 and AC-2 hold.
+- **AC-3** (FR-7) `docs/a11y-checks.md` and spec 13 FR-13 name words the site shows. Roadmap 11a.9 and 13.4 are ticked only after AC-1 and AC-2 hold.
 - **AC-4** (FR-8, FR-11) Unit tests: given Bangla text, the conversion turns "1947 সালের", "এপ্রিল 2026", "17শ শতক", "2.5 কিমি", "1,200 টাকা" and "7:30" into "১৯৪৭ সালের", "এপ্রিল ২০২৬", "১৭শ শতক", "২.৫ কিমি", "১,২০০ টাকা" and "৭:৩০".
 - **AC-5** (FR-10) Unit tests: the conversion leaves `JB-DHK-088`, `(bdnews24),`, `bdnews24-এর`, `HG57+87`, `AGD.27`, `https://example.org/a1`, "23.9174, 90.0622" and "23°44‘N, 90°21’E" unchanged when they appear inside Bangla sentences.
 - **AC-6** (FR-8, FR-9, FR-12, FR-16) Playwright: in Bangla mode, Jalsukha's history shows a year in Bengali digits, and an ID, URL or coordinate in Bangla prose on a checked page keeps Latin digits. In English mode, the same year is in Latin digits. On the Bangla About page, link `href`s are unchanged.
 - **AC-7** (FR-13) Unit test: `searchAll` returns the same site IDs for "১৮৯৯" as for "1899", and for a Bangla query containing Bengali digits as for the same query with Latin digits. `marks` highlights the same spans.
 - **AC-8** (FR-14, FR-15) Playwright: on all FR-1 pages in Bangla mode at 390 px, only the allowed fonts draw Bangla glyphs, and there is no horizontal overflow. The test passes in CI.
 - **AC-9** (NFR-3) `npm run check:budgets` passes, and `index.json` is no larger than before the change (129.1 KB gzipped on 30 Oct 2026, ± the build's normal variation).
-- **AC-10** (NFR-5) The committed screenshots total under about 5 MB.
+- **AC-10** (NFR-5) No screenshots are committed. *(Amended 5 Nov 2026.)*
 - **AC-11** `docs/TRANSLATION_BN.md` states that drafts keep Latin digits and the display converts them, with the FR-10 exceptions. Spec 14 D-13 carries an amendment note and OQ-2 is marked resolved, both pointing to this spec.
 - **AC-12** The UI verification checklist in CLAUDE.md passes for the changed pages: 390 px light and dark, and desktop width.
 
@@ -178,7 +178,7 @@ Two further problems were found while preparing the check (31 Oct 2026):
 | D-4 | Only the final render is judged. | The system-font flash is expected with `display: swap`, and the platform's fallback fonts are outside the site's control. |
 | D-5 | Tokens with Latin letters, URLs, coordinates and `lang="en"` text keep Latin digits. | Follows the project rule that IDs and coordinates keep Latin digits. Outlet names such as bdnews24 are proper names in Latin script. |
 | D-6 | Search converts Bengali digits in the query to Latin. | Readers can type what they see on the page, and the index stays unchanged. |
-| D-7 | Screenshots are committed, resized to about 1000 px JPEG. | They are evidence for the record, and the size keeps the public repository small. They show only the public site. |
+| D-7 | Screenshots stay in the owner's private Drive folder. *(Amended 5 Nov 2026; first: committed, resized to about 1000 px JPEG.)* | `screenshots/` is gitignored, and 21 long Android captures came to about 6 MB even at 640 px, over the 5 MB limit, before any iPhone captures. |
 | D-8 | A Playwright font and overflow guard is added. | It stops a later font or CSS change from silently breaking Bangla in CI. The phones remain the real check. |
 | D-9 | The 13.3 screen-reader walk-throughs stay out of scope. | They come with their own fixes, and including them would widen this phase. |
 

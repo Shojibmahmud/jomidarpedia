@@ -38,6 +38,7 @@ A translation shows only when all of these hold. Otherwise the English shows, an
 - **Numbers stay in Latin digits in the files:** 1889, 200 ফুট, 50 টাকা, 2.5 ঘণ্টা. The site shows them in Bengali digits in Bangla mode (১৮৮৯, ২.৫ ঘণ্টা), so write them in Latin and never convert them yourself. Digits stay Latin on the page in IDs, codes and any word with Latin letters (bdnews24, HG57+87), URLs, coordinates and phone numbers (spec 15 FR-10). Units and currency are Bangla words: "Tk" becomes "টাকা", "km" becomes "কিমি", "feet" becomes "ফুট". "c. 1850" becomes "আনু. 1850". BS dates keep the Bangla month: 1 বৈশাখ 1300 বঙ্গাব্দ.
 - **Never translated:** IDs (`JB-DHK-064`, `SRC-0001`), URLs, coordinates, phone numbers, and image credit lines (licences require them word for word).
 - **Sentence ends:** "।" (dari). A question ends with "?".
+- **Trip stop times** are not translated: the site turns "8:00 AM" into "সকাল ৮:০০" itself.
 - **Opening hours:** clock times stay as written, with Bangla words around them ("সকাল 10টা থেকে বিকেল 5টা"; days as শনিবার … শুক্রবার).
 - **Trip titles:** translate the whole `title` cell, keeping its brackets. The site cuts the displayed title from it the same way it cuts the English one.
 - **Recurring terms:** use one rendering throughout. zamindar is জমিদার, zamindari is জমিদারি, rajbari is রাজবাড়ি, kachari is কাছারি, palace is প্রাসাদ, Indo-Saracenic is ইন্দো-সারাসেনিক, debottar is দেবোত্তর, union parishad is ইউনিয়ন পরিষদ. Nothing enforces these, since there is no glossary (spec 14 D-8); keep them consistent within a table.

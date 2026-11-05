@@ -26,7 +26,7 @@ import type { RoutePoint } from '@/components/trips/RouteMapView';
 import { closedLabel, SiteCards } from '@/components/trips/SiteCards';
 import { Stops, type StopSite } from '@/components/trips/Stops';
 import { getTrips } from '@/lib/data';
-import { both, formatCount } from '@/lib/format';
+import { both, formatClock, formatCount } from '@/lib/format';
 import { dual, type StringKey } from '@/lib/i18n';
 import { correctionUrl } from '@/lib/site-page';
 import { pageMeta, thumbImage } from '@/lib/seo';
@@ -124,7 +124,7 @@ export default async function TripPage({ params }: { params: Promise<Params> }) 
           <li><DurationBadge duration={trip.duration} /></li>
           {trip.planStatus ? <li><PlanBadge status={trip.planStatus} /></li> : null}
           <li><StopsBadge count={trip.stops.length} /></li>
-          {range ? <li><Badge><Latin>{range[0]}–{range[1]}</Latin></Badge></li> : null}
+          {range ? <li><Badge><Both value={both(formatClock, range[0])} />–<Both value={both(formatClock, range[1])} /></Badge></li> : null}
         </ul>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="min-w-0 space-y-2">

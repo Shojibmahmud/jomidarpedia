@@ -16,11 +16,11 @@ export function LogoMark({ size = 34, className = '' }: { size?: number; classNa
 /** Mark + JOMIDARPEDIA + জমিদারপিডিয়া. `compact` is the 34 px header version. */
 export function Lockup({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-2.5">
-      <LogoMark size={compact ? 34 : 56} />
-      <span className="flex flex-col leading-none">
-        <span lang="en" className={`font-wordmark font-semibold uppercase tracking-[0.06em] ${compact ? 'text-[17px]' : 'text-[30px]'}`}>Jomidarpedia</span>
-        <span lang="bn" className={`font-bn text-muted ${compact ? 'text-[12px] leading-4' : 'text-[18px] leading-6'}`}>জমিদারপিডিয়া</span>
+    <span className="inline-flex min-w-0 items-center gap-2.5">
+      <LogoMark size={compact ? 34 : 56} className="shrink-0" />
+      <span className="flex min-w-0 flex-col leading-none">
+        <span lang="en" className={`truncate font-wordmark font-semibold uppercase tracking-[0.06em] ${compact ? 'text-[17px]' : 'text-[30px]'}`}>Jomidarpedia</span>
+        <span lang="bn" className={`truncate font-bn text-muted ${compact ? 'text-[12px] leading-4' : 'text-[18px] leading-6'}`}>জমিদারপিডিয়া</span>
       </span>
     </span>
   );

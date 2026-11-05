@@ -41,7 +41,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-header border-b border-line bg-bg/95 backdrop-blur">
       <div className="mx-auto flex max-w-page items-center gap-2 px-4 py-2 lg:px-8">
-        <Link prefetch={false} href="/" className="mr-2 inline-flex min-h-tap items-center rounded-md">
+        <Link prefetch={false} href="/" className="mr-2 inline-flex min-h-tap min-w-0 items-center rounded-md">
           <Lockup compact />
           <SrT k="nav.home" />
         </Link>
@@ -57,7 +57,7 @@ export function SiteHeader() {
           {rest.slice(1).map(l => <Link key={l.href} href={l.href} className={navItem}><T k={l.k} /></Link>)}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <SearchButton className={iconButton}
             districts={getDistricts().map(d => ({ slug: d.slug, en: d.en, bn: d.bn, divisionSlug: d.divisionSlug, count: d.count }))} />
           <div className="hidden items-center gap-2 lg:flex">

@@ -54,9 +54,9 @@ export function SectionNav({ items }: { items: NavItem[] }) {
       </nav>
       <div className="lg:hidden">
         {hydrated ? (
-          <label className="flex items-center gap-2 text-sm font-semibold">
+          <label className="flex flex-wrap items-center gap-2 text-sm font-semibold">
             <T k="site.jumpTo" />
-            <select className="min-h-tap flex-1 rounded-md border border-line-strong bg-surface px-3" data-section-select
+            <select className="min-h-tap min-w-0 max-w-full flex-1 rounded-md border border-line-strong bg-surface px-3" data-section-select
               value={current} onChange={e => { setCurrent(e.target.value); jump(e.target.value); }}>
               {items.map(i => <option key={i.id} value={i.id}>{i.label[lang]}{i.hint ? ` · ${i.hint[lang]}` : ''}</option>)}
             </select>

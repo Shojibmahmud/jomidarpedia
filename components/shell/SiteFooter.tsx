@@ -12,9 +12,9 @@ export function SiteFooter() {
   const meta = getMeta();
   return (
     <footer className="mt-16 border-t border-line bg-surface">
-      <div className="mx-auto grid max-w-page gap-6 px-4 py-10 lg:grid-cols-[1fr_auto] lg:px-8">
+      <div className="mx-auto grid max-w-page grid-cols-[minmax(0,1fr)] gap-6 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:px-8">
         <div className="max-w-xl space-y-3">
-          <p className="flex items-center gap-2 font-semibold">
+          <p className="flex flex-wrap items-center gap-2 font-semibold">
             <LogoMark size={24} />
             <span lang="en" className="font-wordmark uppercase tracking-[0.06em]">Jomidarpedia</span>
             <span className="text-muted">·</span>
@@ -23,7 +23,7 @@ export function SiteFooter() {
           <p className="text-sm text-muted"><T k="footer.tagline" /></p>
           <p className="text-sm">
             <T k="footer.contact" />{' '}
-            <a href={`mailto:${CONTACT_EMAIL}`} lang="en" className="font-semibold text-primary underline underline-offset-4" data-contact>{CONTACT_EMAIL}</a>
+            <a href={`mailto:${CONTACT_EMAIL}`} lang="en" className="font-semibold text-primary underline underline-offset-4 [overflow-wrap:anywhere]" data-contact>{CONTACT_EMAIL}</a>
           </p>
           <p className="text-sm"><T k="footer.updated" vars={{ date: both(formatDate, meta.lastVerified) }} /></p>
           <p className="text-xs text-muted"><T k="footer.mapCredit" /></p>

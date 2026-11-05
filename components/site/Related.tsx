@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { Both, Prose, T } from '@/components/T';
 import { PlaceholderArt } from '@/components/art/PlaceholderArt';
-import { both, formatHours } from '@/lib/format';
+import { both, formatClock, formatHours } from '@/lib/format';
 import { getTrip } from '@/lib/data';
 import { combineWith, identityNotes } from '@/lib/site-page';
 import { showTimes } from '@/lib/trips';
@@ -88,7 +88,7 @@ function TimedPreview({ trip }: { trip: Itinerary }) {
       <ol className="mt-1 space-y-1 text-sm">
         {trip.stops.map(s => (
           <li key={s.order} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-2">
-            <span lang="en" className="font-mono">{s.time ?? ''}</span>
+            <span className="font-mono">{s.time ? <Both value={both(formatClock, s.time)} /> : null}</span>
             <span><Prose en={s.name} bn={s.nameBn} /></span>
           </li>
         ))}

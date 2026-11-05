@@ -26,6 +26,8 @@ const PAGES = [
 /** The site's Bangla web fonts: the body and heading faces, and the Noto Sans Bengali digit subset (app/fonts.ts). */
 const BANGLA_FONTS = /^(Hind Siliguri|Tiro Bangla|Noto Sans Bengali)\b/;
 
+const bnDigits = (s: string) => s.replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[Number(d)]);
+
 const bangla = (page: Page) => page.addInitScript(() => localStorage.setItem('jp-lang', 'bn'));
 
 /**
@@ -82,6 +84,31 @@ test.describe('Bangla rendering guard at 390 px (spec 15 FR-14, FR-15, AC-8)', (
   }
 });
 
+test.describe('Larger text at a phone width (Android check E3, 5 Nov 2026)', () => {
+  test.use({ viewport: { width: 384, height: 800 } });
+
+  /** Emulates Chrome's Text scaling, which enlarges text the page sizes in px as well as in rem. */
+  const scaleText = (page: Page, by: number) => page.evaluate(s => {
+    const els = [...document.querySelectorAll<HTMLElement>('body *')];
+    const sizes = els.map(e => parseFloat(getComputedStyle(e).fontSize));
+    els.forEach((e, k) => { e.style.fontSize = `${sizes[k] * s}px`; });
+  }, by);
+
+  for (const lang of ['bn', 'en']) {
+    for (const path of [...PAGES.slice(0, 2), PAGES[4], PAGES[5], PAGES[8]]) {
+      test(`${lang} ${path}: 150% text, no sideways scroll, the menu stays on screen`, async ({ page }) => {
+        await page.addInitScript(l => localStorage.setItem('jp-lang', l), lang);
+        await page.goto(path, { waitUntil: 'networkidle' });
+        await scaleText(page, 1.5);
+        const { scroll, width } = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, width: document.documentElement.clientWidth }));
+        expect(scroll, 'horizontal overflow').toBeLessThanOrEqual(width);
+        const menu = await page.locator('header button:visible').last().boundingBox();
+        expect(menu!.x + menu!.width, 'menu button').toBeLessThanOrEqual(width);
+      });
+    }
+  }
+});
+
 test.describe('Bengali digits in Bangla prose (spec 15 FR-8, FR-10, FR-16, AC-6)', () => {
   const sites: SiteRecord[] = readdirSync('data/build/sites').sort().map(f => JSON.parse(readFileSync(`data/build/sites/${f}`, 'utf8')));
   // A site whose Bangla history names an outlet with digits next to a year, e.g. "(bdnews24 ব্লগ 2011)".
@@ -99,6 +126,38 @@ test.describe('Bengali digits in Bangla prose (spec 15 FR-8, FR-10, FR-16, AC-6)
     await page.addInitScript(() => localStorage.removeItem('jp-lang'));
     await page.reload();
     await expect(history.locator('[data-l="en"]').filter({ hasText: '1700' }).first()).toBeVisible();
+  });
+
+  test('a plain history year and the route step numbers are Bengali in Bangla', async ({ page }) => {
+    const site = sites.find(s => s.travel.routes[0]?.steps.length && s.history.some(e => /^\d{4}$/.test(e.year)))!;
+    const year = site.history.find(e => /^\d{4}$/.test(e.year))!.year;
+    await bangla(page);
+    await page.goto(`/site/${site.id}/${site.slug}/`);
+    await expect(page.locator('[data-timeline] [data-l="bn"]').filter({ hasText: bnDigits(year) }).first()).toBeVisible();
+    await expect(page.locator('[data-route-steps] > li').first().locator('[data-l="bn"]').first()).toHaveText('১');
+  });
+
+  test('a timed trip shows Bangla clock times in Bangla and the data form in English', async ({ page }) => {
+    const id = readdirSync('data/build/trips').map(f => JSON.parse(readFileSync(`data/build/trips/${f}`, 'utf8'))).find(t => t.planStatus === 'timed').id;
+    await bangla(page);
+    await page.goto(`/trips/${id}/`);
+    const first = page.locator('[data-time]').first();
+    await expect(first).toHaveText(/(ভোর|সকাল|দুপুর|বিকেল|সন্ধ্যা|রাত)/);
+    expect(await first.innerText()).not.toMatch(/[0-9]|AM|PM/);
+    await page.evaluate(() => localStorage.removeItem('jp-lang'));
+    await page.addInitScript(() => localStorage.removeItem('jp-lang'));
+    await page.reload();
+    expect(await first.innerText()).toMatch(/^\d{1,2}:\d{2} (AM|PM)$/);
+  });
+
+  test('the visitor-photos link is in Bangla in Bangla mode', async ({ page }) => {
+    const site = sites.find(s => s.externalPhotos)!;
+    await bangla(page);
+    await page.goto(`/site/${site.id}/${site.slug}/`);
+    const link = page.locator('[data-external-photos]');
+    await expect(link).toBeVisible();
+    expect(await link.innerText()).toContain('দর্শনার্থীদের');
+    expect(await link.innerText()).not.toMatch(/visitor/i);
   });
 
   test('an outlet name keeps its Latin digits inside Bangla prose', async ({ page }) => {

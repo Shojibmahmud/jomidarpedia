@@ -126,7 +126,7 @@ export default async function SitePage({ params }: { params: Promise<Params> }) 
 
       {site.images.length ? <Gallery images={site.images} /> : <NoPhotoPanel site={site} pageUrl={pageUrl} />}
 
-      <div className="grid gap-8 lg:grid-cols-[180px_minmax(0,1fr)_300px]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[180px_minmax(0,1fr)_300px]">
         <div className="lg:col-start-1 lg:row-start-1"><SectionNav items={nav} /></div>
         <aside className="space-y-4 lg:col-start-3 lg:row-start-1">
           <AtAGlance site={site} />

@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import { Both, Prose, T } from '@/components/T';
 import { Badge } from '@/components/site/Badges';
-import { both, formatCount } from '@/lib/format';
+import { both, formatClock, formatCount } from '@/lib/format';
 import { siteHref } from '@/lib/site-url';
 import { showTimes } from '@/lib/trips';
 import type { Itinerary } from '@/lib/types';
@@ -40,7 +40,7 @@ export function Stops({ trip, sites }: { trip: Itinerary; sites: Record<string, 
       {trip.stops.map((s, k) => (
         <li key={s.order} data-stop={s.order} data-kind={s.kind}
           className={`relative grid gap-x-3 pb-5 ${timed ? 'grid-cols-[4.5rem_2rem_minmax(0,1fr)_auto]' : 'grid-cols-[2rem_minmax(0,1fr)_auto]'} print:break-inside-avoid print:border-b print:border-line print:py-2`}>
-          {timed ? <span className="pt-1 font-mono text-sm" lang="en" data-time>{s.time ?? ''}</span> : null}
+          {timed ? <span className="pt-1 font-mono text-sm" data-time>{s.time ? <Both value={both(formatClock, s.time)} /> : null}</span> : null}
           <span className="relative flex justify-center">
             {k < trip.stops.length - 1 ? <span aria-hidden="true" className="absolute top-8 -bottom-5 w-px bg-line-strong print:hidden" /> : null}
             <StopNumber order={s.order} kind={s.kind} />

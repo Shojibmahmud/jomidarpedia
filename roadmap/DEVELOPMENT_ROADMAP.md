@@ -1075,7 +1075,7 @@ Content work added after Phase 12:
   - VoiceOver on iOS and TalkBack on Android.
 
   These checks show progress towards WCAG 2.2 AA. They do not by themselves certify conformance.
-- [ ] **13.4** **Bangla rendering** on real devices (Android Chrome, iOS Safari): conjuncts such as "সংরক্ষিত" and "ধ্বংসপ্রায়" render correctly.
+- [ ] **13.4** **Bangla rendering** on real devices (Android Chrome, iOS Safari): conjuncts such as "সংরক্ষিত" and "ধ্বংসাবশেষ" render correctly.
 - [x] **13.5** **Error states**, each tested by blocking the request in Playwright:
   - the `index.json` fetch;
   - tiles;
