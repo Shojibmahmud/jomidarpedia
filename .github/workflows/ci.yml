@@ -81,6 +81,16 @@ jobs:
           if-no-files-found: warn
       - run: npm run check:out
       - run: npm run check:budgets
+      # The reference for the fresh-clone check (roadmap 14.4, spec 16 FR-4): `npm run compare:out -- <unzipped artifact>`
+      # in a fresh clone built with this job's env. CI never has ../images, so this build is the reference.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-build
+          path: |
+            data/build/
+            public/data/index.json
+            out/
+          if-no-files-found: error
       # Lighthouse needs an indexable build for SEO, so it runs here, not on the local build (spec 13 FR-1, FR-5)
       - run: npx playwright install --with-deps chromium
       - run: npm run lighthouse

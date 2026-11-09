@@ -246,7 +246,7 @@ test.describe('links into the new pages (AC-9)', () => {
 });
 
 test.describe('About (AC-10)', () => {
-  test('anchors, numbers from meta.json, disagreements apart, licences, no download promise', async ({ page }) => {
+  test('anchors, numbers from meta.json, disagreements apart, licences, download only in a release build', async ({ page }) => {
     await page.goto('/about/');
     for (const id of ['core-book', 'grading', 'locations', 'disagreements', 'costs', 'photos', 'not-done', 'contribute', 'licences']) await expect(page.locator(`#${id}`)).toHaveCount(1);
     const text = await page.locator('main').innerText();
@@ -260,7 +260,9 @@ test.describe('About (AC-10)', () => {
     expect(text).not.toContain(n(c.disagreements + c.openQuestions));
     const licences = await page.locator('#licences').innerText();
     for (const s of ['CC BY-SA 4.0', 'WebP', 'OpenStreetMap', 'CC BY 3.0 IGO', 'Fraunces']) expect(licences).toContain(s);
-    expect(text).not.toMatch(/download|CSV files/i);
+    // The download line exists only when the build wrote the download (spec 16 FR-14, FR-16; it replaced spec 10 D8).
+    if (existsSync('out/data/jomidarpedia-data.zip')) expect(licences).toContain('Download the data');
+    else expect(text).not.toMatch(/download|CSV files/i);
   });
 });
 

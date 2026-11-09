@@ -6,7 +6,8 @@
 //   - the home page's JavaScript is over HOME_JS_BUDGET gzipped. Counted: every script out/index.html loads in a
 //     modern browser (A-2: the noModule polyfills are skipped by those browsers and are not counted);
 //   - the largest image the home page can load (any src or srcset candidate) is over 300 KB;
-//   - the home page references a Leaflet, leaflet.markercluster or Fuse.js chunk (FR-4).
+//   - the home page references a Leaflet, leaflet.markercluster or Fuse.js chunk (FR-4);
+//   - the data download (out/data/jomidarpedia-data.zip, release builds only) is over EXPORT_BUDGET (spec 16 FR-15).
 
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -20,6 +21,8 @@ export const INDEX_BUDGET = 150 * KB;
 // without loading strings per component; see the roadmap's Phase 13 notes.
 export const HOME_JS_BUDGET = 166 * KB;
 export const HOME_IMAGE_BUDGET = 300 * KB;
+// The measured size plus about a third (spec 16 FR-15): 1,166 KB on 10 Nov 2026.
+export const EXPORT_BUDGET = 1600 * KB;
 const HEAVY = [['Leaflet', 'leaflet-container'], ['leaflet.markercluster', 'MarkerClusterGroup'], ['Fuse.js', 'useExtendedSearch']];
 
 const gz = file => gzipSync(readFileSync(file), { level: 9 }).length;
@@ -47,9 +50,9 @@ export function pageImages(html) {
   return [...urls].filter(u => u.startsWith('/'));
 }
 
-/** @param {{ dir?: string, budgets?: { index?: number, homeJs?: number, homeImage?: number } }} [options] */
+/** @param {{ dir?: string, budgets?: { index?: number, homeJs?: number, homeImage?: number, export?: number } }} [options] */
 export function checkBudgets({ dir = 'out', budgets = {} } = {}) {
-  const b = { index: INDEX_BUDGET, homeJs: HOME_JS_BUDGET, homeImage: HOME_IMAGE_BUDGET, ...budgets };
+  const b = { index: INDEX_BUDGET, homeJs: HOME_JS_BUDGET, homeImage: HOME_IMAGE_BUDGET, export: EXPORT_BUDGET, ...budgets };
   if (!existsSync(join(dir, 'index.html'))) throw new Error(`${dir}/index.html does not exist: build first`);
   const html = readFileSync(join(dir, 'index.html'), 'utf8');
   const problems = [];
@@ -77,6 +80,13 @@ export function checkBudgets({ dir = 'out', budgets = {} } = {}) {
     lines.push(`largest home image: ${fmt(biggest.n)} ${biggest.u} (budget ${fmt(b.homeImage)})`);
     if (biggest.n > b.homeImage) problems.push(`home image ${biggest.u} is ${fmt(biggest.n)}, over ${fmt(b.homeImage)}`);
   }
+
+  const zip = join(dir, 'data/jomidarpedia-data.zip');
+  if (existsSync(zip)) {
+    const n = statSync(zip).size;
+    lines.push(`data download: ${fmt(n)} (budget ${fmt(b.export)})`);
+    if (n > b.export) problems.push(`data download is ${fmt(n)}, over ${fmt(b.export)}`);
+  } else lines.push('data download: none (only a release build writes it)');
   return { problems, lines };
 }
 

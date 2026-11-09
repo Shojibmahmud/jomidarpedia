@@ -12,7 +12,7 @@ import { NoPinList } from '@/components/areas/AreaParts';
 import { Skeleton } from '@/components/shell/Skeleton';
 import { areaExploreHref, chipCounts, chipMatches, inOrder, locationTiles, pickTrips } from '@/lib/areas';
 import { districtPage, divisionPage } from '@/lib/area-data';
-import { getDistricts, getDivisions, getIndex, getMeta, getSources } from '@/lib/data';
+import { getDistricts, getDivisions, getExport, getIndex, getMeta, getSources } from '@/lib/data';
 import { Blocks, parseMarkdown } from '@/lib/markdown';
 import { FONTS, tileCredits } from '@/lib/licences';
 import { CONTACT_EMAIL } from '@/lib/nav';
@@ -189,7 +189,9 @@ describe('About (spec 10 FR-35 to FR-44, AC-10, AC-11)', () => {
     expect(html).toContain('disagreements, every version shown');
     expect(html).toContain('open questions, never stated as fact');
     expect(html).not.toContain(String(c.disagreements + c.openQuestions));
-    expect(html).not.toMatch(/download|CSV files/i);
+    // The only download mention is the licences line, and only when the build wrote the download (spec 16 FR-14, FR-16).
+    if (getExport()) expect(html.match(/data-download/g)).toHaveLength(1);
+    else expect(html).not.toMatch(/download|CSV files/i);
     expect(html).toContain(links['url.corrections']);
     expect(html).toContain(links['url.photoOffer']);
     // O2 settled 2026-10-27: the project address is the only email the page may show.
@@ -220,7 +222,10 @@ describe('licences (spec 10 FR-43)', () => {
     const html = renderToStaticMarkup(<Licences />);
     for (const s of ['CC BY-SA 4.0', 'converted to WebP', 'OpenStreetMap', 'Open Database License', 'CC0 1.0', 'CC BY 3.0 IGO', 'Leaflet', 'SIL Open Font License']) expect(html, s).toContain(s);
     for (const f of FONTS) expect(html, f).toContain(f);
-    expect(html).not.toMatch(/download/i);
+    // Spec 10 D8 held the download back; spec 16 FR-16 links it once a release build has written it.
+    const data = getExport();
+    if (data) expect(html).toContain(`href="${data.url}" download=""`);
+    else expect(html).not.toMatch(/download/i);
   });
 
   it('lists the fonts app/fonts.ts loads, and only offered tile providers', () => {

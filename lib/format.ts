@@ -73,6 +73,14 @@ export function formatHours(value: number, lang: Lang): string {
   return lang === 'bn' ? `${bnDigits(n)} ঘণ্টা` : `${n} h`;
 }
 
+/** A download's size: 1.1 MB / ১.১ মেগাবাইট (spec 16 FR-16). */
+export function formatMegabytes(value: number, lang: Lang): string {
+  finite(value, 'formatMegabytes');
+  if (value <= 0) throw new Error(`formatMegabytes: not a size (${value})`);
+  const n = grouped(value, 1);
+  return lang === 'bn' ? `${bnDigits(n)} মেগাবাইট` : `${n} MB`;
+}
+
 /** YYYY-MM-DD → 21 October 2026 / ২১ অক্টোবর ২০২৬; YYYY-MM → October 2026; YYYY → 2026. */
 export function formatDate(value: string, lang: Lang): string {
   const m = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(value ?? '');

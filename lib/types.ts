@@ -231,6 +231,9 @@ export interface Meta {
   };
 }
 
+/** data/build/export.json — written only by a release build, with the data download (spec 16 FR-14). */
+export interface ExportInfo { url: string; megabytes: number }
+
 /** data/build/translations.json — every translatable cell (spec 14 FR-22), for /dev/bn-review/ only. */
 export type TranslationState = 'reviewed' | 'draft' | 'outdated' | 'invalid' | 'missing' | 'orphan';
 export interface TranslationCell {
