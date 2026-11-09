@@ -117,6 +117,7 @@ Record the phone model, OS version and browser version once per device:
 | E1 dark mode (P2, P4) | Android · Chrome | 31 Oct 2026 | pass | E1-jalsukha-android.jpg, E1-ahsan-android.jpg | |
 | E2 sideways (P1) | Android · Chrome | 31 Oct 2026 | pass | E2-baliati-android.jpg | |
 | E3 larger text (P3) | Android · Chrome | 31 Oct 2026 | partial | E3-shilaidaha-android.jpg, E3-shilaidaha-android-sidescroll.jpg | Tester marked OK. Text wraps and conjuncts are correct, but the screenshots show the page scrolling sideways (see Open items). |
+| E3 larger text (P3), recheck | Android · Chrome | 9 Nov 2026 | pass | shilaidaha-150-percent.jpeg | Production, Bangla, dark mode, 150% text. The page fits the screen: the logo text shortens ("JOMI…") and the search and menu buttons stay on screen; long licence URLs wrap. One screenshot of the top of the page, down to the photo credits. Closes the 31 Oct sideways-scroll finding. |
 | E4 search ১৮৪০ | Android · Chrome | 31 Oct 2026 | pass | E4-search-android.jpg | Ruplal House is first; the other three results have 1840 in their family history. |
 | E1 dark mode (P2, P4) | iPhone · Safari | 5 Nov 2026 | pass | | |
 | E2 sideways (P1) | iPhone · Safari | 5 Nov 2026 | pass | | |
