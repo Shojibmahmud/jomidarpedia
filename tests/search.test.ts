@@ -222,7 +222,9 @@ describe('performance (FR-38)', () => {
       }
       expect(best, q).toBeLessThan(bound);
     }
-  });
+    // 300 timed searches take about 1.7 s on a dev machine and over 5 s (Vitest's default) on CI; the
+    // per-query bound above is the check, so the test as a whole gets room.
+  }, 30_000);
 });
 
 describe('/search/ URL (FR-33, AC-16)', () => {
