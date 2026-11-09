@@ -23,7 +23,7 @@ import { BUCKET, DIVISIONS, CONDITIONS, CONFIDENCE, COORD_PAIR, isMappable, latl
 import { loadTables, validateTables, TABLES, rowKey } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, strings, ZERO_OR_FREE } from './lib/checks.mjs';
 import { UNKNOWN, BARE_UNKNOWN, hoursKnown, suggestPlanStatus, PLAN_STATUS, parseClosedDays, routeMode, UNIT, parseLegs, matchVersions, tripTitle,
-  LEG_FARE, MODE_NAME, isPlaceholderEvent, eventYear, BD_COORD_TEXT, isReadyImage, leadFirst, BOILERPLATE_ALT } from './lib/rules.mjs';
+  LEG_FARE, MODE_NAME, isPlaceholderEvent, eventYear, BD_COORD_TEXT, isReadyImage, leadFirst, BOILERPLATE_ALT, placeName } from './lib/rules.mjs';
 import { loadTranslations, pageTracker, translationReport, TRANSLATIONS_DIR, ROUTE_STEPS, VERSUS } from './lib/translations.mjs';
 import { LINE } from './csv.mjs';
 
@@ -415,9 +415,9 @@ export function buildData({ csvDir = 'data/csv', outDir = 'data/build', translat
       ...(!s.name_bn && { bnMissing: true }),
       place: {
         division: s.division, divisionBn: s.division_bn, district: s.district, districtBn: s.district_bn,
-        upazila: s.upazila, upazilaBn: s.upazila_bn,
-        ...(s.union && { union: s.union }), ...(s.union_bn && { unionBn: s.union_bn }),
-        ...(s.locality && { locality: s.locality }), ...(s.locality_bn && { localityBn: s.locality_bn })
+        upazila: placeName(s.upazila), upazilaBn: placeName(s.upazila_bn),
+        ...(placeName(s.union) && { union: placeName(s.union) }), ...(placeName(s.union_bn) && { unionBn: placeName(s.union_bn) }),
+        ...(placeName(s.locality) && { locality: placeName(s.locality) }), ...(placeName(s.locality_bn) && { localityBn: placeName(s.locality_bn) })
       },
       location: {
         ...(latlon(s) && { latlon: latlon(s) }),

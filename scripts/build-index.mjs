@@ -15,7 +15,7 @@ import { pathToFileURL } from 'node:url';
 import { TYPE_GROUP, BUCKET, latlon, isMappable } from './lib/validate.mjs';
 import { loadTables, validateTables } from './lib/structure.mjs';
 import { scanOutputs, coordinateLeaks, notesByCell, ZERO_OR_FREE } from './lib/checks.mjs';
-import { cardSummary, hoursKnown, isKnownText, isReadyImage, leadFirst } from './lib/rules.mjs';
+import { cardSummary, hoursKnown, isKnownText, isReadyImage, leadFirst, placeName } from './lib/rules.mjs';
 import { loadTranslations, TRANSLATIONS_DIR } from './lib/translations.mjs';
 
 export const INDEX_BUDGET = 150 * 1024;
@@ -63,7 +63,7 @@ export function buildIndex({
       a: s.alternate_names || undefined,  // searched, not shown in the list
       fm: isKnownText(s.founder_or_family) ? s.founder_or_family : undefined, // founder or family, as text for search
       fmb: isKnownText(s.founder_or_family) ? tr.lookup('sites', s, 'founder_or_family')?.bn : undefined, // the same in Bangla (FR-21)
-      dv: s.division, d: s.district, db: s.district_bn, u: s.upazila || undefined,
+      dv: s.division, d: s.district, db: s.district_bn, u: placeName(s.upazila) || undefined,
       ll: latlon(s),
       lc: s.coordinates_status,           // verified | single_source | approximate | unverified | not_found
       f: s.map_display === 'show_flagged' ? 1 : undefined,
