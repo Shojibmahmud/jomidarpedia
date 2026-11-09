@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { SummaryCard } from '@/components/map/SummaryCard';
 import { CONDITION_ORDER } from '@/lib/filters';
 import { STRINGS } from '@/lib/i18n';
-import { BASE_MAPS, defaultBaseMap } from '@/lib/map-config';
+import { BASE_MAPS, baseMapsFor, defaultBaseMap } from '@/lib/map-config';
 import { clusterHtml, clusterSize, mappable, pinHtml, pinLabel, pinStyle, pinSvg } from '@/lib/pins';
 import { applyLite, BOOT_SCRIPT, currentLite } from '@/lib/prefs';
 import type { IndexSite, LocationStatus } from '@/lib/types';
@@ -69,6 +69,17 @@ describe('base maps (D5, amended)', () => {
     expect(BASE_MAPS.map(b => b.id)).toContain(defaultBaseMap(false));
     expect(BASE_MAPS.map(b => b.id)).toContain(defaultBaseMap(true));
     for (const b of BASE_MAPS) expect(b.attribution).toMatch(/OpenStreetMap/);
+  });
+
+  it('with a CARTO key offers only CARTO, keyed, with both credits; without one only OSM (O4, D14)', () => {
+    const on = (key: string) => baseMapsFor(key).filter(b => !b.needsKey);
+    const keyed = on('abc/123 ');
+    expect(keyed.map(b => b.id)).toEqual(['carto-light', 'carto-dark']);
+    expect(keyed[0].url).toBe('https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=abc%2F123');
+    expect(keyed[1].url).toContain('/rastertiles/dark_all/');
+    for (const b of keyed) expect(b.attribution).toMatch(/OpenStreetMap.*CARTO/);
+    expect(on('').map(b => b.id)).toEqual(['osm']);
+    expect(on('   ').map(b => b.id)).toEqual(['osm']);
   });
 });
 

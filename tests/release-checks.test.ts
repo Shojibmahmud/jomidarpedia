@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { checkOut, unsafeLinks } from '../scripts/check-out.mjs';
 import { buildSeo, indexablePages } from '../scripts/build-seo.mjs';
 import { checkBudgets, pageImages, pageScripts } from '../scripts/check-budgets.mjs';
+import { checkTileKey } from '../scripts/check-tile-key.mjs';
 import { pageMeta, shortDescription, DEFAULT_OG_IMAGE } from '@/lib/seo';
 import { tempDir, writeTable } from './helpers';
 
@@ -146,7 +147,7 @@ describe('security headers', () => {
   const serve = JSON.parse(readFileSync('serve.json', 'utf8'));
   const all = vercel.headers.find((h: { source: string }) => h.source === '/(.*)').headers as { key: string; value: string }[];
   const header = (k: string) => all.find(h => h.key.toLowerCase() === k.toLowerCase())?.value;
-  const csp = header('Content-Security-Policy') ?? header('Content-Security-Policy-Report-Only') ?? '';
+  const csp = header('Content-Security-Policy') ?? '';
   const directive = (name: string) => csp.split(';').map(d => d.trim()).find(d => d.startsWith(`${name} `));
 
   it('the e2e server sends exactly the headers of vercel.json', () => {
@@ -163,9 +164,14 @@ describe('security headers', () => {
     }
   });
 
-  it('allows every tile host the map can use', async () => {
-    const { BASE_MAPS } = await import('@/lib/map-config');
-    for (const b of BASE_MAPS) {
+  it('enforces the CSP (13.7: Report-Only was checked on production, 9 Nov 2026)', () => {
+    expect(header('Content-Security-Policy')).toBeTruthy();
+    expect(header('Content-Security-Policy-Report-Only')).toBeUndefined();
+  });
+
+  it('allows every tile host the map can use, with or without the CARTO key', async () => {
+    const { baseMapsFor } = await import('@/lib/map-config');
+    for (const b of [...baseMapsFor(''), ...baseMapsFor('k')]) {
       const host = new URL(b.url.replace('{s}', 'a')).origin;
       expect(directive('img-src'), b.id).toContain(b.subdomains ? host.replace(/\/\/a\./, '//*.') : host);
     }
@@ -175,6 +181,16 @@ describe('security headers', () => {
     expect(header('X-Content-Type-Options')).toBe('nosniff');
     expect(header('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     expect(header('Permissions-Policy')).toBe('geolocation=(self), camera=(), microphone=()');
+  });
+});
+
+describe('tile key (spec 13 FR-20, D14)', () => {
+  it('fails a release build without the key, and falls back to OSM elsewhere', () => {
+    expect(checkTileKey({}).ok).toBe(false);
+    expect(checkTileKey({ VERCEL_ENV: 'production', NEXT_PUBLIC_TILE_KEY: ' ' }).ok).toBe(false);
+    expect(checkTileKey({ VERCEL_ENV: 'production', NEXT_PUBLIC_TILE_KEY: 'k' }).ok).toBe(true);
+    expect(checkTileKey({ VERCEL_ENV: 'preview' })).toMatchObject({ ok: true, message: expect.stringContaining('OSM') });
+    expect(checkTileKey({ JP_DATA_MODE: 'local' }).ok).toBe(true);
   });
 });
 

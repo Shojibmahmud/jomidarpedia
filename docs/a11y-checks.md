@@ -58,7 +58,7 @@ Lighthouse Accessibility (`npm run lighthouse`, mobile settings): 1.00 on Home, 
 | 14 | Language change: in Bangla mode VoiceOver reads Bangla with a Bangla voice, and Latin names and IDs in English | Mac | Safari | VoiceOver | | | |
 | 15 | VoiceOver on iOS: Home → search "Baliati" → site page → gallery → back; Explore filter by division | iPhone | Safari | VoiceOver | | | |
 | 16 | TalkBack on Android: the same journey as 15 | Android | Chrome | TalkBack | | | |
-| 17 | NVDA on Windows: headings list, landmarks, the Explore filters and results, an itinerary's stops and budget | Windows | | NVDA | | | |
+| 17 | NVDA on Windows: headings list, landmarks, the Explore filters and results, an itinerary's stops and budget | Windows | | NVDA | 9 Nov 2026 | not done | No Windows PC is available (owner, 9 Nov 2026). Row 18, VoiceOver on Mac, is the desktop screen-reader check instead. |
 | 18 | VoiceOver on Mac: the same as 17 | Mac | Safari | VoiceOver | | | |
 
 ## Bangla rendering on real devices (13.4 and 11a.9)

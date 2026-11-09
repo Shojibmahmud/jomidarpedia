@@ -10,23 +10,32 @@ export interface BaseMap {
   subdomains?: string;
   maxZoom: number;
   attribution: string; // HTML, shown by Leaflet's attribution control (R8)
-  /** Off: the provider needs an API key we don't have yet (O4). */
+  /** Off: the provider needs an API key and the build has none (O4, spec 13 D14). */
   needsKey?: true;
 }
 
 const OSM_CREDIT = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-const CARTO_CREDIT = `${OSM_CREDIT} &copy; <a href="https://carto.com/attributions">CARTO</a>`;
+// CARTO's terms (29 Sep 2026, §13) ask for both credits, linked as in its own Leaflet sample.
+const CARTO_CREDIT = `${OSM_CREDIT} &copy; <a href="https://carto.com/attribution/">CARTO</a>`;
 
 /**
- * Every provider we may use. Development and protected previews only: OSM's tile policy forbids heavy use,
- * and the launch provider is decision O4. CARTO's basemaps answer "API KEY REQUIRED" without a key
- * (checked 24 Oct 2026), so they stay off until O4 provides one (spec 07 D5, amended).
+ * Every provider we may use, for a given CARTO key. O4 was decided on 9 Nov 2026: CARTO, with a
+ * non-commercial key from NEXT_PUBLIC_TILE_KEY (docs/tiles.md). With a key, only CARTO is offered, so a
+ * launched site never sends traffic to OSM's tile servers, whose policy forbids heavy use. Without one
+ * (local and preview builds; a release build fails, scripts/check-tile-key.mjs), OSM is the fallback.
  */
-export const ALL_BASE_MAPS: readonly BaseMap[] = [
-  { id: 'osm', url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', maxZoom: 19, attribution: OSM_CREDIT },
-  { id: 'carto-light', url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', subdomains: 'abcd', maxZoom: 20, attribution: CARTO_CREDIT, needsKey: true },
-  { id: 'carto-dark', url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', subdomains: 'abcd', maxZoom: 20, attribution: CARTO_CREDIT, needsKey: true },
-];
+export function baseMapsFor(key: string): readonly BaseMap[] {
+  const k = encodeURIComponent(key.trim());
+  const carto = (style: string) => `https://basemaps.cartocdn.com/rastertiles/${style}/{z}/{x}/{y}{r}.png?key=${k}`;
+  return [
+    { id: 'osm', url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', maxZoom: 19, attribution: OSM_CREDIT, ...(k ? { needsKey: true as const } : {}) },
+    { id: 'carto-light', url: carto('light_all'), maxZoom: 20, attribution: CARTO_CREDIT, ...(k ? {} : { needsKey: true as const }) },
+    { id: 'carto-dark', url: carto('dark_all'), maxZoom: 20, attribution: CARTO_CREDIT, ...(k ? {} : { needsKey: true as const }) },
+  ];
+}
+
+// Written out in full so Next inlines the value into the client bundle.
+export const ALL_BASE_MAPS: readonly BaseMap[] = baseMapsFor(process.env.NEXT_PUBLIC_TILE_KEY ?? '');
 
 /** The providers offered in the base-map menu. */
 export const BASE_MAPS: readonly BaseMap[] = ALL_BASE_MAPS.filter(b => !b.needsKey);

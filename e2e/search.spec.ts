@@ -182,6 +182,9 @@ test.describe('/search/ page (FR-20 to FR-27)', () => {
     await page.locator('#jp-search-input').fill('saha');
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/\?q=saha$/);
+    // pushState changes the URL at once, but the page reads it a render later. Going Back before then is a
+    // race no reader can hit, and under load it made the box re-submit "saha" (flaky in the full suite).
+    await expect(page).toHaveTitle(/: saha · /);
     await page.goBack();
     await expect(page).toHaveURL(/\?q=teota$/);
     await expect(page.locator('#jp-search-input')).toHaveValue('teota');
