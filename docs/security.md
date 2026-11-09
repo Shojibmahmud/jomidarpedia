@@ -15,7 +15,8 @@ Scanned on 26 Oct 2026 in two ways: over `out/`, and against the code that loads
 | Fonts | `'self'` (`/_next/static/media/*.woff2`) | `next/font`, self-hosted at build time |
 | Images | `'self'` (thumbnails, home photos, icons, `/placeholder.svg`) | Static HTML. No external `src` or `srcset` |
 | | `https://thumb.wikimedia.org`, `https://upload.wikimedia.org` | Lightbox only: the full-size file (`full` in the site data: 814 and 122 images) |
-| | `https://tile.openstreetmap.org` | Map tiles (until O4, see `docs/tiles.md`) |
+| | `https://basemaps.cartocdn.com` | Map tiles in production: CARTO, chosen for O4 on 9 Nov 2026 (`docs/tiles.md`) |
+| | `https://tile.openstreetmap.org` | Map tiles in local builds and previews without the CARTO key |
 | | `data:` | Kept for Leaflet and the browser's own images (roadmap 13.7) |
 | Fetch / XHR | `'self'` | `/data/index.json` (`lib/search-client.ts`) |
 | | `https://api.web3forms.com` | The correction form's submission (`components/correction/CorrectionForm.tsx`) |
@@ -31,7 +32,7 @@ Links to GitHub, Wikipedia, Commons and source websites are plain links, not loa
 default-src 'self';
 script-src 'self' 'unsafe-inline';
 style-src 'self' 'unsafe-inline';
-img-src 'self' data: https://thumb.wikimedia.org https://upload.wikimedia.org https://tile.openstreetmap.org;
+img-src 'self' data: https://thumb.wikimedia.org https://upload.wikimedia.org https://tile.openstreetmap.org https://basemaps.cartocdn.com;
 font-src 'self';
 connect-src 'self' https://api.web3forms.com;
 manifest-src 'self';
@@ -80,8 +81,12 @@ There is no `report-uri`, because a static host has nowhere to collect reports (
 
 ### Checklist
 
-1. [ ] **Report-Only on the preview.** Push the branch to `preview`. Open these pages with DevTools → Console open: Home, Explore with the map, Search (`/search/?q=baliati`), a site page with photos and map (Baliati) including its lightbox, an itinerary with a map, a source page, About, Credits, and an unknown path (404). Repeat in dark mode and in Bangla. Expected: no "Content Security Policy" messages. Date, browser and result: ________
-2. [ ] **Enforce on the preview.** Rename the header to `Content-Security-Policy` in `vercel.json` and run `node -e` (see below) to regenerate `serve.json`, then push. Repeat the visit list; theme boot (no flash), map pins and tiles, the lightbox and search all work. Date and result: ________
+1. [x] **Report-Only.** Checked on **production** instead of the preview, because the Report-Only header had been live there since Phase 13 shipped and blocks nothing. 9 Nov 2026, Chrome on macOS, driven by Claude in Chrome, in Bangla mode:
+   - Pages: Home, Explore with the map (`/explore/?view=map&sel=JB-DHK-064`), Search (`/search/?q=baliati`), Baliati with its mini map and the lightbox stepped through 5 photos, `/trips/IT-DHK-010-1/`, About, Credits, `/division/sylhet/` and an unknown path (404).
+   - Method: a `securitypolicyviolation` listener during the lightbox, plus every loaded resource's origin from `performance.getEntriesByType('resource')` on each page. A test image from `https://example.com` was reported (`img-src … report`), which shows that the listener worked.
+   - Result: **no violations.** The only origins loaded were the site itself, `tile.openstreetmap.org` and `thumb.wikimedia.org`, all of them allowed, and there were no external `<script src>`.
+   - The e2e suite fails on any violation, against the same headers, on every test (`e2e/fixtures.ts`).
+2. [ ] **Enforce on the preview.** Done in code on 9 Nov 2026 (`29-phase-13-wrap-up`): the header is now `Content-Security-Policy`, with `https://basemaps.cartocdn.com` added for CARTO, and `serve.json` is regenerated. Repeat the visit list on the branch's preview; theme boot (no flash), map pins and tiles, the lightbox and search all work. Date and result: ________
 3. [ ] **Production.** Merge to `main`, then run `curl -sI https://jomidarpedia.vercel.app/ | grep -i -E 'content-security|x-content|referrer|permissions'`. Paste the output here: ________
 
 To regenerate `serve.json` after editing `vercel.json`:
@@ -97,6 +102,16 @@ Previews ask for Vercel sign-in, so a plain `curl -I` only shows the redirect. U
 - Or sign in in the browser and read the response headers of the document request in DevTools → Network.
 
 Preview headers checked on ________: ________
+
+Production headers checked on 9 Nov 2026 with `curl -sI https://jomidarpedia.vercel.app/` (13.8), still Report-Only for the CSP at that point:
+
+```
+content-security-policy-report-only: default-src 'self'; script-src 'self' 'unsafe-inline'; … frame-ancestors 'none'
+permissions-policy: geolocation=(self), camera=(), microphone=()
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-content-type-options: nosniff
+```
 
 ## Dependencies (FR-33)
 

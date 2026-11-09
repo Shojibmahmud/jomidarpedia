@@ -11,7 +11,7 @@
     "icons": "node scripts/build-icons.mjs",
     "dev": "JP_DATA_MODE=local npm run data && JP_DATA_MODE=local next dev",
     "build:local": "JP_DATA_MODE=local npm run data && JP_DATA_MODE=local next build && JP_DATA_MODE=local npm run seo",
-    "build": "npm run data && next build && npm run seo",
+    "build": "npm run data && node scripts/check-tile-key.mjs && next build && npm run seo",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

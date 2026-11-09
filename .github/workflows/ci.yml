@@ -67,10 +67,12 @@ jobs:
           cache: npm
       - run: npm ci
       # SITE_URL is the Lighthouse server's origin, so canonical links are absolute as in production (spec 13 FR-35).
-      # This build is checked, never deployed.
+      # This build is checked, never deployed. A release build fails without a tile key (spec 13 D14), so it gets
+      # a placeholder: the real key is restricted to the Vercel domains and would not work on localhost anyway.
       - run: npm run build
         env:
           SITE_URL: http://localhost:4174
+          NEXT_PUBLIC_TILE_KEY: ci-placeholder-not-deployed
       - if: always()
         uses: actions/upload-artifact@v4
         with:

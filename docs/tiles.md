@@ -4,9 +4,16 @@ Roadmap task 13.6 and decision O4; spec `.claude/specs/13-Quality-accessibility-
 
 The maps (Explore, the site mini map, the itinerary route map) draw raster tiles from one provider, set in `lib/map-config.ts`. Lite mode never loads the map or any tile, so it stays the fallback whatever the provider does.
 
-## Current state (26 Oct 2026)
+## Current state (9 Nov 2026)
 
-Only **OpenStreetMap standard** (`tile.openstreetmap.org`) is offered, in both themes. The CARTO entries in `lib/map-config.ts` are switched off (`needsKey`), because CARTO's basemaps answer "API KEY REQUIRED" without a key (spec 07 D5, amended).
+The owner chose **CARTO** on 9 Nov 2026 (see Decision). `lib/map-config.ts` builds the CARTO entries from `NEXT_PUBLIC_TILE_KEY`:
+- **With the key** (production, and previews once the key is set for them): CARTO Positron in light mode and Dark Matter in dark mode, and nothing else. A launched site sends no traffic to OSM's tile servers.
+- **Without it** (local builds, and previews without the key): OSM standard, as before.
+- **A release build without the key fails** (`scripts/check-tile-key.mjs`, run by `npm run build`), so production never falls back to OSM by accident. CI's release job, which is never deployed, uses a placeholder key.
+
+Tile URL, checked on 9 Nov 2026 (both styles answer with a PNG, with `@2x` for retina screens): `https://basemaps.cartocdn.com/rastertiles/{light_all|dark_all}/{z}/{x}/{y}{r}.png?key=<key>`.
+
+Up to 26 Oct 2026, only OSM standard was offered and the CARTO entries were switched off, because CARTO's basemaps answered "API KEY REQUIRED" without a key (spec 07 D5, amended).
 
 ## Candidates
 
@@ -40,14 +47,20 @@ The cost is a key in the page's JavaScript (D14). That is how browser tile keys 
 
 ## Decision (owner)
 
-- [ ] Provider chosen: ________ on ________ (date). Terms read on that date: link ________
-- [ ] Account or key created. If there is a key, it is restricted to `jomidarpedia.vercel.app` and the preview domain, and set as `NEXT_PUBLIC_TILE_KEY` in Vercel (Production and Preview).
+- [x] Provider chosen: **CARTO**, with a non-commercial key, on 9 Nov 2026. Terms read that day: [CARTO Basemaps terms](https://carto.com/legal/basemap-terms/), version 29 Sep 2026. What they mean for this site:
+  - Non-commercial use (personal projects, research, teaching, non-profits) is free up to 5,000,000 tile requests per calendar month (UTC), counted across all of the account's keys (§12.c).
+  - The attribution must credit both OpenStreetMap and CARTO, and be "prominent and conspicuous" on each map (§13). The map shows "© OpenStreetMap contributors © CARTO", with links.
+  - The key is for this project only and must not be shared (§8). Requests may not forge the `Referer` (§9.c.vii). Tiles may not be proxied or cached on a server, or kept on a reader's device for more than 30 days (§9.c). The site does none of these: the browser loads tiles straight from CARTO.
+  - CARTO may rate-limit, suspend or end a key without notice (§3.c). Lite mode stays the fallback, and the map shows its tile-error overlay.
+  - The 30 Nov 2026 change concerns commercial keys made before 23 Sep 2026. It does not affect a new non-commercial key.
+- [ ] Key requested at https://carto.com/basemaps/apikey/ (e-mail only, no account), and restricted in https://dashboard.basemaps.carto.com/ to `jomidarpedia.vercel.app` and the preview domain.
+- [ ] Set as `NEXT_PUBLIC_TILE_KEY` in Vercel, for **Production and Preview**, **before** this branch is merged. Without it, the production build fails and the previous deployment stays live.
 
-Once the decision is made, Claude:
-- adds the provider to `lib/map-config.ts` with its attribution (FR-20);
-- adds its hosts to the CSP `img-src` in `vercel.json`, then regenerates `serve.json`;
-- adds them to `TILE` in `e2e/tiles.ts`;
-- makes a release build fail when the key is missing (D14).
+Done in code on 9 Nov 2026 (`29-phase-13-wrap-up`):
+- CARTO light and dark in `lib/map-config.ts`, with both credits (FR-20);
+- `https://basemaps.cartocdn.com` in the CSP `img-src` (`vercel.json`, `serve.json`);
+- `TILE` in `e2e/tiles.ts` already matches CARTO's host, so tests never contact it;
+- a release build fails without the key (D14), with unit tests in `tests/release-checks.test.ts` and `tests/map.test.tsx`.
 
 ## Preview check (FR-21)
 
