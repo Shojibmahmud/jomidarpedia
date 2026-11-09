@@ -6,7 +6,7 @@ import { isMappable, isIsoDay, isCitationDate, isNonNegativeNumber, COORD_PAIR }
 import { internalTerm } from '../scripts/lib/internal-terms.mjs';
 import { FREE_ENTRY, ZERO_OR_FREE, coordinateLeaks } from '../scripts/lib/checks.mjs';
 import { safetyChecks } from '../scripts/build-data.mjs';
-import { hoursKnown, tripTitle, parseClosedDays, suggestPlanStatus, routeMode, MODE_LABEL, matchVersions, publisherName } from '../scripts/lib/rules.mjs';
+import { hoursKnown, tripTitle, parseClosedDays, suggestPlanStatus, routeMode, MODE_LABEL, matchVersions, publisherName, placeName } from '../scripts/lib/rules.mjs';
 import { parseCsv } from '../scripts/csv.mjs';
 
 describe('isMappable', () => {
@@ -208,5 +208,25 @@ describe('publisher matching (2.2)', () => {
   it('uses no prefix or substring matching', () => {
     expect(publisherName('The Daily Star. Dhaka')).toBe('daily star');
     expect(matchVersions(['(Daily Starling)'], 'The Daily Star')).toEqual([]);
+  });
+});
+
+describe('place names', () => {
+  it('"Unknown" in the sheet is no name; real names are kept, trimmed', () => {
+    for (const v of ['Unknown', ' unknown ', 'Unknown (not researched)', 'N/A', '', undefined]) expect(placeName(v), String(v)).toBe('');
+    expect(placeName(' Kotwali Thana ')).toBe('Kotwali Thana');
+    expect(placeName('কোতোয়ালী')).toBe('কোতোয়ালী');
+  });
+
+  it('no built site page or index row names an unknown place (9 Nov iPhone check, Ahsan Manzil)', () => {
+    const sheet = parseCsv(readFileSync('data/csv/sites.csv', 'utf8'));
+    expect(sheet.rows.some((r: Record<string, string>) => /^unknown$/i.test(r.union))).toBe(true); // the case still exists in the data
+    const UNK = /^(unknown|n\/a)\b/i;
+    for (const f of readdirSync('data/build/sites')) {
+      const { id, place } = JSON.parse(readFileSync(join('data/build/sites', f), 'utf8'));
+      for (const [k, v] of Object.entries(place)) expect(UNK.test(String(v)), `${id} ${k}`).toBe(false);
+    }
+    const index = JSON.parse(readFileSync('public/data/index.json', 'utf8'));
+    for (const s of index) expect(UNK.test(s.u ?? ''), s.i).toBe(false);
   });
 });

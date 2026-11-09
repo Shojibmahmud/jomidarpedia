@@ -8,6 +8,9 @@ export const BARE_UNKNOWN = /^(unknown|not documented)\s*(\([^)]*\))?\.?$/i;
 // Alt text the importer wrote for Wiki Loves Monuments photos; the build replaces it with "<view>: <site name>".
 export const BOILERPLATE_ALT = /^This is a photo of a monument in Bangladesh identified by the ID/i;
 export const isKnownText = v => !!(v || '').trim() && !UNKNOWN.test((v || '').trim());
+// A place name (upazila, union, locality): "Unknown" in the sheet is no name, so it is left out of addresses,
+// breadcrumbs and cards rather than shown as one.
+export const placeName = v => isKnownText(v) ? v.trim() : '';
 
 // ---------------------------------------------------------------- photos
 // Only Ready images may leave the CSV. A site's photos show in CSV order, except that the one the editor
