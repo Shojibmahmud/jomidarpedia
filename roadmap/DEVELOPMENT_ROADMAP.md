@@ -1084,7 +1084,7 @@ Content work added after Phase 12:
   - an image (falls back to placeholder art);
   - offline;
   - an unknown route.
-- [ ] **13.6** **Tiles (O4):** confirm the provider's terms in writing, in `docs/tiles.md`. In the browser's DevTools on the preview, check that tile requests send a `Referer` (the origin is enough under `strict-origin-when-cross-origin`) and that the attribution matches the provider's requirements.
+- [x] **13.6** **Tiles (O4):** confirm the provider's terms in writing, in `docs/tiles.md`. In the browser's DevTools on the preview, check that tile requests send a `Referer` (the origin is enough under `strict-origin-when-cross-origin`) and that the attribution matches the provider's requirements.
 - [ ] **13.7** **Content Security Policy:** list the assets the generated `out/` actually uses. Write a CSP for `vercel.json` with:
   - `default-src 'self'`;
   - `img-src 'self' https://thumb.wikimedia.org https://upload.wikimedia.org <tile hosts> data:`;
@@ -1118,8 +1118,8 @@ Content work added after Phase 12:
 
 **Status (9 Nov 2026, branch 29 `29-phase-13-wrap-up`):**
 - **13.8 done:** `curl -sI` on production shows `nosniff`, `Referrer-Policy`, `Permissions-Policy` and Vercel's HSTS (`docs/security.md`).
-- **13.7:** Report-Only checked on production in Chrome on 9 pages, with the map, lightbox and search: no violations, and every loaded origin is allowed. The CSP is now **enforced** in `vercel.json` and `serve.json`; the e2e suite runs under it. Still to do: the visit list on the branch's preview, then `curl` on production after the merge.
-- **13.6 (O4 decided):** the owner chose **CARTO** on 9 Nov 2026. With `NEXT_PUBLIC_TILE_KEY` the map offers only CARTO light and dark, credited "© OpenStreetMap contributors © CARTO"; without it, OSM. A release build without the key fails (`scripts/check-tile-key.mjs`). Terms recorded in `docs/tiles.md`. Owner: request the key, restrict it to the Vercel domains, and set it in Vercel for Production and Preview **before merging**. Then check the preview for `Referer` and attribution.
+- **13.7:** Report-Only checked on production in Chrome on 9 pages, with the map, lightbox and search: no violations, and every loaded origin is allowed. The CSP is now **enforced** in `vercel.json` and `serve.json`; the e2e suite runs under it. The visit list passed on the branch's preview on 9 Nov with the CSP enforced. Still to do: `curl` on production after the merge.
+- **13.6 (O4 decided):** the owner chose **CARTO** on 9 Nov 2026. With `NEXT_PUBLIC_TILE_KEY` the map offers only CARTO light and dark, credited "© OpenStreetMap contributors © CARTO"; without it, OSM. A release build without the key fails (`scripts/check-tile-key.mjs`). Terms recorded in `docs/tiles.md`. **Done on 9 Nov:** the key is restricted by Referer to production and this branch's preview, and set in Vercel (Production and Preview). The preview loads CARTO tiles (light and dark) on Explore, the mini map and the trip map, and the attribution is correct. Other branches' previews need their host added to the key (`docs/tiles.md`).
 - **13.3:** the owner and testers do all 18 rows. Row 17 (NVDA) is marked not done because no Windows PC is available; Mac VoiceOver (row 18) is the desktop screen-reader check.
 - **13.4 / 11a.9:** the "Googleে" fix is live on production (9 Nov). What remains is the iPhone recheck of P2, confirming P4 with the tester, and Android E3.
 

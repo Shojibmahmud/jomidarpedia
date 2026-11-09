@@ -86,7 +86,18 @@ There is no `report-uri`, because a static host has nowhere to collect reports (
    - Method: a `securitypolicyviolation` listener during the lightbox, plus every loaded resource's origin from `performance.getEntriesByType('resource')` on each page. A test image from `https://example.com` was reported (`img-src … report`), which shows that the listener worked.
    - Result: **no violations.** The only origins loaded were the site itself, `tile.openstreetmap.org` and `thumb.wikimedia.org`, all of them allowed, and there were no external `<script src>`.
    - The e2e suite fails on any violation, against the same headers, on every test (`e2e/fixtures.ts`).
-2. [ ] **Enforce on the preview.** Done in code on 9 Nov 2026 (`29-phase-13-wrap-up`): the header is now `Content-Security-Policy`, with `https://basemaps.cartocdn.com` added for CARTO, and `serve.json` is regenerated. Repeat the visit list on the branch's preview; theme boot (no flash), map pins and tiles, the lightbox and search all work. Date and result: ________
+2. [x] **Enforce on the preview.** On 9 Nov 2026 (`29-phase-13-wrap-up`), the header became `Content-Security-Policy`, with `https://basemaps.cartocdn.com` added for CARTO, and `serve.json` was regenerated. Checked the same day on `jomidarpedia-git-29-phase-13-wrap-up-shojibs-projects.vercel.app`, in Chrome on macOS through Claude in Chrome, in Bangla and dark mode:
+   - The theme and language boot script ran (`data-theme=dark`, `lang=bn` on load).
+   - Home: no broken images.
+   - Explore map: CARTO tiles in light and dark mode.
+   - Baliati: mini map tiles; three lightbox photos from Wikimedia.
+   - Trip `IT-KHL-026-1`: route map tiles.
+   - Search `?q=baliati`: its result.
+   - About and Credits.
+   - An unknown path: status 404.
+   - A `securitypolicyviolation` listener during the map, theme switch and lightbox: no violations.
+   - The response headers had the enforced CSP and no Report-Only header.
+   - Only the Vercel Toolbar (`vercel.live`) is outside the policy. It is injected on previews only (see above).
 3. [ ] **Production.** Merge to `main`, then run `curl -sI https://jomidarpedia.vercel.app/ | grep -i -E 'content-security|x-content|referrer|permissions'`. Paste the output here: ________
 
 To regenerate `serve.json` after editing `vercel.json`:

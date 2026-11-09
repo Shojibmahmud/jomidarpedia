@@ -53,8 +53,10 @@ The cost is a key in the page's JavaScript (D14). That is how browser tile keys 
   - The key is for this project only and must not be shared (§8). Requests may not forge the `Referer` (§9.c.vii). Tiles may not be proxied or cached on a server, or kept on a reader's device for more than 30 days (§9.c). The site does none of these: the browser loads tiles straight from CARTO.
   - CARTO may rate-limit, suspend or end a key without notice (§3.c). Lite mode stays the fallback, and the map shows its tile-error overlay.
   - The 30 Nov 2026 change concerns commercial keys made before 23 Sep 2026. It does not affect a new non-commercial key.
-- [ ] Key requested at https://carto.com/basemaps/apikey/ (e-mail only, no account), and restricted in https://dashboard.basemaps.carto.com/ to `jomidarpedia.vercel.app` and the preview domain.
-- [ ] Set as `NEXT_PUBLIC_TILE_KEY` in Vercel, for **Production and Preview**, **before** this branch is merged. Without it, the production build fails and the previous deployment stays live.
+- [x] Key requested by the owner (account "jomidarpedia", free non-commercial plan), and restricted by Referer in https://dashboard.basemaps.carto.com/ to `jomidarpedia.vercel.app` and `jomidarpedia-git-29-phase-13-wrap-up-shojibs-projects.vercel.app` (9 Nov 2026).
+- [x] Set as `NEXT_PUBLIC_TILE_KEY` in Vercel (type Config, because it is public by design) for Production and Preview, 9 Nov 2026. Without it, the production build fails and the previous deployment stays live.
+
+**Preview hosts.** CARTO accepts one wildcard, and only as a whole leftmost label. Vercel puts the branch name inside that label, so the only wildcard covering previews would be `*.vercel.app`, which would let any Vercel site use the key and its quota. To check the map on another branch's preview, add that branch's host (`jomidarpedia-git-<branch>-shojibs-projects.vercel.app`) to the key, and remove it afterwards. Without it, CARTO answers 403 and the map shows its tile-error overlay. That is what happened on the first check on 9 Nov, when the key listed an older deployment's host instead.
 
 Done in code on 9 Nov 2026 (`29-phase-13-wrap-up`):
 - CARTO light and dark in `lib/map-config.ts`, with both credits (FR-20);
@@ -66,6 +68,6 @@ Done in code on 9 Nov 2026 (`29-phase-13-wrap-up`):
 
 On the preview, with the chosen provider, open DevTools → Network, filter by the tile host, and open the map on Explore:
 
-- [ ] Tile requests carry a `Referer` header. Under `Referrer-Policy: strict-origin-when-cross-origin` this is the origin, e.g. `https://…vercel.app/`.
-- [ ] The attribution in the map's corner matches the provider's required wording and is not covered by controls.
-- [ ] Checked on ________ by ________ in ________ (browser).
+- [x] Tile requests carry a `Referer` header. CARTO answered 403 while the key's Referer list did not include the preview host, and 200 once it did, so the origin is sent and checked.
+- [x] The attribution in the map's corner reads "Leaflet | © OpenStreetMap contributors © CARTO", with links, at the bottom right and not covered by controls. Explore, the site mini map and the trip route map all show it, and `/credits/` lists both.
+- [x] Checked on 9 Nov 2026 by Claude (Claude in Chrome) in Chrome on macOS, on `jomidarpedia-git-29-phase-13-wrap-up-shojibs-projects.vercel.app`. Results: Explore 12/12 tiles in light (`light_all`) and dark mode (`dark_all`); Baliati mini map 4/4; `/trips/IT-KHL-026-1/` route map 9/9; no tile-error overlay.
