@@ -89,7 +89,7 @@ Save one screenshot per row and phone as `<row>-<page>-<device>.jpg` (for exampl
 Record the phone model, OS version and browser version once per device:
 
 - Android: Samsung Galaxy S24 Ultra, Android 17, Chrome 156.0.8078.73
-- iPhone: model ________, iOS ____, Safari ____
+- iPhone: iPhone 11 Pro Max, iOS 18.1.1, Safari 18.1.1
 
 | Row | Device | Date | Deployment | Result | Screenshot | Notes |
 |---|---|---|---|---|---|---|
@@ -101,14 +101,14 @@ Record the phone model, OS version and browser version once per device:
 | P6 | Android · Chrome | 31 Oct 2026 | production | pass | P6-explore-android-1.jpg, -2.jpg, -3.jpg | Includes the filter sheet and the map card. |
 | P7 | Android · Chrome | 31 Oct 2026 | production | pass | P7-sylhet-android.jpg | Tester: "the introduction text is very brief" (see Open items). |
 | P8 | Android · Chrome | 31 Oct 2026 | production | pass | P8-about-android.jpg |  |
-| P1 | iPhone · Safari | | production | | | |
-| P2 | iPhone · Safari | | production | | | |
-| P3 | iPhone · Safari | | production | | | |
-| P4 | iPhone · Safari | | production | | | |
-| P5 | iPhone · Safari | | production | | | |
-| P6 | iPhone · Safari | | production | | | |
-| P7 | iPhone · Safari | | production | | | |
-| P8 | iPhone · Safari | | production | | | |
+| P1 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass | IMG cf8db33c, 011c5c2f |  |
+| P2 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | fail | IMG 904b3b6e, 12f8dbed | Dotted circle (◌) in the location note: the translation had "Googleে", a vowel sign on a Latin word. Tester's note: "in obosthan : Google". Blocker, fixed (see below). |
+| P3 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P4 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | partial | IMG cb20893f | Tester marked a problem with the same note as P2 ("in obosthan: Google"). Ahsan Manzil's location text has no "Google", and the screenshot of it renders correctly. To confirm with the tester at the recheck. |
+| P5 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P6 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P7 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P8 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
 
 **Extra checks**
 
@@ -118,8 +118,14 @@ Record the phone model, OS version and browser version once per device:
 | E2 sideways (P1) | Android · Chrome | 31 Oct 2026 | pass | E2-baliati-android.jpg | |
 | E3 larger text (P3) | Android · Chrome | 31 Oct 2026 | partial | E3-shilaidaha-android.jpg, E3-shilaidaha-android-sidescroll.jpg | Tester marked OK. Text wraps and conjuncts are correct, but the screenshots show the page scrolling sideways (see Open items). |
 | E4 search ১৮৪০ | Android · Chrome | 31 Oct 2026 | pass | E4-search-android.jpg | Ruplal House is first; the other three results have 1840 in their family history. |
+| E1 dark mode (P2, P4) | iPhone · Safari | 5 Nov 2026 | pass | | |
+| E2 sideways (P1) | iPhone · Safari | 5 Nov 2026 | pass | | |
+| E3 larger text (P3) | iPhone · Safari | 5 Nov 2026 | pass | | |
+| E4 search ১৮৪০ | iPhone · Safari | 5 Nov 2026 | pass | | |
 
 Android results come from the tester's filled PDF. Claude also read 19 of the screenshots or slices of them, covering part of every page but not all of each long capture, and found no broken conjuncts, dotted circles or boxes.
+
+iPhone results come from the tester's filled PDF and 39 screenshots, which have generated names (`IMG` plus the first part of the name above). Claude looked at all 39 at small size and zoomed into the marked ones. The iPhone check ran on production before the Android fixes were shipped (history years were still in Latin digits), so it does not cover them.
 
 **Desktop pre-check, 31 Oct 2026** (Chromium, local build, 390 px light and dark and 1440 px light, all 13 pages): no horizontal overflow, no axe colour-contrast violations, no script errors, and every Bangla glyph drawn with the site's fonts once Bangla source titles were moved onto them. `e2e/bangla-device.spec.ts` repeats the font and overflow checks in CI.
 
@@ -127,7 +133,7 @@ Android results come from the tester's filled PDF. Claude also read 19 of the sc
 
 | Check # | Finding | Fix (commit) | Recheck date | Result |
 |---|---|---|---|---|
-| | | | | |
+| P2 (iPhone) | "Googleে" in the Bangla location note of JB-SYL-005: a vowel sign after a Latin word, drawn on a dotted circle. Android P2 passed on the same text, so Chrome either drew it differently or the tester missed it. The same fault was in claim CL-DHK-005-008 ("Offroad Bangladeshে"). | Both rows now read "-এ". A translation with a vowel sign that has no Bangla letter before it is now invalid, so the English shows, and a unit test scans every translation file and interface string (`scripts/lib/translations.mjs`, `tests/bangla.test.tsx`). Uncommitted on `28-mobile-test-checklists`, 9 Nov 2026. | | pending |
 
 ## Fixed after the Android check
 

@@ -1,12 +1,12 @@
 // Bangla prose (spec 14): translation files, the build's Bangla siblings and page state, the report, the
 // todo/merge/approve script, Bangla founder search and the page note. AC-1 to AC-5, AC-9, AC-11, AC-12.
 import { describe, expect, it } from 'vitest';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Fuse from 'fuse.js';
 import { approve, formatTranslations, merge, todo } from '../scripts/bn.mjs';
-import { enHash, FREE_BN, loadTranslations } from '../scripts/lib/translations.mjs';
+import { enHash, FREE_BN, loadTranslations, STRAY_MARK } from '../scripts/lib/translations.mjs';
 import { loadTables, TABLES } from '../scripts/lib/structure.mjs';
 import { Prose } from '@/components/T';
 import { bnNoteKey, ProseNote } from '@/components/shell/ProseNote';
@@ -103,6 +103,21 @@ describe('translation files (FR-1 to FR-7, AC-1)', () => {
     writeBn(dir, 'visitor_info', [{ key: 'JB-DHK-001', column: 'entry_fee_note', bn: 'প্রবেশ বিনামূল্যে।' }]);
     const { cells } = loadTranslations(loadTables(dir, TABLES).T, translationsDirOf(dir));
     expect(cells.find(c => c.column === 'entry_fee_note')).toMatchObject({ state: 'invalid', reason: expect.stringMatching(/free/) });
+  });
+  it('rejects a Bangla vowel sign attached to a Latin word (iPhone check, 5 Nov 2026)', () => {
+    const dir = fixtureDir();
+    writeBn(dir, 'visitor_info', [{ key: 'JB-DHK-001', column: 'entry_fee_note', bn: 'গ্রামে Googleে দেখানো' }]);
+    const { cells } = loadTranslations(loadTables(dir, TABLES).T, translationsDirOf(dir));
+    expect(cells.find(c => c.column === 'entry_fee_note')).toMatchObject({ state: 'invalid', reason: expect.stringMatching(/vowel sign/) });
+    expect(STRAY_MARK.test('গ্রামে Google-এ দেখানো, Sygic-এর পয়েন্ট')).toBe(false);
+  });
+  it('has no vowel sign without a Bangla letter in the translation files or interface strings', () => {
+    const files = ['lib/i18n.ts', ...readdirSync('data/translations/bn').filter(f => f.endsWith('.csv')).map(f => `data/translations/bn/${f}`)];
+    const found: string[] = [];
+    for (const f of files) {
+      readFileSync(f, 'utf8').split('\n').forEach((line, k) => { if (STRAY_MARK.test(line)) found.push(`${f}:${k + 1}`); });
+    }
+    expect(found).toEqual([]);
   });
   it('does not mistake a word that only contains ফ্রি for "free"', () => {
     expect(FREE_BN.test('পলেস্তারার ফ্রিজ')).toBe(false);
