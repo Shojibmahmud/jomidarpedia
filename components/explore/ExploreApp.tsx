@@ -258,7 +258,8 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   }, [go, view]);
   // Below 1280 px the map may be off screen: "Show on map" switches to it in the same entry (FR-20).
   const onShow = useCallback((id: string, button: HTMLButtonElement) => {
-    if (layout !== 'three' && view.extras.view !== 'map') select(id, false, button, { ...view.extras, view: 'map' });
+    // The list (and this button) gives way to the map, so the summary takes focus instead (13.3, 9 Nov 2026).
+    if (layout !== 'three' && view.extras.view !== 'map') select(id, true, button, { ...view.extras, view: 'map' });
     else select(id, false, button);
   }, [layout, select, view.extras]);
 

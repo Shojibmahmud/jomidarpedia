@@ -42,6 +42,7 @@ export function Budget({ trip, correctionHref }: { trip: Itinerary; correctionHr
   return (
     <div className="space-y-3" data-budget>
       <table className="w-full border-collapse text-left">
+        <caption className="sr-only"><T k="budget.title" /></caption>
         <thead className="sr-only">
           <tr><th scope="col"><T k="budget.item" /></th><th scope="col"><T k="budget.amount" /></th></tr>
         </thead>

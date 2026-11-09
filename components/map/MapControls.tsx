@@ -103,8 +103,10 @@ export function MapKeyButton() {
   const id = useId();
   const row = 'flex items-center gap-3 py-1 text-sm';
   return (
-    <div ref={root} className="absolute bottom-8 left-3 z-controls" data-map-key>
-      <div id={id} hidden={!open} className="mb-2 max-h-[60vh] w-72 overflow-y-auto rounded-lg border border-line bg-surface p-4 shadow-2">
+    // The wrapper spans the map's height below the top-left controls, so the open key never runs past the map's
+    // top edge into the header or under the Filters button on a short map (13.3, 9 Nov 2026); it scrolls instead.
+    <div ref={root} className="pointer-events-none absolute bottom-8 left-3 top-16 z-controls flex flex-col items-start justify-end" data-map-key>
+      <div id={id} hidden={!open} className="pointer-events-auto mb-2 min-h-0 w-72 max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-lg border border-line bg-surface p-4 shadow-2">
         <h3 className="font-semibold"><T k="map.key" /></h3>
         <p className="mt-2 text-xs font-bold uppercase tracking-wider text-muted"><T k="map.key.condition" /></p>
         <ul>
@@ -135,7 +137,7 @@ export function MapKeyButton() {
         </ul>
       </div>
       <button ref={button} type="button" aria-expanded={open} aria-controls={id} onClick={() => setOpen(o => !o)}
-        className="inline-flex min-h-tap items-center gap-2 rounded-md border border-line bg-surface px-4 font-semibold shadow-2 hover:bg-surface-2">
+        className="pointer-events-auto inline-flex min-h-tap shrink-0 items-center gap-2 rounded-md border border-line bg-surface px-4 font-semibold shadow-2 hover:bg-surface-2">
         <svg viewBox="0 0 24 24" width={18} height={18} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.5" /></svg>
         <T k="map.key" />
       </button>

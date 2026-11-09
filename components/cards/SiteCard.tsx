@@ -44,11 +44,11 @@ export function SiteCard({ site, variant, highlight = false, headingLevel = 3, a
   const place = { en: site.u ? `${site.u}, ${site.d}` : site.d, bn: site.u ? `${site.u}, ${site.db}` : site.db };
   const row = variant === 'row';
   return (
-    <article data-card={variant} data-site={site.i}
+    <article data-card={variant} data-site={site.i} aria-labelledby={`jp-card-${variant}-${site.i}`}
       className={`relative flex gap-3 rounded-lg ${row ? 'flex-row items-start p-3' : 'flex-col p-2'} ${highlight ? 'bg-surface-2 ring-2 ring-ink' : 'bg-surface'} hover:bg-surface-2`}>
       <Photo site={site} variant={variant} />
       <div className="min-w-0 flex-1 space-y-1">
-        <Heading className={variant === 'full' ? 'font-serif text-h3' : 'text-lg font-semibold'}>
+        <Heading id={`jp-card-${variant}-${site.i}`} className={variant === 'full' ? 'font-serif text-h3' : 'text-lg font-semibold'}>
           <Link prefetch={false} href={siteHref(site.i, site.s)} className="after:absolute after:inset-0 after:rounded-lg hover:underline">
             <span lang="en" className="block"><Marked text={site.e} terms={terms} /></span>
             {site.b ? <span lang="bn" className="block font-bn text-bn-sm font-normal text-muted"><Marked text={site.b} terms={terms} /></span> : null}

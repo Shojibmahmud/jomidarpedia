@@ -42,24 +42,26 @@ Lighthouse Accessibility (`npm run lighthouse`, mobile settings): 1.00 on Home, 
 
 | # | Check | Device / OS | Browser | Assistive technology | Date | Result | Notes |
 |---|---|---|---|---|---|---|---|
-| 1 | 200% zoom: nothing cut off or overlapping on the 5 pages | Mac | | none | | | |
-| 2 | 400% zoom: content reflows into one column, with no horizontal scrolling except the map | Mac | | none | | | |
-| 3 | Reflow at 320 px wide (DevTools device mode or a narrow window) | Mac | | none | | | |
-| 4 | Keyboard only, Explore filters: every filter can be reached and changed; the result count updates | Mac | | none | | | |
-| 5 | Keyboard only, filter drawer (narrow window): opens, Tab stays inside, Escape closes, focus returns to the button | Mac | | none | | | |
-| 6 | Keyboard only, map bottom sheet and summary card (narrow window) | Mac | | none | | | |
-| 7 | Keyboard only, map: pins can be reached, a card opens, zoom and Locate work; the list stays usable without the map | Mac | | none | | | |
-| 8 | Keyboard only, lightbox: opens from the gallery, arrows move, Escape closes, focus returns to the photo | Mac | | none | | | |
-| 9 | Keyboard only, search combobox (header and Home): arrows move through suggestions, Enter opens, Escape closes | Mac | | none | | | |
-| 10 | Focus is always visible (light and dark mode) | Mac | | none | | | |
-| 11 | Focus is restored when the drawer, search overlay, lightbox and map key close | Mac | | none | | | |
-| 12 | Live regions: the result count, "Copied" and the offline notice are announced | Mac | Safari | VoiceOver | | | |
+| 1 | 200% zoom: nothing cut off or overlapping on the 5 pages | Mac | Playwright 1.64.1 Chromium, macOS 27.0.1 | none | 9 Nov 2026 | pass | Production, the 5 pages. 200% zoom on a 1280×800 screen is a 640×400 CSS-pixel viewport, which is what was used. No horizontal scrolling on any page; the menu button stays on screen; screenshots checked for clipped or overlapping text: none. |
+| 2 | 400% zoom: content reflows into one column, with no horizontal scrolling except the map | Mac | Playwright 1.64.1 Chromium, macOS 27.0.1 | none | 9 Nov 2026 | pass | Production, the 5 pages at 320×200 CSS px (400% of 1280×800). One column, no horizontal scrolling. On Explore the floating "Map" button covers a line of the heading while it is in view (Open items). |
+| 3 | Reflow at 320 px wide (DevTools device mode or a narrow window) | Mac | Playwright 1.64.1 Chromium, macOS 27.0.1 | none | 9 Nov 2026 | pass | Production, the 5 pages at 320×640, light and dark: no horizontal scrolling, menu on screen; long licence URLs wrap. |
+| 4 | Keyboard only, Explore filters: every filter can be reached and changed; the result count updates | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Explore at 1440 px. Tab reaches the search box, Day trips, every travel-time, condition, access and division filter and "More"; Space toggles them. Turning on "Lost" set the URL to `?cond=lost` and the count to ৮টি বাড়ি in the polite live region; off again, ৪১৩টি. |
+| 5 | Keyboard only, filter drawer (narrow window): opens, Tab stays inside, Escape closes, focus returns to the button | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Explore at 600 px. Enter on Filters opens the drawer with focus on its heading; 60 Tabs stayed inside it; Escape closes it and focus returns to Filters. |
+| 6 | Keyboard only, map bottom sheet and summary card (narrow window) | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Explore map view at 600 px. "Show more results" (the sheet handle) expands the sheet with Enter, `aria-expanded` true, focus to the "413 sites" heading. "Show on map" on a card opens the summary card; its Close, Read more and Directions are reachable; Escape closes it and focus goes to the pin. Focus is not moved into the card when it opens (Open items). |
+| 7 | Keyboard only, map: pins can be reached, a card opens, zoom and Locate work; the list stays usable without the map | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Explore at 1440 px. Tab reaches the map, every cluster and pin (named, e.g. "৬৩টি বাড়ির গুচ্ছ। কাছে যান"), the attribution, Zoom in/out, Locate, Base map and Map key, then the result list. Enter on a cluster zooms in; Enter on a pin opens its card with focus inside; Escape returns focus to the pin. Zoom buttons changed the zoom 7 → 8 → 7; arrow keys pan the focused map. Locate announced "Finding your location…" then "Your location isn't available". The list stays usable without the map. After Enter on a cluster, focus drops to the page (Open items). |
+| 8 | Keyboard only, lightbox: opens from the gallery, arrows move, Escape closes, focus returns to the photo | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Baliati. Tab reaches "Open photo 1 of 15" and the rest; Enter on photo 5 opens the lightbox with focus on Close ("5 of 15"); Right and Left move (6, then 4); Tab stays inside; Escape closes it and focus returns to the photo 5 link. |
+| 9 | Keyboard only, search combobox (header and Home): arrows move through suggestions, Enter opens, Escape closes | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Home: "bali" opens 9 suggestions (`aria-expanded` true); Down moves `aria-activedescendant` through them; Escape closes the list; "baliati" + Down + Enter opens the Baliati page. Header: the Search button opens the overlay, "saha" + Down ×3 highlights Kumari Saha Zamindar Bari; Escape closes the list, a second Escape the overlay. |
+| 10 | Focus is always visible (light and dark mode) | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Light: header links, Home cards (a ring inside the photo card), the search box, Share / Suggest a correction and the lead photo all show a clear ring. Dark: filter chips, the map key button, the lightbox links and the Source link do too. |
+| 11 | Focus is restored when the drawer, search overlay, lightbox and map key close | Mac | Brave 156 (Chromium), macOS 27.0.1 | none | 9 Nov 2026 | pass | Filter drawer → Filters button; search overlay → Search button; lightbox → the photo link that opened it; map key (a disclosure) → focus stays on its button, Escape closes it; summary card → its pin. |
+| 12 | Live regions: the result count, "Copied" and the offline notice are announced | Mac | Brave 156 (Chromium), macOS 27.0.1 | VoiceOver | 10 Nov 2026 | pass | The owner ran VoiceOver; Claude chose the steps and judged the captions. Explore in Bangla: the day-trip switch is read "off, ঢাকা থেকে দিনে দিনে · দিনে গিয়ে দিনে ফেরা · ১৩২, switch"; turning it on and off announced the new count (১৩২টি / ৪১৩টি বাড়ি). "এই দৃশ্যের লিংক কপি" announced the copied message. Turning Wi-Fi off announced the offline notice. |
 | 13 | Non-drag alternatives: the map can be moved and zoomed with buttons and keys; the bottom sheet opens without dragging | iPhone | Safari | none | | | |
-| 14 | Language change: in Bangla mode VoiceOver reads Bangla with a Bangla voice, and Latin names and IDs in English | Mac | Safari | VoiceOver | | | |
+| 14 | Language change: in Bangla mode VoiceOver reads Bangla with a Bangla voice, and Latin names and IDs in English | Mac | Brave 156 (Chromium), macOS 27.0.1 | VoiceOver | 10 Nov 2026 | pass | Bangla mode. The Home heading "বাংলাদেশের জমিদার বাড়ি" was read in a Bangla voice; the division heading "ঢাকা Dhaka" switched voice mid-line, ঢাকা in Bangla and Dhaka in English. |
 | 15 | VoiceOver on iOS: Home → search "Baliati" → site page → gallery → back; Explore filter by division | iPhone | Safari | VoiceOver | | | |
 | 16 | TalkBack on Android: the same journey as 15 | Android | Chrome | TalkBack | | | |
 | 17 | NVDA on Windows: headings list, landmarks, the Explore filters and results, an itinerary's stops and budget | Windows | | NVDA | 9 Nov 2026 | not done | No Windows PC is available (owner, 9 Nov 2026). Row 18, VoiceOver on Mac, is the desktop screen-reader check instead. |
-| 18 | VoiceOver on Mac: the same as 17 | Mac | Safari | VoiceOver | | | |
+| 18 | VoiceOver on Mac: the same as 17 | Mac | Brave 156 (Chromium), macOS 27.0.1 | VoiceOver | 10 Nov 2026 | pass | Bangla mode, owner at the keys, judged from the caption panel. Home: one level-1 heading, sections at level 2 and their cards and divisions at level 3; landmarks banner, main navigation, main, search, named regions and footer; link names make sense out of context. Explore: the filter switch has name, description, role and state; result cards are links named in English and Bangla. Trip IT-DHK-010-1: headings for the houses, the budget, the timeline and the sources; each stop reads time, number, place, type, note; the budget table reads each cell with its column heading. Minor naming points under Open items. |
+
+Rows 1–11 were done by Claude on 9 Nov 2026 against production: rows 1–3 with a Playwright script at the viewport sizes that 200% and 400% zoom produce (the desktop browser window cannot be made 320 px wide), rows 4–11 in the owner's browser with real key presses. Rows 12, 14 and 18 were done on 10 Nov 2026 with VoiceOver in Brave: the owner pressed the keys and sent the caption panel, and Claude chose the steps and judged the result. Rows 13, 15 and 16 need the phones. Row 13 was also tried with the keyboard in that browser: the zoom buttons, arrow-key panning and the sheet's button all work without dragging.
 
 ## Bangla rendering on real devices (13.4 and 11a.9)
 
@@ -136,6 +138,7 @@ iPhone results come from the tester's filled PDF and 39 screenshots, which have 
 
 | Check # | Finding | Fix (commit) | Recheck date | Result |
 |---|---|---|---|---|
+| 13.3 row 11 (Mac) | The open map key ran past the top of a short map: at 600×733 its top 115 px were behind the site header and the Filters button, so the condition colours could not be read. | The key now fills the map's height below the top-left controls and scrolls (`components/map/MapControls.tsx`); `e2e/map.spec.ts` checks it at 600×733. On `32-a11y-manual-checks`, 9 Nov 2026. | | pending |
 | P2 (iPhone) | "Googleে" in the Bangla location note of JB-SYL-005: a vowel sign after a Latin word, drawn on a dotted circle. Android P2 passed on the same text, so Chrome either drew it differently or the tester missed it. The same fault was in claim CL-DHK-005-008 ("Offroad Bangladeshে"). | Both rows now read "-এ". A translation with a vowel sign that has no Bangla letter before it is now invalid, so the English shows, and a unit test scans every translation file and interface string (`scripts/lib/translations.mjs`, `tests/bangla.test.tsx`). Shipped on `28-mobile-test-checklists`, 9 Nov 2026. | 9 Nov 2026 | pass |
 
 ## Fixed after the Android check
@@ -150,6 +153,19 @@ Not blockers. Fixed on 5 Nov 2026 on `28-mobile-test-checklists`, with automated
 | P2 | English visitor-photo buttons | Now interface strings, in Bangla in Bangla mode (draft wording, marked for review) | `e2e/bangla-device.spec.ts` |
 | P6 | Two Bangla labels for one condition | The owner chose the badge wording: the Explore filter and the Home badge now say "ধ্বংসাবশেষ", and the filter says "সংরক্ষিত, নতুন ব্যবহারে" | |
 
+## Fixed after the manual checks (13.3)
+
+Not blockers. Fixed on 10 Nov 2026 on `32-a11y-manual-checks`, each with a Playwright test in `e2e/a11y-names.spec.ts` that fails on the old code.
+
+| Row | Finding | Fix |
+|---|---|---|
+| 7 | After Enter on a map cluster, the cluster was removed and focus dropped to the page | Focus moves to the cluster's first site: its pin, or the smaller cluster that now holds it (`components/map/MapView.tsx`) |
+| 6 | At narrow widths, "Show on map" opened the summary card but left focus on the page | When the list gives way to the map, the card takes focus (`components/explore/ExploreApp.tsx`) |
+| 18 | The logo link was read with its name twice | The visible lockup is hidden from screen readers; the link is "Jomidarpedia home" / "জমিদারপিডিয়া প্রথম পাতা" |
+| 18 | Home's map link ran two labels together ("বাংলাদেশ-এর মানচিত্র মানচিত্রে ৩০৫টি") | One name: "Map of Bangladesh: 305 sites" / "বাংলাদেশ-এর মানচিত্রে ৩০৫টি বাড়ি" (new string `area.mapLink`, marked for review) |
+| 18 | Home's trip and site cards were bare "article" landmarks | Each card is named by its heading |
+| 18 | The trip budget table had no name | It has the caption "Rough budget" / "আনুমানিক খরচ" for screen readers |
+
 ## Open items
 
 Findings that are not blockers, carried forward with a short description and the check number.
@@ -158,4 +174,5 @@ Findings that are not blockers, carried forward with a short description and the
 - **P5, 5 Nov 2026:** the numbers on the trip map's pins are still in Latin digits in Bangla mode (`components/trips/RouteMapView.tsx`), like the footnote markers above.
 - **E3, emulated 200% text at 384 px, 5 Nov 2026:** after the 150% fix, some pages still scroll sideways by up to 84 px: the Home hero, Explore cards, the trip budget table, a few site badges and an About link. Nothing here was seen on a phone, and 200% is above what the tester used.
 - **P4 recheck, iPhone, 9 Nov 2026 (fixed on `30-unknown-place-values`):** Ahsan Manzil's English address read "Islampur (Old Dhaka), Unknown, Kotwali Thana". The sheet writes "Unknown" for an unknown union (129 sites) or upazila (5 sites), and the site showed it as a place name in the address, the breadcrumb and the cards. The data build now leaves such names out (`placeName` in `scripts/lib/rules.mjs`; test in `tests/rules.test.ts`).
+- **13.3 row 2, 9 Nov 2026:** at 400% zoom on Explore, the floating "Map" button covers about one line of the content behind it while it is in view. The content scrolls out from under it.
 - **P7, Android:** the tester finds the area introduction very brief. It is a generated count ("৪টি জেলায় ২৮টি জমিদার বাড়ি…"), so this is a content matter, not a display fault.

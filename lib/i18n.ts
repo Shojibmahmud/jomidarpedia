@@ -607,6 +607,7 @@ export const STRINGS = {
   'area.openMap': { en: 'Open map', bn: 'মানচিত্র খুলুন', needsReview: true },
   'area.noMap': { en: 'None of these sites has a map location yet.', bn: 'এই বাড়িগুলোর কোনোটির মানচিত্রে অবস্থান এখনও নেই।', needsReview: true },
   'area.mapOf': { en: 'Map of {name}', bn: '{name}-এর মানচিত্র', needsReview: true },
+  'area.mapLink': { en: 'Map of {name}: {count} sites', bn: '{name}-এর মানচিত্রে {count}টি বাড়ি', needsReview: true },
   'area.locationsTitle': { en: 'How sure we are of locations', bn: 'অবস্থান কতটা নিশ্চিত', needsReview: true },
   'area.loc.verified': { en: 'confirmed', bn: 'নিশ্চিত', needsReview: true },
   'area.loc.singleSource': { en: 'one source', bn: 'একটি সূত্র', needsReview: true },
