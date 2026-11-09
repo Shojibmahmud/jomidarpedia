@@ -65,9 +65,11 @@ Lighthouse Accessibility (`npm run lighthouse`, mobile settings): 1.00 on Home, 
 
 Spec `.claude/specs/15-Bangla-device-check.md`. This check covers the interface (13.4) and the reviewed Bangla prose (11a.9).
 
+Testers get a fillable PDF guide for their phone: `docs/testing/jomidarpedia-android-test-guide.pdf` (Chrome) and `docs/testing/jomidarpedia-iphone-test-guide.pdf` (Safari). Their rows P1–P8 match the table below, and they add extra checks E1–E4 (dark mode, sideways, larger text, search with Bangla digits). Copy their results into the table and their notes under Open items or Blockers.
+
 **How to check.** Open https://jomidarpedia.vercel.app on the phone and choose বাংলা from the menu once; the choice is remembered. Open each page below, wait until it has fully loaded, and scroll through every section. Recheck a fix on the branch's Vercel preview instead.
 
-The first pass (owner's choice, 31 Oct 2026) is on production as it was before spec 15 shipped, so prose there still shows Latin digits and Bangla source titles still use the phone's own font. After spec 15 ships, recheck P2 (Bengali digits in prose) and P4 (Bangla source titles) on production on both phones, and record them under "Blockers fixed and rechecked" even if they pass.
+The owner shipped spec 15 before the phone check, so testers without a Vercel login could use production. The results below are from the new build (the screenshots show Bengali digits in prose), so P2 and P4 need no separate recheck.
 
 A row **passes** when all Bangla text on the page (headings, prose, labels and buttons) shows joined conjuncts, with no separated hasanta (্), no dotted circle (◌) and no empty box. A brief moment in the phone's own font before the page's fonts load doesn't count. Any failure is a blocker (see "How to record a check").
 
@@ -82,31 +84,48 @@ A row **passes** when all Bangla text on the page (headings, prose, labels and b
 | P7 | `/division/sylhet/` | the area text and its cards |
 | P8 | `/about/` | the Bangla About page |
 
-Save one screenshot per row and phone under `screenshots/a11y/` as `<row>-<page>-<device>.jpg` (for example `P2-jalsukha-android.jpg`), and one more of any failing text. They are resized to about 1000 px wide before they are committed.
+Save one screenshot per row and phone as `<row>-<page>-<device>.jpg` (for example `P2-jalsukha-android.jpg`), and one more of any failing text. The originals stay in the owner's private Drive folder "Jomidar pedia user testing", not in this repository (spec 15 D-7, amended 5 Nov 2026); the Screenshot columns below name files there.
 
 Record the phone model, OS version and browser version once per device:
 
-- Android: model ________, Android ____, Chrome ____
-- iPhone: model ________, iOS ____, Safari ____
+- Android: Samsung Galaxy S24 Ultra, Android 17, Chrome 156.0.8078.73
+- iPhone: iPhone 11 Pro Max, iOS 18.1.1, Safari 18.1.1
 
 | Row | Device | Date | Deployment | Result | Screenshot | Notes |
 |---|---|---|---|---|---|---|
-| P1 | Android · Chrome | | production | | | |
-| P2 | Android · Chrome | | production | | | |
-| P3 | Android · Chrome | | production | | | |
-| P4 | Android · Chrome | | production | | | |
-| P5 | Android · Chrome | | production | | | |
-| P6 | Android · Chrome | | production | | | |
-| P7 | Android · Chrome | | production | | | |
-| P8 | Android · Chrome | | production | | | |
-| P1 | iPhone · Safari | | production | | | |
-| P2 | iPhone · Safari | | production | | | |
-| P3 | iPhone · Safari | | production | | | |
-| P4 | iPhone · Safari | | production | | | |
-| P5 | iPhone · Safari | | production | | | |
-| P6 | iPhone · Safari | | production | | | |
-| P7 | iPhone · Safari | | production | | | |
-| P8 | iPhone · Safari | | production | | | |
+| P1 | Android · Chrome | 31 Oct 2026 | production | pass | P1-baliati-android-1.jpg, -2.jpg |  |
+| P2 | Android · Chrome | 31 Oct 2026 | production | pass | P2-jalsukha-android-1.jpg, -2.jpg |  |
+| P3 | Android · Chrome | 31 Oct 2026 | production | pass | P3-shilaidaha-android-1.jpg, -2.jpg |  |
+| P4 | Android · Chrome | 31 Oct 2026 | production | pass | P4-ahsan-manzil-android-1.jpg, -2.jpg |  |
+| P5 | Android · Chrome | 31 Oct 2026 | production | pass | P5-trip-android-1.jpg, -2.jpg |  |
+| P6 | Android · Chrome | 31 Oct 2026 | production | pass | P6-explore-android-1.jpg, -2.jpg, -3.jpg | Includes the filter sheet and the map card. |
+| P7 | Android · Chrome | 31 Oct 2026 | production | pass | P7-sylhet-android.jpg | Tester: "the introduction text is very brief" (see Open items). |
+| P8 | Android · Chrome | 31 Oct 2026 | production | pass | P8-about-android.jpg |  |
+| P1 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass | IMG cf8db33c, 011c5c2f |  |
+| P2 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | fail | IMG 904b3b6e, 12f8dbed | Dotted circle (◌) in the location note: the translation had "Googleে", a vowel sign on a Latin word. Tester's note: "in obosthan : Google". Blocker, fixed (see below). |
+| P3 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P4 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | partial | IMG cb20893f | Tester marked a problem with the same note as P2 ("in obosthan: Google"). Ahsan Manzil's location text has no "Google", and the screenshot of it renders correctly. To confirm with the tester at the recheck. |
+| P5 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P6 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P7 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P8 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+
+**Extra checks**
+
+| Check | Device | Date | Result | Screenshot | Notes |
+|---|---|---|---|---|---|
+| E1 dark mode (P2, P4) | Android · Chrome | 31 Oct 2026 | pass | E1-jalsukha-android.jpg, E1-ahsan-android.jpg | |
+| E2 sideways (P1) | Android · Chrome | 31 Oct 2026 | pass | E2-baliati-android.jpg | |
+| E3 larger text (P3) | Android · Chrome | 31 Oct 2026 | partial | E3-shilaidaha-android.jpg, E3-shilaidaha-android-sidescroll.jpg | Tester marked OK. Text wraps and conjuncts are correct, but the screenshots show the page scrolling sideways (see Open items). |
+| E4 search ১৮৪০ | Android · Chrome | 31 Oct 2026 | pass | E4-search-android.jpg | Ruplal House is first; the other three results have 1840 in their family history. |
+| E1 dark mode (P2, P4) | iPhone · Safari | 5 Nov 2026 | pass | | |
+| E2 sideways (P1) | iPhone · Safari | 5 Nov 2026 | pass | | |
+| E3 larger text (P3) | iPhone · Safari | 5 Nov 2026 | pass | | |
+| E4 search ১৮৪০ | iPhone · Safari | 5 Nov 2026 | pass | | |
+
+Android results come from the tester's filled PDF. Claude also read 19 of the screenshots or slices of them, covering part of every page but not all of each long capture, and found no broken conjuncts, dotted circles or boxes.
+
+iPhone results come from the tester's filled PDF and 39 screenshots, which have generated names (`IMG` plus the first part of the name above). Claude looked at all 39 at small size and zoomed into the marked ones. The iPhone check ran on production before the Android fixes were shipped (history years were still in Latin digits), so it does not cover them.
 
 **Desktop pre-check, 31 Oct 2026** (Chromium, local build, 390 px light and dark and 1440 px light, all 13 pages): no horizontal overflow, no axe colour-contrast violations, no script errors, and every Bangla glyph drawn with the site's fonts once Bangla source titles were moved onto them. `e2e/bangla-device.spec.ts` repeats the font and overflow checks in CI.
 
@@ -114,10 +133,25 @@ Record the phone model, OS version and browser version once per device:
 
 | Check # | Finding | Fix (commit) | Recheck date | Result |
 |---|---|---|---|---|
-| | | | | |
+| P2 (iPhone) | "Googleে" in the Bangla location note of JB-SYL-005: a vowel sign after a Latin word, drawn on a dotted circle. Android P2 passed on the same text, so Chrome either drew it differently or the tester missed it. The same fault was in claim CL-DHK-005-008 ("Offroad Bangladeshে"). | Both rows now read "-এ". A translation with a vowel sign that has no Bangla letter before it is now invalid, so the English shows, and a unit test scans every translation file and interface string (`scripts/lib/translations.mjs`, `tests/bangla.test.tsx`). Uncommitted on `28-mobile-test-checklists`, 9 Nov 2026. | | pending |
+
+## Fixed after the Android check
+
+Not blockers. Fixed on 5 Nov 2026 on `28-mobile-test-checklists`, with automated tests. They need a look on the phones once shipped: the iPhone check covers them, and Android repeats E3.
+
+| Check | Finding | Fix | Automated check |
+|---|---|---|---|
+| E3 | At 150% text the page scrolled sideways and the menu button moved off screen | The logo text now shortens to fit, the section selector can shrink, and the footer, About and site page columns stay within the screen | `e2e/bangla-device.spec.ts`: no overflow and the menu on screen at 150%, 384 px, both languages, on 5 pages. This emulates Chrome's Text scaling; it is not the phone itself |
+| P1–P4 | Plain history years in Latin digits | Each computed year now has a Bangla form: 1,521 of 1,521 | `e2e/bangla-device.spec.ts` |
+| P1, P5 | Latin route step numbers and clock times | Step numbers use Bengali digits; `formatClock` gives "সকাল ৮:০০" on trip pages and previews | `tests/format.test.ts`, `e2e/bangla-device.spec.ts` |
+| P2 | English visitor-photo buttons | Now interface strings, in Bangla in Bangla mode (draft wording, marked for review) | `e2e/bangla-device.spec.ts` |
+| P6 | Two Bangla labels for one condition | The owner chose the badge wording: the Explore filter and the Home badge now say "ধ্বংসাবশেষ", and the filter says "সংরক্ষিত, নতুন ব্যবহারে" | |
 
 ## Open items
 
 Findings that are not blockers, carried forward with a short description and the check number.
 
 - **13.4 / 11a.9 desktop pre-check (31 Oct 2026):** in Bangla mode, footnote markers in prose (¹²) and the numbers of the Sources list are still in Latin digits. Prose numbers are Bengali since spec 15; these markers are generated by code and were outside that spec.
+- **P5, 5 Nov 2026:** the numbers on the trip map's pins are still in Latin digits in Bangla mode (`components/trips/RouteMapView.tsx`), like the footnote markers above.
+- **E3, emulated 200% text at 384 px, 5 Nov 2026:** after the 150% fix, some pages still scroll sideways by up to 84 px: the Home hero, Explore cards, the trip budget table, a few site badges and an About link. Nothing here was seen on a phone, and 200% is above what the tester used.
+- **P7, Android:** the tester finds the area introduction very brief. It is a generated count ("৪টি জেলায় ২৮টি জমিদার বাড়ি…"), so this is a content matter, not a display fault.

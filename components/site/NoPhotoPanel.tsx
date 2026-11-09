@@ -3,10 +3,17 @@
 // photo-offer form (5.13). Nothing is uploaded or embedded.
 
 import { T } from '@/components/T';
+import type { StringKey } from '@/lib/i18n';
 import { PlaceholderArt } from '@/components/art/PlaceholderArt';
 import { NoPhotoIcon } from '@/components/art/EmptyStates';
 import type { SiteRecord } from '@/lib/types';
 import { SuggestCorrection } from './SuggestCorrection';
+
+// The build's wording for these links (scripts/build-data.mjs): interface strings.
+const EXTERNAL: Record<string, StringKey> = {
+  'Search for visitor photos': 'photo.searchVisitors',
+  'See visitor photos on Google Maps': 'photo.seeVisitors',
+};
 
 export function NoPhotoPanel({ site, pageUrl }: { site: SiteRecord; pageUrl: string }) {
   const ext = site.externalPhotos;
@@ -20,7 +27,7 @@ export function NoPhotoPanel({ site, pageUrl }: { site: SiteRecord; pageUrl: str
           <>
             <p className="text-sm text-muted"><T k="photo.externalNote" /></p>
             <a href={ext.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-tap items-center rounded-md border border-line-strong px-4 font-semibold" data-external-photos>
-              <span lang="en">{ext.label}</span><span className="sr-only"> <T k="common.newTab" /></span>
+              {EXTERNAL[ext.label] ? <T k={EXTERNAL[ext.label]} /> : <span lang="en">{ext.label}</span>}<span className="sr-only"> <T k="common.newTab" /></span>
             </a>
           </>
         ) : null}

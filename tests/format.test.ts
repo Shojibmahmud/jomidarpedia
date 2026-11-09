@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bnDigits, bnProseDigits, both, formatCoords, formatCount, formatDate, formatHours, formatId, formatMoney } from '@/lib/format';
+import { bnDigits, bnProseDigits, both, formatClock, formatCoords, formatCount, formatDate, formatHours, formatId, formatMoney } from '@/lib/format';
 
 describe('formatters (task 3.2)', () => {
   it('formatCount groups thousands, with Bangla digits in Bangla', () => {
@@ -74,5 +74,24 @@ describe('Bangla prose digits (spec 15 FR-8 to FR-11, AC-4, AC-5)', () => {
     expect(bnProseDigits('পিন 23.9174, 90.0622 এ, 2 কিমি দূরে')).toBe('পিন 23.9174, 90.0622 এ, ২ কিমি দূরে');
     expect(bnProseDigits('যোগাযোগ নম্বর (01711-362913)। খোলা 9টা থেকে')).toBe('যোগাযোগ নম্বর (01711-362913)। খোলা ৯টা থেকে');
     expect(bnProseDigits('+880 1711362913 নম্বরে')).toBe('+880 1711362913 নম্বরে');
+  });
+});
+
+describe('formatClock (Android check, 5 Nov 2026)', () => {
+  it('keeps the English as the data has it', () => {
+    expect(formatClock('8:00 AM', 'en')).toBe('8:00 AM');
+  });
+  it('gives Bengali digits and the part of the day', () => {
+    expect(formatClock('5:30 AM', 'bn')).toBe('ভোর ৫:৩০');
+    expect(formatClock('8:00 AM', 'bn')).toBe('সকাল ৮:০০');
+    expect(formatClock('12:00 PM', 'bn')).toBe('দুপুর ১২:০০');
+    expect(formatClock('5:00 PM', 'bn')).toBe('বিকেল ৫:০০');
+    expect(formatClock('7:30 PM', 'bn')).toBe('সন্ধ্যা ৭:৩০');
+    expect(formatClock('9:00 PM', 'bn')).toBe('রাত ৯:০০');
+    expect(formatClock('12:30 AM', 'bn')).toBe('রাত ১২:৩০');
+    expect(formatClock('07:30', 'bn')).toBe('০৭:৩০');
+  });
+  it('throws on anything that is not a clock time', () => {
+    for (const v of ['End', '4', '13:00 PM', '9:75 AM']) expect(() => formatClock(v, 'bn'), v).toThrow();
   });
 });

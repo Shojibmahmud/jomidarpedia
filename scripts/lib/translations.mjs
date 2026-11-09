@@ -59,6 +59,10 @@ export const ROUTE_STEPS = /\s*->\s*/;
 export const VERSUS = /\s+(?:vs\.?|বনাম)\s+/;
 // The site never says entry is free (R6, scripts/lib/checks.mjs FREE_ENTRY); the same holds in Bangla.
 // A whole word only: 'ফ্রি' must not match inside 'ফ্রিজ' (frieze).
+// A Bangla vowel sign or other combining mark with no Bangla letter before it, e.g. "Googleে" for "Google-এ".
+// Phones draw it on a dotted circle (◌), so the English shows instead (spec 15, iPhone check of 5 Nov 2026).
+export const STRAY_MARK = /(?:^|[^\u0980-\u09FF\u200c\u200d])[\u0981-\u0983\u09BC\u09BE-\u09CD\u09D7\u09E2\u09E3]/;
+
 export const FREE_BN = /বিনা\s*মূল্যে|বিনামূল্যে|ফ্রি(?![\u0980-\u09FF])|প্রবেশ\s*ফি\s*নেই/;
 const parts = (text, re) => text.split(re).filter(Boolean).length;
 const SHAPE = {
@@ -135,6 +139,7 @@ function resolve(T, entries) {
           else if (e.enHash !== enHash(en)) cell.state = 'outdated';
           else if (internalTerm(e.bn)) Object.assign(cell, { state: 'invalid', reason: `internal-note term "${internalTerm(e.bn).term}"` });
           else if (FREE_BN.test(e.bn)) Object.assign(cell, { state: 'invalid', reason: `says entry is free ("${e.bn.match(FREE_BN)[0]}")` });
+          else if (STRAY_MARK.test(e.bn)) Object.assign(cell, { state: 'invalid', reason: `a vowel sign with no Bangla letter before it ("${e.bn.match(STRAY_MARK)[0]}")` });
           else if (typeof shape === 'string') Object.assign(cell, { state: 'invalid', reason: shape });
           else { cell.state = e.status; valid.set(id, { bn: e.bn, draft: e.status === 'draft' }); }
         }

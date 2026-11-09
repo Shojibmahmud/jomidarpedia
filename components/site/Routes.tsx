@@ -3,7 +3,7 @@
 // icons; an unknown mode is never drawn as a bus.
 
 import { Both, Prose, T } from '@/components/T';
-import { both, formatDate, formatHours, formatMoney } from '@/lib/format';
+import { both, formatCount, formatDate, formatHours, formatMoney } from '@/lib/format';
 import type { Mode, Route, SiteRecord } from '@/lib/types';
 import { SuggestCorrection } from './SuggestCorrection';
 
@@ -52,7 +52,7 @@ export function RouteSteps({ route }: { route: Route }) {
     <ol className="space-y-3" data-route-steps>
       {route.steps.map((s, k) => (
         <li key={k} className="flex gap-3">
-          <span aria-hidden="true" className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-sm font-semibold">{k + 1}</span>
+          <span aria-hidden="true" className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-sm font-semibold"><Both value={both(formatCount, k + 1)} /></span>
           <span>
             <Prose en={s.label} bn={s.labelBn} />
             {s.note ? <span className="block text-sm text-muted"><Prose en={s.note} bn={s.noteBn} /></span> : null}

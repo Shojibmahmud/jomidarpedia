@@ -75,10 +75,10 @@ export default function AboutPage() {
   return (
     <main id="main" className="mx-auto max-w-page px-4 py-8 lg:px-8 lg:py-12" data-about>
       <link rel="canonical" href={canonicalUrl('/about/')} />
-      <header className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-12">
+      <header className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-12">
         <div className="space-y-4">
           <p className="text-xs font-bold uppercase tracking-wider text-primary"><T k="about.eyebrow" /></p>
-          <h1 className="font-serif text-display"><T k="about.title" /></h1>
+          <h1 className="font-serif text-display [overflow-wrap:anywhere]"><T k="about.title" /></h1>
           <p lang="bn" data-l="en" aria-hidden="true" className="font-bn-serif text-bn-h3 text-muted">{dual('about.title').bn}</p>
           <ProseNote k={!bnFile ? 'common.proseInEnglish' : bnFile.reviewed ? undefined : 'bnNote.draft'} />
           {reviewed ? null : <p role="note" className="rounded-lg border border-gold bg-gold-tint p-3 text-sm" data-about-draft><T k="about.draft" /></p>}
@@ -97,7 +97,7 @@ export default function AboutPage() {
         ]} />
       </div>
 
-      <div className="mt-12 grid gap-10 xl:grid-cols-[14rem_minmax(0,1fr)]">
+      <div className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 xl:grid-cols-[14rem_minmax(0,1fr)]">
         <nav aria-labelledby="jp-toc" className="xl:sticky xl:top-24 xl:self-start" data-toc>
           <p id="jp-toc" className="mb-2 text-sm font-semibold text-muted"><T k="site.onThisPage" /></p>
           <ol className="flex flex-wrap gap-2 text-sm xl:flex-col xl:gap-0 xl:border-l xl:border-line">
@@ -117,7 +117,7 @@ export default function AboutPage() {
               <section key={s.id} id={s.id} aria-labelledby={`${s.id}-title`} className="scroll-mt-24 space-y-4 border-b border-line pb-10 last:border-0">
                 <div className="flex items-center gap-3">
                   {mark ? <span aria-hidden="true" className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${mark.tone}`}>{mark.icon}</span> : null}
-                  <h2 id={`${s.id}-title`} className="font-serif text-h2"><Dual as="span" en={inline(s.title)} bn={bnSection(s.id) && inline(bnSection(s.id)!.title)} /></h2>
+                  <h2 id={`${s.id}-title`} className="font-serif text-h2 [overflow-wrap:anywhere]"><Dual as="span" en={inline(s.title)} bn={bnSection(s.id) && inline(bnSection(s.id)!.title)} /></h2>
                 </div>
                 <Dual className="space-y-4" en={<Blocks blocks={s.blocks} directives={directives} listIcon={listIcon(s.id)} />}
                   bn={bnSection(s.id) && <Blocks blocks={bnSection(s.id)!.blocks} directives={directives} listIcon={listIcon(s.id)} />} />
