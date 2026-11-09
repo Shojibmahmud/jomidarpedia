@@ -42,7 +42,8 @@ export function SiteHeader() {
     <header className="sticky top-0 z-header border-b border-line bg-bg/95 backdrop-blur">
       <div className="mx-auto flex max-w-page items-center gap-2 px-4 py-2 lg:px-8">
         <Link prefetch={false} href="/" className="mr-2 inline-flex min-h-tap min-w-0 items-center rounded-md">
-          <Lockup compact />
+          {/* Named once by the hidden text; the visible lockup repeats the name, so it is hidden (13.3 VoiceOver, 10 Nov 2026). */}
+          <span aria-hidden="true" className="flex min-w-0"><Lockup compact /></span>
           <SrT k="nav.home" />
         </Link>
 

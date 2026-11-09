@@ -97,9 +97,9 @@ export function MapTeaser({ svg, onMap, total, href, name, label, caption = 'are
   return (
     <figure className="space-y-2" data-map-teaser>
       <Link prefetch={false} href={href} className="relative block overflow-hidden rounded-lg border border-line bg-surface-2 hover:border-line-strong">
-        <span className="sr-only"><T k="area.mapOf" vars={{ name }} /></span>
+        <span className="sr-only"><T k="area.mapLink" vars={{ name, count: n(onMap) }} /></span>
         <span aria-hidden="true" className="block [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: svg }} />
-        <span className="absolute left-3 top-3 rounded-full bg-surface px-3 py-1 text-sm font-semibold text-primary-tint-ink shadow-1" data-on-map>
+        <span aria-hidden="true" className="absolute left-3 top-3 rounded-full bg-surface px-3 py-1 text-sm font-semibold text-primary-tint-ink shadow-1" data-on-map>
           {label ?? <T k="area.onMap" vars={{ count: n(onMap), total: n(total) }} />}
         </span>
         <span aria-hidden="true" className="absolute right-3 top-3 rounded-full border border-line-strong bg-surface px-3 py-1 text-sm font-semibold"><T k={button} /></span>

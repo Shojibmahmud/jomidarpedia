@@ -117,10 +117,28 @@ export default function MapView({ sites, fitKey, selected, hovered, onSelect, po
 
     // Enter and Space activate a focused pin or cluster (FR-14, FR-18). Leaflet itself handles Enter only on
     // markers with its own popup, so both keys become a click (detail 0, which marks it as keyboard).
+    let keyCluster = false;
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
-      if ((e.key === 'Enter' || e.key === ' ') && (t.classList.contains('jp-pin') || t.classList.contains('jp-cluster'))) { e.preventDefault(); t.click(); }
+      if ((e.key === 'Enter' || e.key === ' ') && (t.classList.contains('jp-pin') || t.classList.contains('jp-cluster'))) {
+        e.preventDefault();
+        keyCluster = t.classList.contains('jp-cluster');
+        t.click();
+      }
     };
+    // A cluster opened from the keyboard is removed as the map zooms, which dropped focus to the page (13.3,
+    // 9 Nov 2026). Focus follows its first site: the pin, or the smaller cluster that now holds it.
+    cluster.on('clusterclick', e => {
+      if (!keyCluster) return;
+      keyCluster = false;
+      const first = (e as unknown as { layer: L.MarkerCluster }).layer.getAllChildMarkers()[0];
+      const follow = () => {
+        const target = (cluster.getVisibleParent(first) as L.Marker | null) ?? first;
+        target.getElement()?.focus({ preventScroll: true });
+      };
+      map.once('zoomend', () => setTimeout(follow, 0));
+      cluster.once('animationend spiderfied', follow);
+    });
     el.addEventListener('keydown', onKey);
     const ro = new ResizeObserver(() => map.invalidateSize({ pan: false }));
     ro.observe(el);

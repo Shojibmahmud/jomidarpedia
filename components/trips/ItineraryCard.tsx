@@ -34,7 +34,7 @@ export function ItineraryCard({ trip, headingLevel = 2 }: { trip: TripCard; head
   const Heading = `h${headingLevel}` as const;
   const photos = trip.photos ?? [];
   return (
-    <article className="relative flex w-full flex-col overflow-hidden rounded-lg border border-line bg-surface hover:bg-surface-2" data-trip={trip.id}>
+    <article aria-labelledby={`jp-trip-card-${trip.id}`} className="relative flex w-full flex-col overflow-hidden rounded-lg border border-line bg-surface hover:bg-surface-2" data-trip={trip.id}>
       <div className="relative">
         {/* Each photo fills its cell absolutely, so the strip is 2:1 however many photos it has (one 4:3 photo used to stretch it). */}
         {photos.length ? (
@@ -58,7 +58,7 @@ export function ItineraryCard({ trip, headingLevel = 2 }: { trip: TripCard; head
         {photos.length ? <PhotoCredits photos={photos} /> : null}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <Heading className="font-serif text-h3">
+        <Heading id={`jp-trip-card-${trip.id}`} className="font-serif text-h3">
           <Link prefetch={false} href={tripHref(trip.id)} className="after:absolute after:inset-0 hover:underline"><Prose en={trip.title} bn={trip.titleBn} /></Link>
         </Heading>
         <p className="text-sm text-muted">

@@ -317,6 +317,22 @@ test.describe('desktop', () => {
 test.describe('phone', () => {
   test.use({ viewport: PHONE });
 
+  test('the open map key stays inside a short map, below the Filters button (13.3)', async ({ page }) => {
+    await page.setViewportSize({ width: 600, height: 733 }); // the narrow window of the 9 Nov manual check
+    await open(page, 'view=map');
+    await mapReady(page);
+    await page.getByRole('button', { name: 'Map key' }).click();
+    const panel = page.locator('[data-map-key] > [id]');
+    await expect(panel).toBeVisible();
+    const [p, map, filters] = await Promise.all([panel.boundingBox(), page.locator('[data-map]').boundingBox(),
+      page.getByRole('button', { name: /^Filters/ }).first().boundingBox()]);
+    expect(p!.y).toBeGreaterThanOrEqual(map!.y);
+    expect(p!.y).toBeGreaterThanOrEqual(filters!.y + filters!.height);
+    await expect(panel.getByRole('heading', { name: 'Map key' })).toBeInViewport();
+    await page.locator('[data-key-circle]').scrollIntoViewIfNeeded();
+    await expect(page.locator('[data-key-circle]')).toBeInViewport();
+  });
+
   test('the handle cycles peek, half, full; a summary swaps sheets and Close restores (AC-8)', async ({ page }) => {
     await open(page, 'view=map');
     await mapReady(page);
