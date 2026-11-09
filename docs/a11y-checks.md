@@ -109,6 +109,8 @@ Record the phone model, OS version and browser version once per device:
 | P6 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
 | P7 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
 | P8 | iPhone · Safari | 5 Nov 2026 | production (before the Android fixes) | pass |  |  |
+| P2, recheck | iPhone · Safari | 9 Nov 2026 | production | pass | owner screenshot, 11:44 | Location note reads "Google-এ" with no dotted circle; conjuncts (স্থানাঙ্ক, আজমিরীগঞ্জ) correct. Closes the P2 blocker. |
+| P4, recheck | iPhone · Safari | 9 Nov 2026 | production | pass | owner screenshot, 11:45 | Ahsan Manzil location panel renders correctly (মঞ্জিল, নিশ্চিত, বুড়িগঙ্গা). Settles the 5 Nov "in obosthan: Google" note. |
 
 **Extra checks**
 
@@ -134,7 +136,7 @@ iPhone results come from the tester's filled PDF and 39 screenshots, which have 
 
 | Check # | Finding | Fix (commit) | Recheck date | Result |
 |---|---|---|---|---|
-| P2 (iPhone) | "Googleে" in the Bangla location note of JB-SYL-005: a vowel sign after a Latin word, drawn on a dotted circle. Android P2 passed on the same text, so Chrome either drew it differently or the tester missed it. The same fault was in claim CL-DHK-005-008 ("Offroad Bangladeshে"). | Both rows now read "-এ". A translation with a vowel sign that has no Bangla letter before it is now invalid, so the English shows, and a unit test scans every translation file and interface string (`scripts/lib/translations.mjs`, `tests/bangla.test.tsx`). Uncommitted on `28-mobile-test-checklists`, 9 Nov 2026. | | pending |
+| P2 (iPhone) | "Googleে" in the Bangla location note of JB-SYL-005: a vowel sign after a Latin word, drawn on a dotted circle. Android P2 passed on the same text, so Chrome either drew it differently or the tester missed it. The same fault was in claim CL-DHK-005-008 ("Offroad Bangladeshে"). | Both rows now read "-এ". A translation with a vowel sign that has no Bangla letter before it is now invalid, so the English shows, and a unit test scans every translation file and interface string (`scripts/lib/translations.mjs`, `tests/bangla.test.tsx`). Shipped on `28-mobile-test-checklists`, 9 Nov 2026. | 9 Nov 2026 | pass |
 
 ## Fixed after the Android check
 
