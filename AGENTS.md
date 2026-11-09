@@ -1,7 +1,7 @@
 # Jomidarpedia
 
 Bilingual (English / Bangla) static Next.js site about the zamindar houses of Bangladesh.
-Roadmap: `roadmap/DEVELOPMENT_ROADMAP.md`. Specs: `.Codex/specs/NN-*.md`.
+Roadmap: `roadmap/DEVELOPMENT_ROADMAP.md`. Specs: `.claude/specs/NN-*.md`.
 
 ## Commands
 
