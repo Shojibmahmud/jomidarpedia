@@ -1,6 +1,6 @@
 {
   "name": "jomidarpedia",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "data:index": "node scripts/build-index.mjs",
@@ -16,10 +16,13 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "e2e": "playwright test",
+    "e2e:prod": "PW_BASE_URL=${PW_BASE_URL:-https://jomidarpedia.vercel.app} playwright test e2e/smoke.spec.ts",
     "screenshots": "node scripts/screenshots.mjs",
     "seo": "node scripts/build-seo.mjs",
     "check:out": "node scripts/check-out.mjs",
     "check:budgets": "node scripts/check-budgets.mjs",
+    "check:prod": "node scripts/check-prod.mjs",
+    "compare:out": "node scripts/compare-out.mjs",
     "lighthouse": "node scripts/lighthouse.mjs"
   },
   "dependencies": {

@@ -1,10 +1,13 @@
 // The licences block (roadmap task 10.8; spec 10 FR-43): on /about/#licences and beside the credits on /credits/.
-// The text and data licence (O5) with no download promise (D8), photo licences with the one change notice (D11),
+// The text and data licence (O5) with the data download when the build has one (spec 16 FR-16; it replaced
+// spec 10 D8's "no download promise"), photo licences with the one change notice (D11),
 // and only the map, boundary, library and font licences of what actually ships (D13). Server component.
 
 import Link from 'next/link';
 import { Latin, T } from '@/components/T';
 import { text, type Lang, type StringKey } from '@/lib/i18n';
+import { getExport } from '@/lib/data';
+import { both, formatMegabytes } from '@/lib/format';
 import { BOUNDARIES, FONT_LICENCE, FONTS, LIBRARIES, ODBL, TEXT_LICENCE, tileCredits, type Licence } from '@/lib/licences';
 
 const MARK = '\u0001';
@@ -36,9 +39,18 @@ function Sentence({ k, parts }: { k: StringKey; parts: Record<string, Licence | 
 }
 
 export function Licences({ compact = false }: { compact?: boolean }) {
+  const data = getExport();
   return (
     <dl className={`grid gap-4 ${compact ? '' : 'md:grid-cols-2'}`} data-licences>
-      <Item k="lic.text"><Sentence k="lic.textBody" parts={{ licence: TEXT_LICENCE }} /></Item>
+      <Item k="lic.text">
+        <Sentence k="lic.textBody" parts={{ licence: TEXT_LICENCE }} />
+        {data && (
+          <span className="mt-1 block" data-download>
+            <a href={data.url} download className="font-semibold text-primary underline underline-offset-4"><T k="lic.download" /></a>{' '}
+            <T k="lic.downloadNote" vars={{ size: both(formatMegabytes, data.megabytes) }} />
+          </span>
+        )}
+      </Item>
       <Item k="lic.photos">
         <T k="lic.photosBody" /> <Link prefetch={false} href="/credits/" className="text-primary underline"><T k="footer.credits" /></Link>{' '}
         <span data-changes><T k="lic.changes" /></span>

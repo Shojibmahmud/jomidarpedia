@@ -8,7 +8,7 @@
 - Each phase lists its **required** prerequisites. The order of phases is a suggestion, except where a prerequisite says otherwise.
 - Unticked tasks have not been implemented or verified. Statements about the current state of the repository were checked on 22 October 2026, by reading the files and running both data builders into temporary folders; where Phase 1 changed them, the text says so.
 
-**Status, 30 October 2026.** Phases 0–12 are done; production (`main` on `*.vercel.app`) is live. The owner reversed O6 on 26 Oct, so Bangla prose is now MVP work (**Phase 11a**): the pipeline and the drafts for every site are merged, and every cell is drafted (13,340 in all). On 30 Oct the owner finished the table-by-table review: all 11 tables and all 13,340 cells are reviewed, so no draft marker remains. Only the device check (11a.9) is left in 11a. Phase 13 waits on the owner's device, tile and header checks; Phase 14 has not started. **9 Nov 2026 (branch 29):** 13.8 verified on production; CSP enforced; O4 decided (CARTO, key pending); NVDA row not done (no Windows). Work since the last update (branches 15–24): **9 Nov 2026:** both phones have been checked for 11a.9 and 13.4; one iPhone blocker was fixed and rechecked, so 11a.9 and 13.4 are done. Phase 13 has only 13.3 (manual accessibility checks) left.
+**Status, 30 October 2026.** Phases 0–12 are done; production (`main` on `*.vercel.app`) is live. The owner reversed O6 on 26 Oct, so Bangla prose is now MVP work (**Phase 11a**): the pipeline and the drafts for every site are merged, and every cell is drafted (13,340 in all). On 30 Oct the owner finished the table-by-table review: all 11 tables and all 13,340 cells are reviewed, so no draft marker remains. Only the device check (11a.9) is left in 11a. Phase 13 waits on the owner's device, tile and header checks; Phase 14 has not started. **9 Nov 2026 (branch 29):** 13.8 verified on production; CSP enforced; O4 decided (CARTO, key pending); NVDA row not done (no Windows). Work since the last update (branches 15–24): **9 Nov 2026:** both phones have been checked for 11a.9 and 13.4; one iPhone blocker was fixed and rechecked, so 11a.9 and 13.4 are done. Phase 13 has only 13.3 (manual accessibility checks) left. **10 Nov 2026 (branch 34):** Phase 14 started (spec 16): the data download, the fresh-clone and production check scripts, and the maintainer documents are built. The production checks and the `v1.0.0` tag follow the merge.
 - **15** CI: data is built before unit tests; Lighthouse no longer hangs.
 - **16** Phase 11a: Bangla prose pipeline, review tools and drafts of all site prose (see Phase 11a).
 - **17** Interface polish; corrections now go through a popup email form (O2).
@@ -166,7 +166,7 @@ Each decision has a recommended default. Work continues on the default unless th
 | O2 | Correction email address. **Decided 27 Oct 2026:** every correction link opens a popup form that posts to Web3Forms, which emails jomidarpedia@gmail.com. It replaces the GitHub-issue links, because most readers have no GitHub account. Attachments need a paid plan, which the owner declined (28 Oct): the form is text only and asks readers to email files with the same subject. | None. Hide the email fallback until one is provided. | 5.13 |
 | O3 | **How to clear internal notes** | Rewrite the public fields by hand in the CSV. Non-public fields are covered by I7. Formulaic groups (citation publishers) may be rewritten with a reviewed script that runs once. | 12.x |
 | O4 | **Tile provider. Decided 9 Nov 2026: CARTO with a non-commercial key** (`docs/tiles.md`). | Development uses OSM standard tiles. **Before public launch**, choose a provider whose terms allow the expected traffic (a CARTO basemap under its terms, or a paid or free-tier provider), with Lite mode as the fallback. OSM's tile policy forbids heavy use. **Phase 13 (26 Oct 2026):** four providers compared in `docs/tiles.md`; the recommendation is CARTO with a non-commercial key. The owner's decision is still open. | 13.6, 14.1 |
-| O5 | **Text and data licence** | CC BY-SA 4.0. It already appears in the credits design, so it only needs the owner's confirmation. Photos keep their own licences. | 10.8, 14.6 |
+| O5 | **Text and data licence. Decided 10 Nov 2026: CC BY-SA 4.0** (spec 16 D2). | CC BY-SA 4.0. It already appears in the credits design, so it only needs the owner's confirmation. Photos keep their own licences. | 10.8, 14.6 |
 | O6 | **Bangla scope for the MVP. Decided 23 Oct 2026: owner confirmed the default. Reversed by the owner on 26 Oct 2026:** every visible text in Bangla mode is Bangla, prose included, because the site is no use to a reader without English. This adds Phase 11a (spec 14). The default below no longer applies. | Bangla mode covers interface strings, names, numbers and dates. Long prose stays English and is marked `lang="en"`, with a one-line note in Bangla mode. The `বাংলা · Baliati` board, which shows translated prose, is the post-MVP target. If the owner wants translated prose in the MVP, add Phase 11a (storage, translation and review), which is listed in §4. | 3.1–3.4, 11.x |
 | O7 | **Lite mode activation** | Switch automatically **only** when `navigator.connection.saveData` is true. On a slow connection, *suggest* it. The manual toggle always wins and is stored in `localStorage` (`jp-lite`). The offline/slow board's "We switched to Lite mode" copy is used only in the Save-Data case. | 7.9 |
 | O8 | **Offline promise** | No service worker in the MVP. Change the copy to: "You're offline. This page stays open; other pages and photos need a connection." | 10.12 |
@@ -175,7 +175,7 @@ Each decision has a recommended default. Work continues on the default unless th
 | O11 | **What counts as a "timed plan"** | Add a reviewed `plan_status` column to `itineraries.csv` with the values `timed`, `circuit` and `incomplete`. The build suggests a value (2 or more stops, and every stop has a clock time such as `7:30 AM`; labels like `1`, `2`, `End` don't count) in a report: 37 timed, 266 circuit and 82 incomplete on 22 Oct 2026. Only the editor's value is published. | 2.10, 9.2 |
 | O12 | **Thumbnail storage. Decided 23 Oct 2026: owner confirmed the default** (thumbnails committed, although the repository is public). | Commit generated WebP thumbnails, about 480 px wide and about 40 KB each (roughly 35–40 MB for 934 images). The alternative is width-limited Wikimedia thumbnail URLs with no committed images. Choose before task 3.5. | 3.5 |
 | O13 | Bangla names missing for **JB-RAJ-059** and **JB-RAJ-071** | Show the English name with `lang="en"` and the text "Bangla name not yet recorded" until a verified name is added. | 2.13 |
-| O14 | **Canonical domain** | `*.vercel.app` at first. Changing the domain means changing `SITE_URL` and rebuilding (14.2). Phase 13 (spec 13 D5) sets `SITE_URL` to the `*.vercel.app` domain now, so canonical links, the sitemap and share images are absolute; this is an owner action in Vercel. | 13.11, 14.2 |
+| O14 | **Canonical domain. Decided 10 Nov 2026: `https://jomidarpedia.vercel.app`**, with `SITE_URL` set in Vercel Production (spec 16 D1). | `*.vercel.app` at first. Changing the domain means changing `SITE_URL` and rebuilding (14.2). Phase 13 (spec 13 D5) sets `SITE_URL` to the `*.vercel.app` domain now, so canonical links, the sitemap and share images are absolute; this is an owner action in Vercel. | 13.11, 14.2 |
 | O15 | **Remaining data issues:** 79 `unclassified` sites, 15 non-standard credit lines, and the editor's 20 October Manikganj fares | Classify and fix them in Phase 12. Add the fares as cost and leg rows with their unit and shared/reserved basis. | 12.6–12.8 |
 
 ### 2.4 Build modes and gates
@@ -1155,10 +1155,10 @@ Content work added after Phase 12:
 
 **Prerequisites:** Phases 12 and 13, and O4, O5 and O14.
 
-- [ ] **14.1** Configure the production tile provider (O4) and repeat test 13.6 against it.
-- [ ] **14.2** Set `SITE_URL` (O14) in the Vercel production environment and in CI, then rebuild.
-  - **Verify:** the canonical URLs, the sitemap and the Open Graph URLs use it.
-- [ ] **14.3** *(Optional.)* Generate host-level redirects in `vercel.json` for `/site/:id` and any renamed slugs, with `data/redirects.csv` holding the old slug, the ID and the date. Keep the meta-refresh pages as a portable fallback.
+- [ ] **14.1** Configure the production tile provider (O4) and repeat test 13.6 against it. *(The configuration was done on 9 Nov; what remains is the check on production after the merge, logged in `docs/tiles.md`. Spec 16 FR-1, A-5.)*
+- [ ] **14.2** Set `SITE_URL` (O14) in the Vercel production environment, then rebuild. *(Already set, per the owner. CI's release job keeps `SITE_URL=http://localhost:4174`, so Lighthouse sees canonicals on its own origin; spec 16 D6.)*
+  - **Verify:** the canonical URLs, the sitemap and the Open Graph URLs use it. `npm run check:prod` checks this on production (spec 16 FR-2).
+- ~~**14.3**~~ *Skipped for v1.0.0 (spec 16 D3): no slug has been renamed, and the meta-refresh pages already work.* *(Optional.)* Generate host-level redirects in `vercel.json` for `/site/:id` and any renamed slugs, with `data/redirects.csv` holding the old slug, the ID and the date. Keep the meta-refresh pages as a portable fallback.
 - [ ] **14.4** Run the fresh-clone check:
   - clone into an empty folder **without** `../images`;
   - run `npm ci && npm run build` (release by default);
@@ -1169,16 +1169,17 @@ Content work added after Phase 12:
   - `out/` has the **same set of files**, and the same page text once Next's build IDs and hashed chunk names are normalised away.
 
   Use the script `scripts/compare-out.mjs`.
-- [ ] **14.5** *(Owner action.)* Turn on production deployments. Deploy, then run the smoke tests and the 13.9 leak checks **against the production URL**.
-- [ ] **14.6** *(O1 and O5.)* Publish the cleaned data download: a release-built CSV or JSON export containing only the whitelisted public fields, with a `LICENSE` and a README. Link it from About.
-- [ ] **14.7** Write `CONTRIBUTING.md`, covering:
+  - **Status (10 Nov):** `scripts/compare-out.mjs` (`npm run compare:out`) and the CI `release-build` artifact are built. A clean copy of the branch with no `../images`, built with CI's env, matched a release build of this checkout (16,491 files). The logged run against the CI artifact (`docs/release-checks.md`) waits for CI on the merged commit.
+- [ ] **14.5** Deploy the release commit (production deployments are already on; spec 16 A-6), then run the smoke tests (`npm run e2e:prod`) and the 13.9 leak checks (`npm run check:prod`) **against the production URL**, and log them in `docs/release-checks.md`.
+- [x] **14.6** *(O1 and O5.)* Publish the cleaned data download: a release-built CSV or JSON export containing only the whitelisted public fields, with a `LICENSE` and a README. Link it from About.
+- [x] **14.7** Write `CONTRIBUTING.md`, covering:
   - editing a CSV;
   - `npm run dev`;
   - reading the problem report;
   - regenerating thumbnails;
   - how corrections arrive.
-- [ ] **14.8** Write a rollback note in `docs/RUNBOOK.md`. In Vercel, use "Promote" on the previous production deployment, or revert the commit and push. Data mistakes are fixed in the CSV and rebuilt.
-- [ ] **14.9** Once 14.4 and 14.5 have passed, tag `v1.0.0` and write `CHANGELOG.md`.
+- [x] **14.8** Write a rollback note in `docs/RUNBOOK.md`. In Vercel, use "Promote" on the previous production deployment, or revert the commit and push. Data mistakes are fixed in the CSV and rebuilt.
+- [ ] **14.9** Once 14.4 and 14.5 have passed, tag `v1.0.0` and write `CHANGELOG.md`. *(`CHANGELOG.md` is written and `package.json` says 1.0.0; the tag goes on the deployed `main` commit after the merge, spec 16 D9.)*
 
 **Regression checklist before tagging.** These checks re-run tests that already exist; none of them re-implements anything.
 - [ ] Release build green (12)
@@ -1191,6 +1192,15 @@ Content work added after Phase 12:
 - [ ] Leak checks green on production (13.9, 14.5)
 - [ ] Fresh clone matches (14.4)
 - [ ] Every link from the header and footer resolves
+
+**Status (10 Nov 2026, branch `34-phase-14-release`):** specified in `.claude/specs/16-Release.md` (approved 10 Nov 2026). Built:
+- **Data download (14.6):** `scripts/build-export.mjs` writes `/data/jomidarpedia-data.zip` in release builds only. It holds 15 CSV tables, `LICENSE` (CC BY-SA 4.0) and a README in English and Bangla, about 1.2 MB, made from `data/build/**`. Hidden sites have no coordinates. Every build-record field is either exported or skipped with a reason, so a new field fails the build. `check:out` scans the zip, and `check:budgets` limits it to 1,600 KB. About's licences block and the footer link to it in both languages; local and preview builds show no link.
+- **Fresh clone (14.4):** `npm run compare:out` and the CI `release-build` artifact.
+- **Production checks (14.5):** `npm run check:prod` (every sitemap URL, leak rules, canonical origin, the download; at most 4 requests at a time) and `npm run e2e:prod` (smoke tests with `PW_BASE_URL`).
+- **Documents:** `CONTRIBUTING.md`, `docs/RUNBOOK.md`, `CHANGELOG.md` and `docs/release-checks.md`.
+- **Checks:** 522 unit tests (42 new in `tests/release.test.ts`), the full Playwright suite on the local build (270 passed), and the download and About tests on a release build. The UI check at 390 px and 1280 px, in light and dark, in English and Bangla, found no overflow, and the Bangla size uses Bengali digits.
+
+**Left, after the merge:** 14.1 and 14.2 on production, the 14.4 run against the CI artifact, 14.5, the regression checklist below, and the tag (14.9). The regression checklist also needs 13.3 (the NVDA row) closed or explicitly waived.
 
 **Acceptance criteria**
 - Production is live on the chosen domain.
@@ -1219,7 +1229,7 @@ Optional improvements, listed separately from the required MVP work:
 
 1. **O1 is decided** (22 Oct 2026): a private app repository, a public corrections repository, and a cleaned CSV export at release. The first push (0.9) is no longer blocked by a decision. The owner then made the app repository public, and corrections go by email form (O2), so no corrections repository is needed.
 2. ~~**Content cleanup (Phase 12)** blocks any production deployment.~~ Done 26 Oct 2026; production is live.
-3. **O4 (tile terms)** blocks the public launch. The comparison is in `docs/tiles.md`; the owner's choice is still open.
+3. ~~**O4 (tile terms)** blocks the public launch.~~ Decided 9 Nov 2026: CARTO, with a non-commercial key (`docs/tiles.md`).
 4. **Data contracts (Phase 2)** block conflict, budget, itinerary and filter UI. Don't build those components on the current shapes.
 5. **Image reproducibility (3.5, 3.6)** blocks fresh-clone verification.
 6. **Vercel Hobby** is for non-commercial use only. Ads or sponsorship would mean changing plan.

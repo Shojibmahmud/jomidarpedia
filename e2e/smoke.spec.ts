@@ -16,8 +16,11 @@ const site = (id: string): SiteRecord => JSON.parse(readFileSync(`data/build/sit
 const href = (s: SiteRecord) => `/site/${s.id}/${s.slug}/`;
 const baliati = site('JB-DHK-064');
 const elangi = site('JB-RAJ-002');
+// Against a deployed host (PW_BASE_URL, `npm run e2e:prod`; spec 16 FR-9) the expected values still come from the
+// local build of the same commit, but tests that read out/ itself are skipped.
+const remote = !!process.env.PW_BASE_URL;
 // A build outside release includes the /dev/ test page (next.config.mjs); its pages must be noindex.
-const nonRelease = existsSync('out/dev/i18n/index.html');
+const nonRelease = !remote && existsSync('out/dev/i18n/index.html');
 
 test('home shows the title, the hero credit and a link from each section (spec 11 AC-2, FR-25)', async ({ page }) => {
   const credits: Credit[] = JSON.parse(readFileSync('data/build/credits.json', 'utf8'));
@@ -60,6 +63,7 @@ test('pages outside release are noindex', async ({ page }) => {
 });
 
 test.describe('static export', () => {
+  test.skip(remote, 'reads the local out/, not the deployed host');
   const html = (path: string) => readFileSync(join('out', path, 'index.html'), 'utf8');
 
   test('one slug page and one ID redirect per site', () => {

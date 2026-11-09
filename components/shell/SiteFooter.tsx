@@ -1,15 +1,16 @@
 // Site footer (roadmap task 3.9): the contact address, when the data was last updated, the map credit, and links
-// to Credits, Licences, Sources and Suggest a correction. Counts and dates come from meta.json, never from copy.
+// to Credits, Licences, Sources and Suggest a correction, and the data download in a release build (spec 16 FR-17). Counts and dates come from meta.json, never from copy.
 
 import Link from 'next/link';
 import { LogoMark } from '@/components/brand/Logo';
 import { T } from '@/components/T';
-import { getMeta } from '@/lib/data';
+import { getExport, getMeta } from '@/lib/data';
 import { both, formatCount, formatDate } from '@/lib/format';
 import { CONTACT_EMAIL, CORRECTIONS_URL, FOOTER_LINKS } from '@/lib/nav';
 
 export function SiteFooter() {
   const meta = getMeta();
+  const data = getExport();
   return (
     <footer className="mt-16 border-t border-line bg-surface">
       <div className="mx-auto grid max-w-page grid-cols-[minmax(0,1fr)] gap-6 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:px-8">
@@ -36,6 +37,11 @@ export function SiteFooter() {
                 : <Link prefetch={false} href={l.href} className="inline-flex min-h-tap items-center font-semibold underline-offset-4 hover:underline"><T k={l.k} /></Link>}
             </li>
           ))}
+          {data && (
+            <li>
+              <a href={data.url} download className="inline-flex min-h-tap items-center font-semibold underline-offset-4 hover:underline" data-download><T k="footer.download" /></a>
+            </li>
+          )}
         </ul>
       </div>
     </footer>

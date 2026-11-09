@@ -6,7 +6,7 @@
 import 'server-only';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { Credit, District, Division, IndexSite, Itinerary, Meta, SiteRecord, SourceEntry, TranslationCells, TripSummary } from './types';
+import type { Credit, ExportInfo, District, Division, IndexSite, Itinerary, Meta, SiteRecord, SourceEntry, TranslationCells, TripSummary } from './types';
 
 export function createReaders(buildDir = join(process.cwd(), 'data/build'), indexPath = join(process.cwd(), 'public/data/index.json')) {
   const cache = new Map<string, unknown>();
@@ -32,6 +32,11 @@ export function createReaders(buildDir = join(process.cwd(), 'data/build'), inde
     getCredits: file<Credit[]>('credits.json'),
     getTranslations: file<TranslationCells>('translations.json'),
     getTrips,
+    /** The data download, or null when this build has none (only release builds write it; spec 16 FR-14). */
+    getExport(): ExportInfo | null {
+      const path = join(buildDir, 'export.json');
+      return existsSync(path) ? read<ExportInfo>(path, 'data/build/export.json') : null;
+    },
     getSite(id: string): SiteRecord {
       if (!ids(getIndex()).has(id)) throw new Error(`getSite: no site "${id}" in the index`);
       return read<SiteRecord>(join(buildDir, 'sites', `${id}.json`), `data/build/sites/${id}.json`);
@@ -43,4 +48,4 @@ export function createReaders(buildDir = join(process.cwd(), 'data/build'), inde
   };
 }
 
-export const { getIndex, getMeta, getDivisions, getDistricts, getSources, getCredits, getTranslations, getTrips, getSite, getTrip } = createReaders();
+export const { getIndex, getMeta, getDivisions, getDistricts, getSources, getCredits, getTranslations, getTrips, getExport, getSite, getTrip } = createReaders();

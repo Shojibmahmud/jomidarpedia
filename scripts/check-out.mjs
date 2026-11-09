@@ -10,12 +10,14 @@
 //     note gives the Jessoreshwari temple, JB-KHL-047, which is published), and that reveals nothing hidden.
 // The data build already checks its own output (scripts/lib/checks.mjs); this checks what is actually served.
 // JavaScript chunks under _next/static are framework code, not published text, and are not searched for terms.
+// A zip (the data download, spec 16 FR-15) is opened, and every file in it is checked as published text.
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseCsv } from './csv.mjs';
 import { INTERNAL_TERMS, LOCAL_PATHS, WORKING_FILES } from './lib/internal-terms.mjs';
+import { readZip } from './lib/zip.mjs';
 
 const TEXT_TYPES = new Set(['.html', '.json', '.txt', '.xml']);
 const COORD_PAIR = /(-?\d{1,2}\.\d{3,})\s*(?:,|%2C)\s*(-?\d{2,3}\.\d{3,})/gi;
@@ -83,6 +85,17 @@ export function hiddenCoordinatePatterns(sitesCsv) {
   return out;
 }
 
+/** The link, term and hidden-coordinate problems in one published text (FR-29 to FR-32). Shared with check-prod.mjs. */
+export function textProblems(rel, ext, raw, coords, anyCoord = coords.length ? new RegExp(coords.map(c => c.re.source).join('|'), 'i') : null) {
+  const problems = [];
+  if (ext === '.html') for (const tag of unsafeLinks(raw)) problems.push(`${rel}: new-tab link without rel="noopener noreferrer": ${tag}`);
+  if (!rel.startsWith(`_next${'/'}static`)) {
+    for (const h of termHits(ext === '.html' ? textOf(raw) : raw)) problems.push(`${rel}: "${h.term}" in "…${h.context}…"`);
+  }
+  if (anyCoord?.test(raw)) for (const c of coords) if (c.re.test(raw)) problems.push(`${rel}: coordinates of hidden site ${c.site} (${c.pair})`);
+  return problems;
+}
+
 /** @param {{ dir?: string, sitesCsv?: string }} [options] */
 export function checkOut({ dir = 'out', sitesCsv = 'data/csv/sites.csv' } = {}) {
   if (!existsSync(dir)) throw new Error(`${dir}/ does not exist: build first`);
@@ -93,15 +106,17 @@ export function checkOut({ dir = 'out', sitesCsv = 'data/csv/sites.csv' } = {}) 
   let checked = 0;
   for (const file of outFiles(dir)) {
     const ext = extname(file);
-    if (!TEXT_TYPES.has(ext)) continue;
     const rel = relative(dir, file);
-    const raw = readFileSync(file, 'utf8');
-    checked++;
-    if (ext === '.html') for (const tag of unsafeLinks(raw)) problems.push(`${rel}: new-tab link without rel="noopener noreferrer": ${tag}`);
-    if (!rel.startsWith(`_next${'/'}static`)) {
-      for (const h of termHits(ext === '.html' ? textOf(raw) : raw)) problems.push(`${rel}: "${h.term}" in "…${h.context}…"`);
+    if (ext === '.zip') {
+      for (const e of readZip(readFileSync(file))) {
+        checked++;
+        problems.push(...textProblems(`${rel}/${e.name}`, e.name.endsWith('.html') ? '.html' : '.txt', e.data.toString('utf8'), coords, anyCoord));
+      }
+      continue;
     }
-    if (anyCoord?.test(raw)) for (const c of coords) if (c.re.test(raw)) problems.push(`${rel}: coordinates of hidden site ${c.site} (${c.pair})`);
+    if (!TEXT_TYPES.has(ext)) continue;
+    checked++;
+    problems.push(...textProblems(rel, ext, readFileSync(file, 'utf8'), coords, anyCoord));
   }
   return { problems: [...new Set(problems)], checked, hiddenPairs: new Set(coords.map(c => `${c.site} ${c.pair}`)).size };
 }
