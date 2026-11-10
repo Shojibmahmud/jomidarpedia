@@ -31,6 +31,13 @@ const files = execFileSync('git', ['ls-files', '--cached', '--others', '--exclud
 const dirs = new Set<string>();
 for (const f of files) for (let d = dirname(f); d !== '.'; d = dirname(d)) dirs.add(d);
 const known = [...files, ...dirs];
+const knownSet = new Set(known);
+// Only what git holds counts, so the test answers the same on a working copy as on a fresh clone in CI.
+const inRepo = (p: string) => knownSet.has(normalize(p).replace(/\/$/, ''));
+
+// Places the guides name on purpose that are not in the repository: the original photos, kept beside it,
+// and Claude Code's local hook folder.
+const OUTSIDE = new Set(['../images', '.claude/hooks']);
 
 // Outputs of the build, which are ignored by git and so absent from a fresh clone. A guide may name them.
 const GENERATED_DIRS = /^(out|\.next|node_modules|data\/build|public\/data|public\/maps|data\/reports|data\/translations\/todo|test-results|playwright-report|\.lighthouse|screenshots|\.vercel)(\/|$)/;
@@ -62,9 +69,8 @@ const isPathLike = (s: string) =>
 
 const exists = (doc: string, raw: string) => {
   const p = raw.replace(/\/$/, '').replace(/:\d+(-\d+)?$/, '');
-  if (GENERATED_DIRS.test(p) || GENERATED_FILES.has(p.split('/').pop()!)) return true;
-  const fromDoc = normalize(join(dirname(doc), p));
-  if (existsSync(p) || existsSync(fromDoc)) return true;
+  if (OUTSIDE.has(p) || GENERATED_DIRS.test(p) || GENERATED_FILES.has(p.split('/').pop()!)) return true;
+  if (inRepo(p) || inRepo(join(dirname(doc), p))) return true;
   // A short path inside a table that names its folder elsewhere (`correction/CorrectionForm.tsx`),
   // or an import specifier without its extension, relative to where it is used (`./fixtures` in e2e/).
   const bare = p.replace(/^\.\//, '');
@@ -87,7 +93,7 @@ describe.each(GUIDES)('%s', doc => {
     const links = [...text.matchAll(/\]\(([^)\s]+)\)/g)]
       .map(m => m[1].split('#')[0])
       .filter(l => l && !/^[a-z]+:/i.test(l));
-    const missing = links.filter(l => !existsSync(normalize(join(dirname(doc), l))));
+    const missing = links.filter(l => !inRepo(join(dirname(doc), l)));
     expect(missing).toEqual([]);
   });
 
