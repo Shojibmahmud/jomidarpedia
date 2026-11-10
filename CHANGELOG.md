@@ -2,7 +2,7 @@
 
 All notable changes to Jomidarpedia (https://jomidarpedia.vercel.app). Newest first. Versions follow [Semantic Versioning](https://semver.org/): a new major version for a change in URLs or in the data download's columns, a minor one for new pages or data, and a patch for fixes. Data edits alone don't need a release.
 
-## [1.0.0] - 2026-11-10
+## [1.0.0] - 2026-11-11
 
 The first public release: the MVP in `roadmap/DEVELOPMENT_ROADMAP.md`, built statically from the CSV tables and verified as a reproducible build (spec `.claude/specs/16-Release.md`).
 
@@ -32,3 +32,13 @@ The first public release: the MVP in `roadmap/DEVELOPMENT_ROADMAP.md`, built sta
 - **12. Content readiness:** release mode passes, with public text rewritten rather than deleted.
 - **13. Quality:** performance budgets, Lighthouse, axe and manual accessibility checks, error handling, an enforced Content Security Policy, SEO, and CARTO map tiles.
 - **14. Release:** the data download, the fresh-clone comparison (`npm run compare:out`), production checks (`npm run check:prod`, `npm run e2e:prod`), `CONTRIBUTING.md` and `docs/RUNBOOK.md`.
+
+### Fixed in the release checks
+- Production had no `robots.txt` or `sitemap.xml`, and its canonical links were relative: Vercel now serves the built site as it is, and `SITE_URL` is set.
+- On phones, the map's Zoom in button didn't respond to taps (the Filters row lay over it), and a strip of the page showed above the map.
+- `compare:out` no longer reports the order of `<head>` tags, which Next.js doesn't keep the same between builds.
+- Two map tests that could fail under load now wait for the map to settle.
+
+### Known limits
+- Screen readers were checked with VoiceOver on a Mac and TalkBack on Android. NVDA on Windows and VoiceOver on iPhone were not checked for this release.
+- Firefox and Safari print preview were last checked in Phase 9; this release repeated the print checks in Chromium only.
