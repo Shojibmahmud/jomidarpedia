@@ -177,6 +177,7 @@ None of this is required to work on the code by hand.
 - **`npm run data` without `JP_DATA_MODE` is a release build**, and fails on editorial problems. That is intended.
 - **`npm run e2e` tests whatever is in `out/`.** If you forget to rebuild, you test old pages.
 - **`vercel.json` and `serve.json` must carry the same headers.** A unit test fails if they differ. Change both together.
+- **Keep `"framework": null` in `vercel.json`.** Vercel serves `out/` as it is. With Vercel's Next.js builder, files written to `out/` after `next build` (`robots.txt`, `sitemap.xml`) don't ship (`docs/ARCHITECTURE.md` §9).
 - **A new external origin needs a CSP change.** An image, fetch or form to a new host is blocked until you add the host to both header files and to `docs/security.md`.
 - **`useSearchParams` needs `<Suspense>`** in a static export, or the build fails.
 - **Dynamic routes need `generateStaticParams()` and `dynamicParams = false`.**

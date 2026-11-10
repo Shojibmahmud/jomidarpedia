@@ -9,7 +9,7 @@ import { EMPTY, filter, makePlaces, type FilterState } from '../lib/filters';
 import { parse } from '../lib/urlState';
 import type { District, Division, IndexSite } from '../lib/types';
 import { BASE_MAPS } from '../lib/map-config';
-import { stubTiles, TILE } from './tiles';
+import { PNG_1PX, stubTiles, TILE } from './tiles';
 
 const index: IndexSite[] = JSON.parse(readFileSync('public/data/index.json', 'utf8'));
 const divisions: Division[] = JSON.parse(readFileSync('data/build/divisions.json', 'utf8'));
@@ -224,15 +224,19 @@ test.describe('desktop', () => {
   });
 
   test('blocked tiles show the overlay; the list keeps working; Retry recovers (AC-10)', async ({ page }) => {
+    // One handler, so tiles stay blocked until the map has settled: a tile that loads while the map is still moving
+    // after the filter would clear the overlay on its own and leave Retry nothing to click (flaky on CI, 10 Nov 2026).
+    let blocked = true;
     await page.unroute(TILE);
-    await page.route(TILE, r => r.abort());
+    await page.route(TILE, r => (blocked ? r.abort() : r.fulfill({ contentType: 'image/png', body: PNG_1PX })));
     await open(page);
     await expect(page.locator('[data-tiles-failed]')).toBeVisible({ timeout: 10_000 });
     await expect(page.locator('.leaflet-control-attribution')).toBeInViewport();
     await page.locator('aside').getByRole('switch', { name: /Day trips from Dhaka/ }).click();
     await expect(page.locator('#jp-results-title')).toHaveAttribute('data-count', String(filter(index, { ...EMPTY, day: true }, places).length));
-    await page.unroute(TILE);
-    await stubTiles(page);
+    await mapReady(page);
+    await expect(page.locator('[data-tiles-failed]')).toBeVisible();
+    blocked = false;
     await page.locator('[data-tiles-failed] button').click();
     await expect(page.locator('[data-tiles-failed]')).toHaveCount(0);
   });
