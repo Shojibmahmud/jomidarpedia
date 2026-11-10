@@ -337,6 +337,29 @@ test.describe('phone', () => {
     await expect(page.locator('[data-key-circle]')).toBeInViewport();
   });
 
+  // 13.3 row 13 on an Android phone (11 Nov 2026): the Filters row spanned the map's width above the controls, so
+  // a tap on Zoom in landed on its empty right end. Each control must be what a tap at its centre reaches.
+  for (const width of [PHONE.width, 384]) {
+    test(`every map control takes taps, and Zoom in zooms, at ${width} px (13.3)`, async ({ page }) => {
+      await page.setViewportSize({ width, height: PHONE.height });
+      await open(page, 'view=map');
+      await mapReady(page);
+      const controls = page.locator('[data-map-controls] button:not([disabled]), [data-map-key] > button');
+      expect(await controls.count()).toBeGreaterThanOrEqual(4);
+      const covered = await controls.evaluateAll(els => els.filter(el => el.getClientRects().length > 0).map(el => {
+        const b = el.getBoundingClientRect();
+        const top = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2);
+        return top && (top === el || el.contains(top)) ? null : `${el.getAttribute('aria-label') ?? el.textContent?.trim()} under ${top?.className}`;
+      }).filter(Boolean));
+      expect(covered).toEqual([]);
+      const z = await zoomOf(page);
+      await page.locator('[data-zoom-in]').click();
+      await expect.poll(() => zoomOf(page)).toBe(z + 1);
+      await page.locator('[data-zoom-out]').click();
+      await expect.poll(() => zoomOf(page)).toBe(z);
+    });
+  }
+
   test('the handle cycles peek, half, full; a summary swaps sheets and Close restores (AC-8)', async ({ page }) => {
     await open(page, 'view=map');
     await mapReady(page);
