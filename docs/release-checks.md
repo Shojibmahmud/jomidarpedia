@@ -30,3 +30,6 @@ Run these after the release commit has deployed, from a checkout of that commit 
 
 | Date | Commit | check:prod | e2e:prod | Headers | Tiles |
 |---|---|---|---|---|---|
+| 11 Nov 2026 | `caccbd0` (deployment of the branch 37 merge; CI run 42909917063 green) | **pass**: 2,025 URLs, no problems; data compiled 2026-10-29. Run with `NODE_USE_ENV_PROXY=1` behind a proxy | **pass**: 6 passed, 3 skipped by design (two read the local `out/`, one is for non-release builds) | **pass**: CSP, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS | **pass**: see `docs/tiles.md`, production check |
+
+Also checked on 11 Nov: `/robots.txt` allows indexing and names `https://jomidarpedia.vercel.app/sitemap.xml` (2,023 URLs); canonical and `og:url` are absolute on that origin (14.2); `/about` answers 308 to `/about/`; an unknown path answers 404 with the site's page; all 19 header and footer links on Home, Explore and a site page answer 200 (the `mailto:` link was not fetched).
