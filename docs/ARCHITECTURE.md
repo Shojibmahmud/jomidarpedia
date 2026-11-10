@@ -193,6 +193,7 @@ Storage can throw (private mode). A change then applies to the open page only.
 ## 9. Hosting and delivery
 
 - **Vercel Hobby** builds and deploys `main` to production with `npm run build`. Other branches get preview deployments. The Hobby plan is for non-commercial use only.
+- **Vercel serves `out/` as a plain static site** (`vercel.json`: `"framework": null`, `"outputDirectory": "out"`, `"trailingSlash": true`), so production is exactly the `out/` that the tests and `compare:out` check. Vercel's Next.js builder must not be used: it takes the output when `next build` ends, so `robots.txt` and `sitemap.xml`, which `npm run seo` writes afterwards, were missing from production until 10 Nov 2026. A unit test in `tests/release-checks.test.ts` keeps these settings.
 - **GitHub Actions** (`.github/workflows/ci.yml`) runs two jobs on every push to `main` and every pull request: `check` (lint, types, a local build, unit tests, link and budget checks, page tests) and `release` (a release build, the same checks, and Lighthouse).
 - **Environment variables** are listed in `docs/DEVELOPMENT.md`. Production needs `SITE_URL` and `NEXT_PUBLIC_TILE_KEY`.
 

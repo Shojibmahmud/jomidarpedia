@@ -182,6 +182,12 @@ describe('security headers', () => {
     expect(header('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     expect(header('Permissions-Policy')).toBe('geolocation=(self), camera=(), microphone=()');
   });
+
+  // 14.2, spec 16 FR-2: Vercel's Next.js builder captured the output when `next build` ended, so robots.txt and
+  // sitemap.xml, written to out/ afterwards by `npm run seo`, never shipped (production answered 404, 10 Nov 2026).
+  it('deploys out/ as a plain static site, so files written after next build ship', () => {
+    expect(vercel).toMatchObject({ framework: null, buildCommand: 'npm run build', outputDirectory: 'out', trailingSlash: true });
+  });
 });
 
 describe('tile key (spec 13 FR-20, D14)', () => {

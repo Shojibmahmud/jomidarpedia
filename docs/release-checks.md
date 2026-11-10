@@ -17,6 +17,7 @@ How to run it:
 
 | Date | Commit | CI run | Node | Result |
 |---|---|---|---|---|
+| 11 Nov 2026 | `8f3637d` | [42840123736](https://github.com/Shojibmahmud/jomidarpedia/actions/runs/42840123736) | 24.18.0 | **pass**: 16,491 files identical after normalisation; `data/build/**` and `index.json` byte-identical. Clone on macOS with no `../images`. The first build differed on one page (`/site/JB-RAJ-005/kahaloo-zamindar-bari/`) in the *order* of two `<head>` tags only, same tags; a rebuild of the same clone matched exactly. Next's head order is not stable between builds, so `compare:out` now compares `<head>` meta and link tags as a sorted list (branch 37). |
 
 ## Production checks (14.5, FR-10)
 

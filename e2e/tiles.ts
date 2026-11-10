@@ -4,8 +4,8 @@
 import type { Page } from '@playwright/test';
 
 export const TILE = /basemaps\.cartocdn\.com|tile\.openstreetmap\.org/;
-const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
+export const PNG_1PX = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
 
 export async function stubTiles(page: Page) {
-  await page.route(TILE, r => r.fulfill({ contentType: 'image/png', body: PNG }));
+  await page.route(TILE, r => r.fulfill({ contentType: 'image/png', body: PNG_1PX }));
 }

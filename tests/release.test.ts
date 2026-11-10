@@ -9,7 +9,7 @@ import { dosDate, readZip, writeZip } from '../scripts/lib/zip.mjs';
 import { buildExport, cell, EXPORT_URL, fieldProblems, FIELDS, toCsv } from '../scripts/build-export.mjs';
 import { checkOut, hiddenCoordinatePatterns } from '../scripts/check-out.mjs';
 import { checkBudgets } from '../scripts/check-budgets.mjs';
-import { compareOut, normalise } from '../scripts/compare-out.mjs';
+import { compareOut, normalise, sortHeadTags } from '../scripts/compare-out.mjs';
 import { checkProd, originProblems, sitemapUrls } from '../scripts/check-prod.mjs';
 import { parseCsv } from '../scripts/csv.mjs';
 import { createReaders } from '@/lib/data';
@@ -254,6 +254,16 @@ describe('compare:out (FR-5, FR-6, AC-5)', () => {
     expect(normalise('/_next/static/chunks/0cz1d0mv5g_q7.js and /_next/static/chunks/1-nqmp1rl8kqt.js', undefined)).toBe('/_next/static/chunks/#.js and /_next/static/chunks/#.js');
     expect(normalise('_next/static/media/167cd0713aa75522-s.1nzccunaoxsdm.woff2', undefined)).toBe('_next/static/media/167cd0713aa75522-s.#.woff2');
     expect(normalise('"b":"abc123XYZ"', 'abc123XYZ')).toBe('"b":"BUILD_ID"');
+  });
+
+  it('ignores the order of <meta> and <link> tags in <head>, but not a changed or missing tag', () => {
+    const page = (head: string) => `<html><head><title>T</title>${head}<script src="a.js"></script></head><body><link rel="x"/><meta name="b"/></body></html>`;
+    const canon = '<link rel="canonical" href="/a/"/>';
+    const theme = '<meta name="theme-color" content="#fff"/>';
+    expect(sortHeadTags(page(canon + theme))).toBe(sortHeadTags(page(theme + canon)));
+    expect(sortHeadTags(page(canon + theme))).not.toBe(sortHeadTags(page('<link rel="canonical" href="/b/"/>' + theme)));
+    expect(sortHeadTags(page(canon + theme))).not.toBe(sortHeadTags(page(theme)));
+    expect(sortHeadTags(page(theme))).toContain('<body><link rel="x"/><meta name="b"/></body>');
   });
 
   it('passes trees that differ only in build ID and chunk hashes', () => {
