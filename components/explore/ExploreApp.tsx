@@ -435,12 +435,16 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   if (phoneMap) {
     const mapBottom = selSite ? summaryH : sheetH;
     return (
-      <div ref={overlay} className="fixed inset-x-0 bottom-0 top-[61px] z-panel overflow-hidden bg-map-land" data-phone-map>
+      // !mt-0: <main>'s space-y-6 gave this fixed layer a 24 px top margin, and the page showed through the gap
+      // under the header (Android check, 11 Nov 2026).
+      <div ref={overlay} className="fixed inset-x-0 bottom-0 top-[61px] z-panel !mt-0 overflow-hidden bg-map-land" data-phone-map>
         {live}
         <div className="absolute inset-x-0 top-0" style={{ bottom: mapBottom }}>
           {theMap(snap === 'full' && !selSite, false)}
           <div className="pointer-events-none absolute inset-x-3 top-3 z-panel space-y-2">
-            <div className="pointer-events-auto flex items-start gap-2">{filtersButton(true)}</div>
+            {/* Only the button takes taps: the row spans the map's width, and its empty right end lay over Zoom in
+                (13.3 row 13, Android, 11 Nov 2026). */}
+            <div className="flex items-start gap-2"><div className="pointer-events-auto">{filtersButton(true)}</div></div>
             <div className="pointer-events-auto space-y-2">{noticeBox}<LiteNotices /></div>
           </div>
         </div>

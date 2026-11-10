@@ -337,6 +337,32 @@ test.describe('phone', () => {
     await expect(page.locator('[data-key-circle]')).toBeInViewport();
   });
 
+  // 13.3 row 13 on an Android phone (11 Nov 2026): the Filters row spanned the map's width above the controls, so
+  // a tap on Zoom in landed on its empty right end. Each control must be what a tap at its centre reaches.
+  for (const width of [PHONE.width, 384]) {
+    test(`every map control takes taps, and Zoom in zooms, at ${width} px (13.3)`, async ({ page }) => {
+      await page.setViewportSize({ width, height: PHONE.height });
+      await open(page, 'view=map');
+      await mapReady(page);
+      const controls = page.locator('[data-map-controls] button:not([disabled]), [data-map-key] > button');
+      expect(await controls.count()).toBeGreaterThanOrEqual(4);
+      const covered = await controls.evaluateAll(els => els.filter(el => el.getClientRects().length > 0).map(el => {
+        const b = el.getBoundingClientRect();
+        const top = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2);
+        return top && (top === el || el.contains(top)) ? null : `${el.getAttribute('aria-label') ?? el.textContent?.trim()} under ${top?.className}`;
+      }).filter(Boolean));
+      expect(covered).toEqual([]);
+      // The map starts right under the header, with no strip of the page between them.
+      const [header, layer] = await Promise.all([page.locator('body > header').boundingBox(), page.locator('[data-phone-map]').boundingBox()]);
+      expect(Math.abs(layer!.y - (header!.y + header!.height))).toBeLessThanOrEqual(1);
+      const z = await zoomOf(page);
+      await page.locator('[data-zoom-in]').click();
+      await expect.poll(() => zoomOf(page)).toBe(z + 1);
+      await page.locator('[data-zoom-out]').click();
+      await expect.poll(() => zoomOf(page)).toBe(z);
+    });
+  }
+
   test('the handle cycles peek, half, full; a summary swaps sheets and Close restores (AC-8)', async ({ page }) => {
     await open(page, 'view=map');
     await mapReady(page);
@@ -357,16 +383,17 @@ test.describe('phone', () => {
     await handle.click();
     await expect(sheet).toHaveAttribute('data-sheet', 'half');
 
-    const pin = page.locator('.leaflet-marker-pane .jp-pin, .leaflet-marker-pane .jp-cluster').first();
-    await pin.focus();
-    await page.keyboard.press('Enter');
-    if (!(await page.locator('[data-summary-sheet]').count())) {
+    // Enter on a pin opens its card; Enter on a cluster zooms in, and the pins it splits into are re-drawn, so a pin
+    // focused mid-animation can vanish with the key press. Retry from the settled map until a card opens (flaky under
+    // load, 11 Nov 2026).
+    await expect(async () => {
       await mapReady(page);
-      const p = page.locator('.leaflet-marker-pane .jp-pin').first();
-      await p.focus();
+      const pins = page.locator('.leaflet-marker-pane .jp-pin');
+      const target = (await pins.count()) ? pins.first() : page.locator('.leaflet-marker-pane .jp-cluster').first();
+      await target.focus();
       await page.keyboard.press('Enter');
-    }
-    await expect(page.locator('[data-summary-sheet] [role="dialog"]')).toBeVisible();
+      await expect(page.locator('[data-summary-sheet] [role="dialog"]')).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 20_000 });
     await expect(sheet).toHaveAttribute('aria-hidden', 'true');
     await page.locator('[data-summary-close]').click();
     await expect(page.locator('[data-summary-sheet]')).toHaveCount(0);
