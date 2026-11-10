@@ -51,6 +51,20 @@ export function normalise(text, id) {
   return out;
 }
 
+// Next does not always emit the <head> tags in the same order: on 10 Nov 2026 one page of 2,436 had its canonical
+// link ahead of theme-color in one build and behind it in the next, with the same tags. The <meta> and <link> tags
+// in <head> are therefore compared as a sorted list: every tag and attribute still counts, only their order does not.
+const HEAD_TAG = /<(?:meta|link)\b[^>]*>/g;
+
+/** The page with the <meta> and <link> tags inside <head> put in sorted order, each in the place of one of them. */
+export function sortHeadTags(html) {
+  return html.replace(/<head\b[^>]*>[\s\S]*?<\/head>/, head => {
+    const sorted = (head.match(HEAD_TAG) ?? []).sort();
+    let i = 0;
+    return head.replace(HEAD_TAG, () => sorted[i++]);
+  });
+}
+
 const firstDiff = (a, b) => {
   const la = a.split('\n');
   const lb = b.split('\n');
@@ -135,8 +149,8 @@ export function compareOut(ref, cand = '.') {
       if (d) problems.push(`out/${k}: ${d}`);
       else if (!a.equals(b)) notes.push(`out/${k}: the bytes differ but every entry is identical (a different zlib build)`);
     } else if (TEXT.has(ext)) {
-      const ta = normalise(a.toString('utf8'), ida);
-      const tb = normalise(b.toString('utf8'), idb);
+      const ta = (ext === '.html' ? sortHeadTags : String)(normalise(a.toString('utf8'), ida));
+      const tb = (ext === '.html' ? sortHeadTags : String)(normalise(b.toString('utf8'), idb));
       if (ta !== tb) problems.push(`out/${k}: ${firstDiff(ta, tb)}`);
     } else if (!a.equals(b)) problems.push(`out/${k}: not byte-identical`);
   }
