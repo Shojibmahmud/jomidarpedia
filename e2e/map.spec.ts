@@ -352,6 +352,9 @@ test.describe('phone', () => {
         return top && (top === el || el.contains(top)) ? null : `${el.getAttribute('aria-label') ?? el.textContent?.trim()} under ${top?.className}`;
       }).filter(Boolean));
       expect(covered).toEqual([]);
+      // The map starts right under the header, with no strip of the page between them.
+      const [header, layer] = await Promise.all([page.locator('body > header').boundingBox(), page.locator('[data-phone-map]').boundingBox()]);
+      expect(Math.abs(layer!.y - (header!.y + header!.height))).toBeLessThanOrEqual(1);
       const z = await zoomOf(page);
       await page.locator('[data-zoom-in]').click();
       await expect.poll(() => zoomOf(page)).toBe(z + 1);
@@ -380,16 +383,17 @@ test.describe('phone', () => {
     await handle.click();
     await expect(sheet).toHaveAttribute('data-sheet', 'half');
 
-    const pin = page.locator('.leaflet-marker-pane .jp-pin, .leaflet-marker-pane .jp-cluster').first();
-    await pin.focus();
-    await page.keyboard.press('Enter');
-    if (!(await page.locator('[data-summary-sheet]').count())) {
+    // Enter on a pin opens its card; Enter on a cluster zooms in, and the pins it splits into are re-drawn, so a pin
+    // focused mid-animation can vanish with the key press. Retry from the settled map until a card opens (flaky under
+    // load, 11 Nov 2026).
+    await expect(async () => {
       await mapReady(page);
-      const p = page.locator('.leaflet-marker-pane .jp-pin').first();
-      await p.focus();
+      const pins = page.locator('.leaflet-marker-pane .jp-pin');
+      const target = (await pins.count()) ? pins.first() : page.locator('.leaflet-marker-pane .jp-cluster').first();
+      await target.focus();
       await page.keyboard.press('Enter');
-    }
-    await expect(page.locator('[data-summary-sheet] [role="dialog"]')).toBeVisible();
+      await expect(page.locator('[data-summary-sheet] [role="dialog"]')).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 20_000 });
     await expect(sheet).toHaveAttribute('aria-hidden', 'true');
     await page.locator('[data-summary-close]').click();
     await expect(page.locator('[data-summary-sheet]')).toHaveCount(0);

@@ -435,7 +435,9 @@ export function ExploreApp({ places: list }: { places: PlaceList }) {
   if (phoneMap) {
     const mapBottom = selSite ? summaryH : sheetH;
     return (
-      <div ref={overlay} className="fixed inset-x-0 bottom-0 top-[61px] z-panel overflow-hidden bg-map-land" data-phone-map>
+      // !mt-0: <main>'s space-y-6 gave this fixed layer a 24 px top margin, and the page showed through the gap
+      // under the header (Android check, 11 Nov 2026).
+      <div ref={overlay} className="fixed inset-x-0 bottom-0 top-[61px] z-panel !mt-0 overflow-hidden bg-map-land" data-phone-map>
         {live}
         <div className="absolute inset-x-0 top-0" style={{ bottom: mapBottom }}>
           {theMap(snap === 'full' && !selSite, false)}
