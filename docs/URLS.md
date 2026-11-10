@@ -29,12 +29,13 @@ Status: **built** means the page exists in `app/` now; **planned** names the tas
 | `/trips/` | Day trips listing (first 12 cards static; filters in the browser) | built | 9.1, 9.2 |
 | `/trips/<id>/` | Itinerary page, with print layout | built | 9.3–9.12 |
 | `/sources/` | Sources list (first 25 rows static; search, chips, sort and paging in the browser) | built | 10.3 |
-| `/sources/<id>/` | Source page (1,136) | built | 10.4 |
-| `/about/` | About and methodology (text: `content/about.en.md`) | built | 10.5–10.9 |
+| `/sources/<id>/` | Source page (1,146) | built | 10.4 |
+| `/about/` | About and methodology (text: `content/about.en.md` and `content/about.bn.md`) | built | 10.5–10.9 |
 | `/credits/` | Image credits and licences | built | 10.7 |
 | `/correction/` | Correction and photo-offer form (noindex); every correction link opens it as a popup instead | built | 5.13 |
 | `/404.html` | Not found (served for any unknown path, status 404) | built | 10.10 |
 | `/dev/i18n/` | Language test page: local and preview builds only, never in release | built | 3.1 |
+| `/dev/bn-review/`, `/dev/bn-review/<table>/` | Bangla translation coverage and review: local and preview builds only, never in release | built | 11a (spec 14 FR-22) |
 
 Slugs come from the data: site `dataset_slug`; division and district `slug` in `data/build/divisions.json` and `districts.json`. A district and a division may share a slug (Dhaka), because they live under different prefixes.
 

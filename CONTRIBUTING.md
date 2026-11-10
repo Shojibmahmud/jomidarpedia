@@ -2,9 +2,11 @@
 
 A short guide for the editor and anyone helping them. The rules for writing code here are in `CLAUDE.md`. What each field means is in `docs/DATA_CONTRACT.md`, and how Bangla is written is in `docs/TRANSLATION_BN.md`. This page doesn't repeat them.
 
+Developers: start with `README.md`, then `docs/ARCHITECTURE.md` and `docs/DEVELOPMENT.md`. The tables themselves are described in `docs/DATA_GUIDE.md`.
+
 ## Set up
 
-You need Node 24 (`.nvmrc`) and npm.
+You need Node 24 or newer (`.nvmrc`) and npm.
 
 ```sh
 npm ci

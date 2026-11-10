@@ -1,226 +1,142 @@
-# Jomidarpedia: developer handoff
+# Jomidarpedia · জমিদারপিডিয়া
 
-Static Next.js (App Router) site, `output: 'export'`, Tailwind CSS v3.4, deployed on Vercel Hobby. No server code, no API routes, no database, no login.
+A free, bilingual (English and Bangla) encyclopedia and travel guide to the zamindar houses, palaces, rajbaris and kacharis of Bangladesh.
 
-Design canvas (all screens, light and dark, Bangla mode, print, accessibility pass): https://claude.ai/artifact/RWUDBkchSgq1mwrDe5LqqC
+**Live site:** https://jomidarpedia.vercel.app · **Version:** 1.0.0 (10 November 2026) · **Changes:** [`CHANGELOG.md`](CHANGELOG.md)
 
-## Files in this folder
+For each of its 413 sites, the site shows what is known, how sure we are, where the sources disagree, and how to get there from Dhaka. Unknowns are shown as words ("Not documented", "No ticket reported"). They are never shown as blanks, zeros or "Free".
 
-| File | What it is |
+## What it is, technically
+
+- **A fully static site.** Next.js (App Router) with `output: 'export'`. There is no server, API, database, login, cookie or analytics. Vercel serves the files in `out/`.
+- **CSV files are the only source of truth.** The 17 tables in `data/csv/` are compiled into JSON at build time. Nothing is edited anywhere else.
+- **The build is the safety gate.** It refuses to publish a hidden site's coordinates, a photo that isn't cleared, a fee of 0 shown as a price, or an internal research note.
+- **Both languages are in every page.** English and Bangla are rendered together, and CSS shows one. There are no `/bn/` routes.
+
+| Area | Choice |
 |---|---|
-| `tailwind.config.ts` | Theme: colours as CSS variables, paired English/Bangla type scale, radii, shadows, z-index above Leaflet |
-| `app/tokens.css` | Global CSS: light and dark tokens, base rules (focus ring, placeholder colour, Bangla line height), print rules |
-| `app/fonts.ts` | `next/font/google` setup for Fraunces, Source Sans 3, Tiro Bangla, Hind Siliguri |
-| `app/layout.tsx` | Root layout: font variables, no-flash theme/language script, skip link |
-| `next.config.mjs` | Static export settings |
-| `lib/types.ts` | TypeScript shapes of every generated JSON file |
-| `scripts/build-index.mjs` | Builds `public/data/index.json` from `sites.csv` and `images.csv` (defaults: `data/csv/`, `public/data`). Last run (22 Oct 2026): **413 sites, 35.0 KB gzipped** (budget 150 KB) |
-| `scripts/build-data.mjs` | Builds `data/build/**` from all 14 CSV tables |
-| `scripts/data.mjs` | `npm run data`: runs both builders, builds the static maps (`scripts/build-maps.mjs`), checks the thumbnails and writes `data/reports/release-problems.md` |
-| `scripts/build-thumbs.mjs`, `scripts/build-icons.mjs` | `npm run thumbs` and `npm run icons`: maintenance commands whose output is committed |
-| `scripts/data-mode.mjs`, `scripts/lib/` | Build mode, CSV validation, safety and editorial checks, the report |
-| `roadmap/DEVELOPMENT_ROADMAP.md` | The build plan (v2). Decisions, build modes and data contracts there override this README where they differ |
-| `roadmap/DESIGN_COVERAGE.md` | Each design board mapped to routes, data and roadmap tasks |
-| `roadmap/ROADMAP_REVIEW_AND_REVISION_REQUEST.md`, `roadmap/ROADMAP_REVIEW_RESOLUTION.md` | The review of roadmap v1 and how each finding was handled |
-| `roadmap/archive/` | Superseded roadmap versions |
-| `.claude/specs/` | Feature specifications, one per phase |
-| `docs/DATA_CONTRACT.md`, `docs/URLS.md` | Data contract and URL contract |
+| Framework | Next.js 16 (App Router, static export), React 19, TypeScript |
+| Styling | Tailwind CSS 3.4, with colours as CSS variables (`app/tokens.css`) |
+| Map | Leaflet and leaflet.markercluster over CARTO raster tiles, loaded only when a map is shown |
+| Search | Fuse.js, loaded only when a search box is used |
+| Tests | Vitest (unit), Playwright with axe (pages), Lighthouse |
+| Hosting | Vercel Hobby, deployed from `main` |
+| Corrections | A form that posts to Web3Forms, which emails the editor |
 
-## Build pipeline
+## Quick start
 
-```
-data/csv/*.csv            source of truth, edited in GitHub
-   │  npm run data  (scripts/build-index.mjs + scripts/build-data.mjs)
-   ▼
-public/data/index.json    the ONLY file the browser fetches (Explore, Search, Lite list)
-data/build/**/*.json      read at build time only, via fs, by generateStaticParams + page.tsx
-   │  next build  (output: 'export')
-   ▼
-out/                      ~2,430 static pages (413 sites + 413 ID redirects + 385 trips + 1,136 sources + 72 areas + ~10 others) + assets → Vercel
+You need Node 24 or newer (`.nvmrc`) and npm.
+
+```sh
+npm ci
+npm run dev          # builds the data in local mode, then serves http://localhost:3000
 ```
 
-`build-data.mjs` reads all 14 tables in `data/csv/` (exported from the workbook; `scripts/export-xlsx.py` goes the other way) and writes the build-time files below. The spec is `.claude/specs/01-Data-pipeline-gates.md`.
+Restart `npm run dev` after editing a CSV, because the data is built once at start.
 
-The build mode comes from `scripts/data-mode.mjs` (roadmap §2.4). It is **`release` unless set otherwise**; Vercel production is always `release`. `npm run dev` and `npm run build:local` set `JP_DATA_MODE=local`.
+To run everything CI runs:
 
-| Problem | local / preview | release |
-|---|---|---|
-| Structural: malformed CSV, missing column, bad or duplicate ID, broken reference, bad enum, date or number, coordinates outside Bangladesh, duplicate slug, Ready image without a file | fail; nothing is written | fail; nothing is written |
-| Safety: hidden-pin coordinates on any path, a non-`Ready` image, a fee of 0 or "free entry" shown as a price, `index.json` over 150 KB gzipped | fail | fail |
-| Editorial: internal notes in public text, non-standard credit line, `unclassified` site type | reported | fail |
+```sh
+npm run lint
+npm run typecheck
+npm run build:local  # data (local mode) + static site in out/ + robots.txt
+npm test             # unit tests; they need the data build above
+npm run check:out    # link and leak checks over out/
+npm run check:budgets
+npx playwright install chromium   # first time only
+npm run e2e          # page tests against out/
+```
 
-Every run writes `data/reports/release-problems.md`, which groups editorial problems by the CSV cell to edit. Outputs are deterministic: `meta.generatedAt` is `SOURCE_DATE_EPOCH` if set, otherwise the data's last-updated date.
+Every command is explained in [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).
 
-Hard rules it enforces:
-- Only images with `publication_readiness = Ready` are written; `Needs review` and `Permission required` never leave the CSV.
-- `entry_fee_bdt = 0` becomes `{ known: false, text: 'No ticket reported' }`. The word "Free" never appears.
-- Sites with `map_display = hide`, or without both coordinates, get no coordinates on any output path (index, site JSON, trip stops, map links), so no guessed pin is possible.
+## How it works
 
-## Data files
+```
+data/csv/*.csv                17 tables: the only source of truth
+data/translations/bn/*.csv    Bangla prose, tied to its English by a fingerprint
+content/about.{en,bn}.md      the About page's text
+        │
+        │  npm run data        validate → build → check → report
+        ▼
+public/data/index.json        one row per site: the ONLY data file the browser fetches
+data/build/**/*.json          everything else, read with fs while pages are pre-rendered
+public/maps/*.svg             static preview maps
+data/reports/release-problems.md   what to fix, by CSV cell
+        │
+        │  next build          output: 'export'
+        ▼
+out/                          about 2,440 static pages → Vercel
+```
 
-| File | Built from | Count | Read by |
-|---|---|---|---|
-| `public/data/index.json` | sites, images | 413 rows, 35 KB gz | **Browser**: `<ExploreApp>`, `<SearchApp>`, `<SearchBox>` dropdown, Lite list |
-| `data/build/sites/<id>.json` | sites, visitor_info, travel_routes, costs, history_events, legends, claims, claim_source_links, site_sources, sources, images, site_relationships, itineraries | 413 | `/site/[id]/[slug]` |
-| `data/build/trips/<id>.json` | itineraries, itinerary_stops, costs, sites (names, coords) | 385 | `/trips/[id]` |
-| `data/build/trips.json` | itineraries (summary) | 385 rows | `/trips`, `/`, site page "Itineraries" |
-| `data/build/divisions.json` | sites (counts by division and district, condition counts, no-pin lists) | 8 | `/`, `/division/[slug]`, filter picker |
-| `data/build/districts.json` | sites | 64 | `/district/[slug]`, filter picker |
-| `data/build/sources.json` | sources, site_sources | 1,136 | `/sources`, `/sources/[id]` |
-| `data/build/credits.json` | images (Ready) | 934 | `/credits` |
-| `data/build/meta.json` | all | 1 | footer "Data last updated", Home stats strip, About numbers |
-| `public/thumbs/<image_id>.webp` | images (Ready), centre-cropped to 4:3, 480×360, metadata stripped. **Committed**; made by `npm run thumbs` from `JP_IMAGES_DIR` (default `../images`); `manifest.json` records checksums. `npm run data` fails in every mode if one is missing or a non-Ready one is present (roadmap 3.5, 3.6) | 934 | `<SiteCard>`, `<Gallery>`, `<SummaryCard>` |
-| `public/maps/bd.svg`, `division/<slug>.svg`, `district/<slug>.svg` | static preview maps: boundaries from `data/geo/` (see its `SOURCE.md`) plus mappable sites; token colours, inlined into pages. Generated by `npm run data` (roadmap 3.8) | 1 + 8 + 64 | `<MapTeaser>` (no Leaflet on first load) |
+The data build has three modes. `local` and `preview` report editorial problems and carry on. `release` (the default, and always what production uses) fails on them. Structural errors and the safety rules fail in every mode.
 
-## Routes
+The full picture is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-All routes are statically generated. Dynamic segments export `generateStaticParams()` and `export const dynamicParams = false`.
+## Repository map
 
-| Route | File | Params from | Pages | Data | Client parts |
-|---|---|---|---|---|---|
-| `/` | `app/page.tsx` | | 1 | meta, divisions, trips (3 featured), 4 featured sites | `<SearchBox>` |
-| `/explore` | `app/explore/page.tsx` | | 1 | index.json (fetched) | `<ExploreApp>`: whole page. Filters live in the URL query |
-| `/site/[id]/[slug]` | `app/site/[id]/[slug]/page.tsx` | index.json | 413 | sites/<id>.json | `<Gallery>`, `<Lightbox>`, `<MiniMap>`, `<ShareButton>` |
-| `/site/[id]` | `app/site/[id]/page.tsx` | index.json | 413 | | none: `<meta http-equiv="refresh">` to the canonical slug URL (static export can't redirect) |
-| `/trips` | `app/trips/page.tsx` | | 1 | trips.json | `<TripsFilters>` |
-| `/trips/[id]` | `app/trips/[id]/page.tsx` | trips.json | 385 | trips/<id>.json | `<RouteMap>`, `<DayCheck>`, `<PrintButton>` |
-| `/division/[slug]` | `app/division/[slug]/page.tsx` | divisions.json | 8 | divisions.json, trips.json | none |
-| `/district/[slug]` | `app/district/[slug]/page.tsx` | districts.json | 64 | districts.json, index rows for that district | `<MiniMap>` |
-| `/search` | `app/search/page.tsx` | | 1 | index.json (fetched) | `<SearchApp>` reads `?q=`; wrap in `<Suspense>` (required for `useSearchParams` in a static export) |
-| `/sources` | `app/sources/page.tsx` | | 1 | sources.json | `<SourcesTable>` (filter, sort, paginate client-side) |
-| `/sources/[id]` | `app/sources/[id]/page.tsx` | sources.json | 1,136 | sources.json | none |
-| `/about` | `app/about/page.tsx` | | 1 | meta.json | none |
-| `/credits` | `app/credits/page.tsx` | | 1 | credits.json | `<CreditsFilter>` |
-| 404 | `app/not-found.tsx` | | 1 | | `<SearchBox>` |
+| Path | What it holds |
+|---|---|
+| `app/` | Routes (one `page.tsx` each), the root layout, fonts and `tokens.css` |
+| `components/` | React components, grouped by page or feature |
+| `lib/` | Pure rules and typed data readers: filters, URL state, search, formatting, interface strings |
+| `scripts/` | The data build, the checks and the maintenance commands (plain Node, no dependencies) |
+| `data/csv/` | The source tables |
+| `data/translations/bn/` | Bangla translations of the prose |
+| `data/geo/`, `data/reference/` | Boundary outlines for the static maps; reference tables from the core book |
+| `content/` | The About page's Markdown, in both languages |
+| `public/thumbs/`, `public/home/` | Committed WebP photos (made by `npm run thumbs`) |
+| `tests/`, `e2e/` | Vitest unit tests; Playwright page tests |
+| `docs/` | The documentation listed below |
+| `roadmap/` | The build plan, with every decision and task |
+| `.claude/specs/` | One feature specification per phase |
+| `.claude/skills/`, `.agents/skills/` | Workflow commands for AI coding assistants |
 
-Slugs: division `dhaka, chattogram, rajshahi, khulna, barishal, sylhet, rangpur, mymensingh`; district = lower-case English name (`manikganj`); site = `dataset_slug`. Site IDs never change, so `/site/JB-DHK-064` always resolves even if a slug is renamed.
+Generated and not committed: `data/build/`, `public/data/`, `public/maps/`, `out/`, `.next/`.
 
-Bangla mode is a client-side switch. The boot script sets `<html lang>` and `data-lang` from the stored preference before paint. Planned rendering (roadmap I3, Phase 3): interface strings are server-rendered in both languages and CSS shows the active one, so Server Components need no language context. All names are already bilingual. Long text is English-only in the data; whether the MVP translates prose is owner decision O6. Separate `/bn/...` routes can come later.
+## Documentation
 
-## Component inventory
+Start with the first three.
 
-S = server component, C = client component. "Data" says where the props come from.
+| Read this | When you want to |
+|---|---|
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Understand how the whole system fits together, and the rules it never breaks |
+| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Set up, run commands, test, deploy, and follow step-by-step recipes for common changes |
+| [`docs/CODE_MAP.md`](docs/CODE_MAP.md) | Find the file that does something |
+| [`docs/DATA_GUIDE.md`](docs/DATA_GUIDE.md) | Understand the CSV tables, IDs and the data build's stages |
+| [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md) | Look up a field in the generated JSON: where it comes from and what shows when it is missing |
+| [`docs/URLS.md`](docs/URLS.md) | Look up a route, a query key or a page anchor |
+| [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) | Style something: colours, type, breakpoints, Bangla text, accessibility conventions |
+| [`docs/TRANSLATION_BN.md`](docs/TRANSLATION_BN.md) | Write or review Bangla text |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Edit the data as the editor: facts, photos, corrections |
+| [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Operate the live site: the accounts and keys it needs, handing it over, roll back, confirm a release, fix map tiles, change the domain |
+| [`docs/security.md`](docs/security.md) | See the security headers, the Content Security Policy and why each origin is allowed |
+| [`docs/tiles.md`](docs/tiles.md) | See the map tile provider, its terms and its key |
+| [`docs/a11y-checks.md`](docs/a11y-checks.md), [`docs/release-checks.md`](docs/release-checks.md) | Read or add to the logs of manual accessibility and release checks |
+| [`roadmap/DEVELOPMENT_ROADMAP.md`](roadmap/DEVELOPMENT_ROADMAP.md) | See why something was decided (requirements R1–R10, recommendations I1–I7, owner decisions O1–O15) and what comes after the MVP |
+| [`CLAUDE.md`](CLAUDE.md), [`AGENTS.md`](AGENTS.md) | Work on the project with an AI coding assistant |
 
-### Layout and shared
+The index with a suggested reading order is [`docs/README.md`](docs/README.md).
 
-| Component | | Props | States | Data |
-|---|---|---|---|---|
-| `SiteHeader` | S | `current?: 'explore'\|'trips'\|'divisions'\|'about'` | sticky; mobile menu open/closed | none |
-| `SiteFooter` | S | | | meta.json |
-| `LanguageToggle` | C | | `en` / `bn` (localStorage `jp-lang`) | none |
-| `ThemeToggle` | C | | system / light / dark (localStorage `jp-theme`) | none |
-| `Breadcrumb` | S | `items: {label, labelBn?, href?}[]` | | page data |
-| `SectionNav` | C | `sections: {id, label, empty?: 'no pin'\|'not yet'\|'none'}[]` | desktop sticky TOC with active section; mobile `<select>` jump | page data |
-| `SuggestCorrection` | S | `siteId?, field?, variant: 'button'\|'link'` | links to the pre-filled `/correction/` form, opened as a popup that emails the editor | none |
-| `Skeleton` | S | `variant: 'row'\|'card'\|'map'` | | none |
-| `OfflineNotice` | C | | online / slow (Lite suggested) / offline | `navigator.onLine`, `navigator.connection` |
+## The rules the build enforces
 
-### Names, badges and states of knowledge
+A new developer should know these before changing anything. They come from the roadmap (§2.1) and are checked by the data build, by `npm run check:out` and by tests.
 
-| Component | | Props | States | Data |
-|---|---|---|---|---|
-| `BilingualName` | S | `en, bn, alt?: string[], size: 'page'\|'card'\|'compact', lead?: 'en'\|'bn'` | `lead='bn'` in Bangla mode | IndexSite / SiteRecord |
-| `ConditionBadge` | S | `condition: Condition, label?: 'short'\|'long'` | 5 conditions, each with its own glyph | `c` / `condition` |
-| `AccessBadge` | S | `access: Access, fee?: number` | ticketed shows "Tk 30"; never "Free" | `ac`, `fe` |
-| `DayTripBadge` | S | `dayTrip?: boolean, hours?: number` | yes / overnight / unknown | `dt`, `h` |
-| `LocationBadge` | S | `status: LocationStatus, flagged?: boolean` | confirmed / one source / approximate / no pin | `lc`, `f` |
-| `ConflictNote` | C | `conflict: Conflict` | collapsed / expanded | SiteRecord.conflicts |
-| `LastChecked` | S | `date: string` | fresh / older than 12 months: "May be out of date" | visiting.lastChecked |
-| `RecordBanner` | S | `confidence: RecordConfidence, pinMissing: boolean` | shown for unconfirmed and partly confirmed records | SiteRecord |
-| `Unknown` | S | `value: Maybe<T>, render?: (v) => ReactNode` | known: renders value; unknown: italic muted text | any `Maybe` |
-| `StillToConfirm` | S | `fields: string[], siteId` | hidden when empty | stillToConfirm |
-| `LegendBox` | S | `legends: SiteRecord['legends']` | stories list / "none recorded yet" | legends |
+1. **Real data only.** No invented fact, coordinate, time, fare or name. An unknown is shown as words.
+2. **Hidden pins stay hidden.** A site with `map_display = hide`, or without both coordinates, has no coordinates on any public path: JSON, HTML, links, the sitemap or the data download.
+3. **Fees.** An entry fee of 0 or blank is never a price and never "free entry".
+4. **Photos.** Only an image whose `publication_readiness` is `Ready` is published, with its exact credit line.
+5. **Uncertainty is visible.** Legends stay out of the history timeline. A disagreement shows every version, each with only its own sources.
+6. **Counts come from data.** No number is typed into copy or a test.
 
-### Cards and lists
+## Licences
 
-| Component | | Props | States | Data |
-|---|---|---|---|---|
-| `SiteCard` | S | `site: IndexSite, variant: 'full'\|'compact'\|'row', highlight?: boolean` | photo / no-photo placeholder; "No map location yet"; highlighted (selected pin) | index.json |
-| `PlaceholderArt` | S | `size: 'card'\|'thumb'\|'band', tint?: Condition` | colonnade + chini-tikri dots | none |
-| `ItineraryCard` | S | `trip: TripSummary` | one day / overnight / not stated | trips.json |
-| `DivisionCard` | S | `division: Division` | | divisions.json |
-| `StatStrip` | S | `stats: {value, label, labelBn}[]` | | meta.json |
-| `ResultsList` | C | `sites: IndexSite[], sort: 'time'\|'name'\|'district', selectedId?` | loading skeleton, empty, paged by 24 ("Load more") | filtered index.json |
-| `EmptyResults` | C | `suggestion?: {filter, gain}` | names the one filter to loosen | computed |
+- **Text and data:** [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The published tables can be downloaded from the About page and the footer.
+- **Photos:** each keeps its own licence, listed with its credit on `/credits/`.
+- **Maps:** © OpenStreetMap contributors, © CARTO. Boundaries: geoBoundaries; districts BBS/OCHA, CC BY 3.0 IGO (`data/geo/SOURCE.md`).
+- **Code:** [MIT](LICENSE).
 
-### Map (Leaflet, loaded with `next/dynamic` and `ssr: false`, never in Lite mode)
+## Contact
 
-| Component | | Props | States | Data |
-|---|---|---|---|---|
-| `MapView` | C | `sites: IndexSite[], selectedId?, onSelect, basemap: 'osm'\|'positron', bounds?` | loading; clusters split as you zoom; approximate pins draw a 1.5 km circle from zoom 11 | index.json |
-| `SitePin` | C | `site: IndexSite, selected?, focused?` | fill: solid / outlined / hatched; glyph by condition; `?` when flagged; hover name; focus ring | `c`, `lc`, `f` |
-| `ClusterIcon` | C | `count: number` | 36 / 44 / 52 px by count | markercluster |
-| `MapControls` | C | | zoom, locate, base-map menu open | none |
-| `MapKey` | C | | collapsed / open | none |
-| `SummaryCard` | C | `site: IndexSite` | desktop popover / mobile sheet body | index.json |
-| `BottomSheet` | C | `snap: 'peek'\|'half'\|'full', onSnap` | drag, or tap the handle (a button with `aria-expanded`) | none |
-| `MiniMap` | C | `latlon?, status, areaLabel?` | pin / approximate circle / no-pin area panel | SiteRecord.location |
-| `MapTeaser` | S | `src, alt, href, count` | static SVG preview, no Leaflet | public/maps |
-| `RouteMap` | C | `stops: Itinerary['stops'], legs` | numbered markers; solid, dashed, dotted legs | trips/<id>.json |
+Corrections and photo offers go through **Suggest a correction** on the site, or to jomidarpedia@gmail.com.
 
-### Filters, search
-
-| Component | | Props | States | Data |
-|---|---|---|---|---|
-| `ExploreApp` | C | | URL query ↔ filter state; map / list; Lite mode | index.json |
-| `FilterRail` / `FilterDrawer` | C | `state, counts, onChange` | rail applies instantly; drawer applies on "Show N sites"; all groups collapsible | computed from index.json |
-| `DayTripSwitch` | C | `checked, count` | on / off, `role="switch"` | `dt` |
-| `TravelTimeSegmented` | C | `value: TravelBucket\|'any', counts` | single select; Unknown is its own segment | `tb` |
-| `ChipGroup` | C | `options: {value, label, labelBn, count}[], selected[]` | each chip: default / selected (check glyph) / zero count | computed |
-| `DivisionDistrictPicker` | C | `selected` | division open shows its districts | divisions.json, districts.json |
-| `ActiveFilters` | C | `state, onRemove, onClear` | | URL |
-| `SearchBox` | C | `variant: 'hero'\|'header'\|'page'` | empty / typing with results dropdown (Sites, Districts, Families) / no results | index.json (Fuse.js, lazy) |
-| `SearchApp` | C | | results, "Did you mean", empty | index.json |
-
-### Site page
-
-| Component | | Props | States | Data |
-|---|---|---|---|---|
-| `Gallery` | C | `images: ImageRecord[]` | photos / `NoPhotoPanel` | SiteRecord.images |
-| `Lightbox` | C | `images, index` | open, ←/→, Esc, swipe, focus trapped | SiteRecord.images |
-| `NoPhotoPanel` | S | `externalPhotos?` | outbound link + "Share a photo" | SiteRecord |
-| `AtAGlance` | S | `site: SiteRecord` | | SiteRecord |
-| `LocationPanel` | S | `location, place` | confirmed / one source / approximate / no pin | SiteRecord |
-| `HistoryTimeline` | S | `events` | events / empty state naming what is known | SiteRecord.history |
-| `FeatureList` | S | `features, style: Maybe<string>` | list / "Not documented" boxes | SiteRecord |
-| `VisitingInfo` | S | `visiting, access` | private-house notice when restricted | SiteRecord.visiting |
-| `RouteSteps` | S | `route: Route` | horizontal (desktop) / vertical (mobile) | SiteRecord.travel |
-| `RouteAccordion` | C | `routes: Route[]` | each alternative open/closed | SiteRecord.travel |
-| `CombineWith` | S | `related` | | SiteRecord.related |
-| `SourcesList` | S | `sources` | | SiteRecord.sources |
-
-### Trips
-
-| Component | | Props | States | Data |
-|---|---|---|---|---|
-| `TripsFilters` | C | | length, travel time, division, sort | trips.json |
-| `ItineraryStops` | S | `stops` | timed / order only | trips/<id>.json |
-| `DayCheck` | C | `rules` (closing days, breaks) | weekday selected → warning | site visiting rules |
-| `BudgetTable` | S | `rows: Itinerary['budget']` | known total + count of unknown items | trips/<id>.json |
-| `PrintButton` + `PrintLayout` | C / S | | `window.print()`; two A4 pages styled by `@media print` | trips/<id>.json |
-
-## Accessibility and performance (the design depends on these)
-
-- `:focus-visible` ring everywhere (in tokens.css). Pins are `<button>`s in Leaflet's marker pane with names like "Baliati Palace, preserved, location confirmed".
-- `html { scroll-padding-top: 88px }`; when the bottom sheet is open, set `scroll-padding-bottom` to the sheet's height.
-- The list is the accessible equivalent of the map and renders before the map loads. Leaflet, markercluster and Fuse.js are dynamic imports.
-- Touch targets are 44 px; pins draw at 26–34 px inside a 44 px hit area.
-- No animation libraries; CSS transitions only, off under `prefers-reduced-motion`.
-- Bangla: `lang="bn"` on every Bangla string; Latin inside Bangla text needs `lang="en"`.
-
-## Data issues to fix before launch
-
-Status as of 22 Oct 2026. Tasks refer to `roadmap/DEVELOPMENT_ROADMAP.md` v2.
-
-1. ~~**Internal research notes in public text.** The release report (`data/reports/release-problems.md`, 22 Oct 2026) lists **1,510 cells to edit**: 1,416 internal-note cells (1,489 output occurrences), 15 credit lines and 79 unclassified types. Largest groups: `site_sources.citation_publisher` (643), `sites.coordinates_note` (298), `site_sources.citation_title` (110), `claims.claim_text` (78), `sites.short_description` (71). Another 1,286 flagged cells never reach the output. Phase 12.~~ Done in Phase 12 (26 Oct 2026): rewritten in public words, keeping each limitation; the release report shows 0 cells to edit.
-2. **`entry_fee_bdt = 0` means "no ticket reported"** (for example Teota, Ruplal House). Never display it as a price or as free entry. Enforced by the build (roadmap 1.11).
-3. ~~**`site_type = unclassified` for 79 sites**, including Baliati. Roadmap 12.6.~~ Done: classified from linked sources (`data/reports/classification-2026-10-25.md`).
-4. ~~**Source records carry internal provenance** (for example SRC-1079). Public fields are rewritten in Phase 12; internal columns are never emitted (roadmap I7).~~ Done in Phase 12.
-5. ~~**15 image credit lines don't follow the standard format.** Fix without dropping any licence-required wording. Roadmap 12.7.~~ Done.
-6. **Itinerary titles embed the anchor site.** Handled only in the build (`tripTitle`), made idempotent; CSV titles are not rewritten. Roadmap I5, 2.16.
-7. ~~Only `sites.csv` exists as CSV.~~ Done: all 14 tables are in `data/csv/`.
-8. ~~**New fares from the editor (20 Oct 2026)** for the Manikganj loop aren't in the data yet: Teota → Aricha rickshaw Tk 15 shared / Tk 30 reserved; Aricha → Utholi shared auto Tk 10; Utholi → Gabtoli bus Tk 200. Roadmap 12.8.~~ Done: legs and fares for `IT-DHK-064-1` (known per person Tk 405).
-9. **Builder defects to fix** (roadmap Phase 2): conflict versions lose their sources (576 of 1,196); unknown route modes are drawn as buses (37 routes); trip `lastChecked` takes the newest anchor date; `features` is always empty; budgets drop the numeric amount, unit and basis that `costs.csv` already has.
-10. ~~**Missing Bangla names:** JB-RAJ-059 and JB-RAJ-071. Roadmap 2.13 (no invented names).~~ Done in Phase 12: the owner's transliterations, listed as still to confirm.
-11. ~~`app/layout.tsx` says "399 sites" and refers to missing icons.~~ Done in Phase 3: the count comes from `meta.json`, and the icons are generated by `npm run icons`.
-12. **Print CSS:** in dark mode the dark tokens outrank the `@media print` override. Roadmap 9.11.
+Earlier versions of this file are in `archive/`. They are design-time handoff notes and no longer describe the code.

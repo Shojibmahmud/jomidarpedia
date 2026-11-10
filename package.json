@@ -2,6 +2,7 @@
   "name": "jomidarpedia",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "data:index": "node scripts/build-index.mjs",
     "data:build": "node scripts/build-data.mjs",
