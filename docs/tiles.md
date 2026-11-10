@@ -71,3 +71,7 @@ On the preview, with the chosen provider, open DevTools → Network, filter by t
 - [x] Tile requests carry a `Referer` header. CARTO answered 403 while the key's Referer list did not include the preview host, and 200 once it did, so the origin is sent and checked.
 - [x] The attribution in the map's corner reads "Leaflet | © OpenStreetMap contributors © CARTO", with links, at the bottom right and not covered by controls. Explore, the site mini map and the trip route map all show it, and `/credits/` lists both.
 - [x] Checked on 9 Nov 2026 by Claude (Claude in Chrome) in Chrome on macOS, on `jomidarpedia-git-29-phase-13-wrap-up-shojibs-projects.vercel.app`. Results: Explore 12/12 tiles in light (`light_all`) and dark mode (`dark_all`); Baliati mini map 4/4; `/trips/IT-KHL-026-1/` route map 9/9; no tile-error overlay.
+
+## Production check (14.1, spec 16 FR-1)
+
+- [x] 11 Nov 2026, by Claude (Claude in Chrome) in Chrome on macOS, on `https://jomidarpedia.vercel.app` (deployment of `caccbd0`). Explore map: 16/16 tiles in dark mode (`dark_all`) and 12/12 in light mode (`light_all`); Baliati mini map 4/4 (`light_all`); `/trips/IT-KHL-026-1/` route map 9/9. Every map credits "Leaflet | © OpenStreetMap contributors © CARTO"; no tile-error overlay. The browser's theme choice was set back to System afterwards.
