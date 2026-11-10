@@ -108,7 +108,7 @@ Start with the first three.
 | [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) | Style something: colours, type, breakpoints, Bangla text, accessibility conventions |
 | [`docs/TRANSLATION_BN.md`](docs/TRANSLATION_BN.md) | Write or review Bangla text |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Edit the data as the editor: facts, photos, corrections |
-| [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Operate the live site: roll back, confirm a release, fix map tiles, change the domain |
+| [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Operate the live site: the accounts and keys it needs, handing it over, roll back, confirm a release, fix map tiles, change the domain |
 | [`docs/security.md`](docs/security.md) | See the security headers, the Content Security Policy and why each origin is allowed |
 | [`docs/tiles.md`](docs/tiles.md) | See the map tile provider, its terms and its key |
 | [`docs/a11y-checks.md`](docs/a11y-checks.md), [`docs/release-checks.md`](docs/release-checks.md) | Read or add to the logs of manual accessibility and release checks |
@@ -133,7 +133,7 @@ A new developer should know these before changing anything. They come from the r
 - **Text and data:** [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The published tables can be downloaded from the About page and the footer.
 - **Photos:** each keeps its own licence, listed with its credit on `/credits/`.
 - **Maps:** © OpenStreetMap contributors, © CARTO. Boundaries: geoBoundaries; districts BBS/OCHA, CC BY 3.0 IGO (`data/geo/SOURCE.md`).
-- **Code:** no licence file has been added yet, so the code is not licensed for reuse. This is an open decision for the owner.
+- **Code:** [MIT](LICENSE).
 
 ## Contact
 

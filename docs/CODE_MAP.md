@@ -18,6 +18,7 @@ Where things are. Use this to find the file that does something. Every file also
 | `.github/workflows/ci.yml` | The two CI jobs |
 | `CLAUDE.md`, `AGENTS.md` | Instructions for AI coding assistants |
 | `CHANGELOG.md`, `CONTRIBUTING.md` | Release history; the editor's guide |
+| `LICENSE` | MIT, for the code. Text and data are CC BY-SA 4.0 |
 | `archive/` | Superseded versions of the README |
 
 ## `app/`: routes
@@ -229,6 +230,7 @@ Pure rules unless marked "server only" (reads files) or "client" (uses hooks).
 | Path | What it is |
 |---|---|
 | `tests/*.test.ts(x)` | Unit tests, named after what they cover (`search.test.ts`, `pipeline.test.ts`, `release-checks.test.ts`…) |
+| `tests/docs.test.ts` | Every path, link and `npm run` command named in the guides exists |
 | `tests/baseline.json`, `baseline.test.ts`, `measures.ts` | The reviewed counts of the real data, and the invariants |
 | `tests/fixtures/csv/` | Generated fixture data sets, by `tests/fixtures/make-fixtures.mjs` |
 | `tests/helpers.ts`, `index-contract.ts`, `stubs/` | Shared helpers |

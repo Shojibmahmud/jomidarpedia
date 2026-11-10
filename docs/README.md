@@ -25,6 +25,7 @@ Then run `npm run dev`, open `/dev/i18n/` and a site page such as `/site/JB-DHK-
 | Draft or review Bangla prose | `TRANSLATION_BN.md` |
 | Add a filter, a page, a string or a published field | `DEVELOPMENT.md` §9 |
 | Deploy, confirm a release or roll back | `RUNBOOK.md` |
+| Find out which accounts the site needs, hand it over, or change a key | `RUNBOOK.md`, "Accounts and keys" |
 | Load something from a new external host | `security.md`, `DEVELOPMENT.md` §9 |
 | Fix map tiles or change the tile provider | `tiles.md` |
 | Run or record a screen-reader or phone check | `a11y-checks.md`, `testing/*.pdf` |
@@ -75,13 +76,14 @@ Then run `npm run dev`, open `/dev/i18n/` and a site page such as `/site/JB-DHK-
 | `../roadmap/DEVELOPMENT_ROADMAP.md` | The plan: purpose, requirements, decisions, build modes, the dataset baseline, every phase and task |
 | `../roadmap/DESIGN_COVERAGE.md` | Each design board mapped to routes, data and tasks |
 | `../roadmap/ROADMAP_REVIEW_AND_REVISION_REQUEST.md`, `ROADMAP_REVIEW_RESOLUTION.md` | The review of roadmap v1, and how each finding was handled |
-| `../.claude/specs/01` to `16` | One specification per phase |
+| `../.claude/specs/` | One specification per phase, numbered `01` to `16` |
 | `../CLAUDE.md`, `../AGENTS.md` | Standing instructions for AI coding assistants |
 
 The roadmap and the specs are a record of how the site was built. Their early sections describe the repository as it was at the time, so where they differ from the guides above, the guides and the code are right.
 
 ## Keeping the documentation true
 
+- `tests/docs.test.ts` fails when a guide names a file, folder, link or `npm run` command that doesn't exist. When a rename trips it, fix the guide, not the test. Records (`tiles.md`, `a11y-checks.md`, `release-checks.md`, the changelog, roadmap and specs) are left out because they describe the repository as it was.
 - A change to a route, a query key, a JSON field or a header goes into its contract file in the same commit.
 - A new file gets a header comment, and a line in `CODE_MAP.md` if it is a new module.
 - A new command or environment variable goes into `DEVELOPMENT.md`.

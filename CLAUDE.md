@@ -5,8 +5,6 @@ Roadmap: `roadmap/DEVELOPMENT_ROADMAP.md`. Specs: `.claude/specs/NN-*.md`.
 
 ## Commands
 
-- `npm run lint`, `npm run typecheck`, `npm test` (Vitest), `npm run e2e` (Playwright)
-- `npm run build:local` builds the data in local mode, then the site, then SEO files. CI runs the same and then `check:out` and `check:budgets` (`.github/workflows/ci.yml`).
 - In the sandbox, run npm with `npm_config_cache=$TMPDIR/npm-cache`. `next build` and Playwright have to run outside the sandbox.
 - For anything beyond a one-liner (loops, arrays, heavy quoting), write a `.mjs` or `.py` script and run it instead of inline zsh. zsh arrays are 1-indexed and don't word-split.
 
